@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary */
+  --maasik-terracotta: #C84B31;
+  --maasik-terracotta-deep: #A6361F;
+  --maasik-terracotta-darker: #7A2818;
+
+  /* Surface */
+  --maasik-cream: #FAF3E7;
+  --maasik-cream-warm: #fdf8ee;
+  --maasik-cream-deep: #f3e9d4;
+  --maasik-sand: #e8dcc1;
+  --maasik-sand-deep: #d9c9a7;
+
+  /* Ink */
+  --maasik-ink: #2D2A26;
+  --maasik-ink-soft: #4a3f31;
+  --maasik-ink-faded: #8a7d6a;
+
+  /* Semantic */
+  --maasik-favor: #7A8450;
+  --maasik-favor-bg: #f4f6ec;
+  --maasik-avoid: #6b2a1a;
+  --maasik-avoid-bg: #fbf0ec;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  background-color: var(--maasik-cream);
+  color: var(--maasik-ink);
+  font-family: var(--font-inter-tight), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(200, 75, 49, 0.15);
+  color: var(--maasik-ink);
+}
+
+/* Hero load-in animation */
+@keyframes maasik-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-anim {
+  opacity: 0;
+  animation: maasik-fade-up 620ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .hero-anim {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Diamond bullets for pricing card lists */
+.diamond-list > li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+.diamond-list > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  background-color: var(--maasik-terracotta);
+  transform: rotate(45deg);
+}
+
+/* Hide scrollbar but keep horizontal scroll on mobile preview */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hero radial background */
+.hero-bg {
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 10% 10%,
+      var(--maasik-cream-warm) 0%,
+      var(--maasik-cream) 60%
+    );
+}
+
+/* Focus rings */
+*:focus-visible {
+  outline: 2px solid var(--maasik-terracotta);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
