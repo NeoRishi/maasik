@@ -24,7 +24,7 @@ import {
 } from '@/lib/maasik/helpers';
 
 export const runtime = 'nodejs';
-export const maxDuration = 120;  // 2 minute budget for Claude + Doppio + Resend
+export const maxDuration = 800;  // 2 minute budget for Claude + Doppio + Resend
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
