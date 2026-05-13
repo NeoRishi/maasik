@@ -1,10 +1,17 @@
 /**
  * Doppio.sh client for converting HTML to PDF.
- * V1 simple wrapper. Returns a Buffer of the PDF bytes.
+ * Returns a Buffer of the PDF bytes.
+ *
+ * API docs: https://doc.doppio.sh/guide/render-methods/render-pdf-direct.html
+ * - The `pdf` config must live INSIDE `page`, not as a sibling
+ * - The `setContent.html` value must be base64-encoded
  */
 export async function htmlToPdfBuffer(html: string): Promise<Buffer> {
   const apiKey = process.env.DOPPIO_API_KEY;
   if (!apiKey) throw new Error('DOPPIO_API_KEY not set');
+
+  // Doppio requires base64-encoded HTML in setContent.html
+  const encodedHtml = Buffer.from(html, 'utf8').toString('base64');
 
   const response = await fetch('https://api.doppio.sh/v1/render/pdf/direct', {
     method: 'POST',
@@ -14,13 +21,16 @@ export async function htmlToPdfBuffer(html: string): Promise<Buffer> {
     },
     body: JSON.stringify({
       page: {
-        setContent: { html, waitUntil: 'networkidle0' },
-      },
-      pdf: {
-        format: 'A4',
-        printBackground: true,
-        margin: { top: '0mm', bottom: '0mm', left: '0mm', right: '0mm' },
-        preferCSSPageSize: true,
+        setContent: {
+          html: encodedHtml,
+          options: { waitUntil: ['networkidle0'] },
+        },
+        pdf: {
+          format: 'A4',
+          printBackground: true,
+          preferCSSPageSize: true,
+          margin: { top: '0mm', bottom: '0mm', left: '0mm', right: '0mm' },
+        },
       },
     }),
   });

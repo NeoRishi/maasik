@@ -24,7 +24,7 @@ import {
 } from '@/lib/maasik/helpers';
 
 export const runtime = 'nodejs';
-export const maxDuration = 800;  // 2 minute budget for Claude + Doppio + Resend
+export const maxDuration = 800;  // Up to 13 minutes for Claude + Doppio + Resend
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
@@ -41,16 +41,18 @@ export async function POST(req: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
-    // 1. Fetch user
+    // ---- 1. Fetch user
     const { data: user, error: userError } = await supabase
       .from('maasik_users')
       .select('*')
       .eq('id', user_id)
       .single();
 
-    if (userError || !user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    if (userError || !user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
-    // 2. Find current Vedic month
+    // ---- 2. Find current Vedic month
     const today = new Date().toISOString().split('T')[0];
     const { data: month, error: monthError } = await supabase
       .from('maasik_vedic_calendar')
@@ -62,125 +64,157 @@ export async function POST(req: NextRequest) {
       .limit(1)
       .single();
 
-    if (monthError || !month) return NextResponse.json({ error: 'No active Vedic month' }, { status: 404 });
-
-    // 3. Check for existing report
-    if (!force_regenerate) {
-      const { data: existing } = await supabase
-        .from('maasik_reports')
-        .select('id, delivery_status')
-        .eq('user_id', user_id)
-        .eq('vedic_month', month.vedic_month)
-        .eq('paksha', month.paksha)
-        .eq('vikram_samvat', month.vikram_samvat)
-        .maybeSingle();
-
-      if (existing && ['sent', 'delivered', 'opened'].includes(existing.delivery_status)) {
-        return NextResponse.json({ ok: true, already_sent: true, report_id: existing.id });
-      }
+    if (monthError || !month) {
+      return NextResponse.json({ error: 'No active Vedic month' }, { status: 404 });
     }
 
-    // 4. Issue number
-    const { count: priorCount } = await supabase
+    // ---- 3. Check for existing report (with usable HTML to skip Claude during testing)
+    const { data: existing } = await supabase
       .from('maasik_reports')
-      .select('id', { count: 'exact', head: true })
+      .select('id, delivery_status, report_html, issue_number')
       .eq('user_id', user_id)
-      .in('delivery_status', ['sent', 'delivered', 'opened']);
-    const issueNumber = (priorCount || 0) + 1;
+      .eq('vedic_month', month.vedic_month)
+      .eq('paksha', month.paksha)
+      .eq('vikram_samvat', month.vikram_samvat)
+      .maybeSingle();
 
-    // 5. Upsert report record
-    const { data: report, error: reportError } = await supabase
-      .from('maasik_reports')
-      .upsert({
-        user_id,
-        vedic_month: month.vedic_month,
-        paksha: month.paksha,
-        vikram_samvat: month.vikram_samvat,
-        ritu: month.ritu,
-        gregorian_start: month.gregorian_start,
-        gregorian_end: month.gregorian_end,
-        issue_number: issueNumber,
-        delivery_status: 'generating',
-        generation_prompt_version: 'v1.0',
-        generation_model: 'claude-sonnet-4-6',
-      }, { onConflict: 'user_id,vedic_month,paksha,vikram_samvat' })
-      .select()
-      .single();
-
-    if (reportError || !report) {
-      return NextResponse.json({ error: 'Failed to create report record', details: reportError }, { status: 500 });
+    // Short-circuit if already fully delivered
+    if (existing && ['sent', 'delivered', 'opened'].includes(existing.delivery_status) && !force_regenerate) {
+      return NextResponse.json({
+        ok: true,
+        already_sent: true,
+        report_id: existing.id,
+      });
     }
 
-    // 6. Build the user message
-    const userMessage = buildUserMessage(user as MaasikUser, month as VedicMonth, issueNumber);
+    // ---- 4. Determine issue number (only for new reports)
+    let issueNumber: number;
+    if (existing?.issue_number) {
+      issueNumber = existing.issue_number;
+    } else {
+      const { count: priorCount } = await supabase
+        .from('maasik_reports')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user_id)
+        .in('delivery_status', ['sent', 'delivered', 'opened']);
+      issueNumber = (priorCount || 0) + 1;
+    }
 
-    // 7. Call Claude
-    const anthropic = getAnthropic();
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 16000,
-      temperature: 0.4,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: userMessage }],
-    });
+    // ---- 5. Decide whether to reuse existing HTML or generate fresh
+    let report: any;
+    let html: string;
 
-    const html = response.content
-      .filter(b => b.type === 'text')
-      .map(b => (b as any).text)
-      .join('\n')
-      .trim();
+    const hasUsableHtml =
+      existing &&
+      existing.report_html &&
+      existing.report_html.length > 5000 &&
+      existing.report_html.startsWith('<!DOCTYPE html>');
 
-    // 8. Validate HTML
-    if (!html.startsWith('<!DOCTYPE html>') || !html.endsWith('</html>')) {
-      await supabase.from('maasik_reports').update({
-        delivery_status: 'failed',
-        delivery_error: 'Invalid HTML output from Claude',
-        report_html: html.slice(0, 5000),
-      }).eq('id', report.id);
+    if (hasUsableHtml && !force_regenerate) {
+      // -- Path A: REUSE existing HTML (zero Claude cost, fast)
+      console.log('Reusing existing HTML from report', existing.id, 'skipping Claude');
+      report = existing;
+      html = existing.report_html;
+    } else {
+      // -- Path B: GENERATE fresh via Claude
 
-      await sendInternalFailureAlert({
-        userEmail: user.email,
-        userId: user.id,
-        reportId: report.id,
-        reason: 'Claude returned malformed HTML',
+      // 5B.1: Upsert the report row in 'generating' status
+      const { data: newReport, error: reportError } = await supabase
+        .from('maasik_reports')
+        .upsert({
+          user_id,
+          vedic_month: month.vedic_month,
+          paksha: month.paksha,
+          vikram_samvat: month.vikram_samvat,
+          ritu: month.ritu,
+          gregorian_start: month.gregorian_start,
+          gregorian_end: month.gregorian_end,
+          issue_number: issueNumber,
+          delivery_status: 'generating',
+          generation_prompt_version: 'v1.0',
+          generation_model: 'claude-sonnet-4-6',
+        }, { onConflict: 'user_id,vedic_month,paksha,vikram_samvat' })
+        .select()
+        .single();
+
+      if (reportError || !newReport) {
+        return NextResponse.json(
+          { error: 'Failed to create report record', details: reportError },
+          { status: 500 },
+        );
+      }
+      report = newReport;
+
+      // 5B.2: Build the user message and call Claude
+      const userMessage = buildUserMessage(user as MaasikUser, month as VedicMonth, issueNumber);
+      const anthropic = getAnthropic();
+      const response = await anthropic.messages.create({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 16000,
+        temperature: 0.4,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMessage }],
       });
 
-      return NextResponse.json({ error: 'Invalid HTML output' }, { status: 500 });
-    }
+      html = response.content
+        .filter((b: any) => b.type === 'text')
+        .map((b: any) => b.text)
+        .join('\n')
+        .trim();
 
-    // 9. Check for unfilled placeholders
-    const unfilled = html.match(/\[\[[A-Z_]+\]\]/g);
-    if (unfilled && unfilled.length > 0) {
+      // 5B.3: Validate HTML structure
+      if (!html.startsWith('<!DOCTYPE html>') || !html.endsWith('</html>')) {
+        await supabase.from('maasik_reports').update({
+          delivery_status: 'failed',
+          delivery_error: 'Invalid HTML output from Claude',
+          report_html: html.slice(0, 5000),
+        }).eq('id', report.id);
+
+        await sendInternalFailureAlert({
+          userEmail: user.email,
+          userId: user.id,
+          reportId: report.id,
+          reason: 'Claude returned malformed HTML',
+        });
+
+        return NextResponse.json({ error: 'Invalid HTML output' }, { status: 500 });
+      }
+
+      // 5B.4: Check for unfilled placeholders
+      const unfilled = html.match(/\[\[[A-Z_]+\]\]/g);
+      if (unfilled && unfilled.length > 0) {
+        await supabase.from('maasik_reports').update({
+          delivery_status: 'failed',
+          delivery_error: `Unfilled placeholders: ${unfilled.slice(0, 5).join(', ')}`,
+          report_html: html,
+        }).eq('id', report.id);
+
+        await sendInternalFailureAlert({
+          userEmail: user.email,
+          userId: user.id,
+          reportId: report.id,
+          reason: `Unfilled placeholders: ${unfilled.join(', ')}`,
+        });
+
+        return NextResponse.json({ error: 'Template not fully filled', unfilled }, { status: 500 });
+      }
+
+      // 5B.5: Save the generated HTML and generation metadata
       await supabase.from('maasik_reports').update({
-        delivery_status: 'failed',
-        delivery_error: `Unfilled placeholders: ${unfilled.slice(0, 5).join(', ')}`,
         report_html: html,
+        generation_tokens_input: response.usage.input_tokens,
+        generation_tokens_output: response.usage.output_tokens,
+        generation_cost_inr: computeReportCostInr(response.usage),
+        generation_duration_ms: Date.now() - startTime,
       }).eq('id', report.id);
-
-      await sendInternalFailureAlert({
-        userEmail: user.email,
-        userId: user.id,
-        reportId: report.id,
-        reason: `Unfilled placeholders: ${unfilled.join(', ')}`,
-      });
-
-      return NextResponse.json({ error: 'Template not fully filled', unfilled }, { status: 500 });
     }
 
-    // 10. Save HTML and generation metadata
-    await supabase.from('maasik_reports').update({
-      report_html: html,
-      generation_tokens_input: response.usage.input_tokens,
-      generation_tokens_output: response.usage.output_tokens,
-      generation_cost_inr: computeReportCostInr(response.usage),
-      generation_duration_ms: Date.now() - startTime,
-    }).eq('id', report.id);
-
-    // 11. Convert HTML to PDF via Doppio
+    // ---- 6. Convert HTML to PDF via Doppio (applies to both paths)
     const pdfBuffer = await htmlToPdfBuffer(html);
 
-    // 12. Upload PDF to Supabase Storage
-    const pdfFilename = `MAASIK_${month.vedic_month}_${user.full_name.replace(/\s+/g, '_')}_${month.gregorian_start}.pdf`;
+    // ---- 7. Upload PDF to Supabase Storage
+    const safeName = user.full_name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+    const pdfFilename = `MAASIK_${month.vedic_month}_${safeName}_${month.gregorian_start}.pdf`;
     const storagePath = `${user.id}/${report.id}/${pdfFilename}`;
 
     const { error: uploadError } = await supabase.storage
@@ -195,7 +229,7 @@ export async function POST(req: NextRequest) {
       // Non-fatal, we can still email it
     }
 
-    // Get signed URL (valid 30 days)
+    // ---- 8. Generate signed URL (valid 30 days)
     const { data: signed } = await supabase.storage
       .from('maasik-reports')
       .createSignedUrl(storagePath, 30 * 24 * 60 * 60);
@@ -205,7 +239,7 @@ export async function POST(req: NextRequest) {
       report_pdf_url: signed?.signedUrl || null,
     }).eq('id', report.id);
 
-    // 13. Send the email
+    // ---- 9. Send the email
     let resendId = '';
     try {
       resendId = await sendReportEmail({
@@ -230,24 +264,27 @@ export async function POST(req: NextRequest) {
         reason: emailErr.message,
       });
 
-      return NextResponse.json({ error: 'Email send failed', details: emailErr.message }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Email send failed', details: emailErr.message },
+        { status: 500 },
+      );
     }
 
-    // 14. Mark sent
+    // ---- 10. Mark as sent
     await supabase.from('maasik_reports').update({
       delivery_status: 'sent',
       sent_at: new Date().toISOString(),
       resend_message_id: resendId,
     }).eq('id', report.id);
 
-    // 15. Update user first_report_sent_at if this is issue 1
+    // ---- 11. Update user.first_report_sent_at if this is issue 1
     if (issueNumber === 1) {
       await supabase.from('maasik_users').update({
         first_report_sent_at: new Date().toISOString(),
       }).eq('id', user_id);
     }
 
-    // 16. Log event
+    // ---- 12. Log event
     await supabase.from('maasik_events').insert({
       user_id,
       email: user.email,
@@ -258,6 +295,7 @@ export async function POST(req: NextRequest) {
         vedic_month: month.vedic_month,
         issue_number: issueNumber,
         duration_ms: Date.now() - startTime,
+        path: hasUsableHtml ? 'reused_html' : 'fresh_generation',
       },
     });
 
@@ -266,6 +304,7 @@ export async function POST(req: NextRequest) {
       report_id: report.id,
       duration_ms: Date.now() - startTime,
       resend_message_id: resendId,
+      path: hasUsableHtml ? 'reused_html' : 'fresh_generation',
     });
 
   } catch (err: any) {
@@ -278,14 +317,12 @@ function buildUserMessage(user: MaasikUser, month: VedicMonth, issueNumber: numb
   const firstName = user.full_name.split(' ')[0];
   const today = formatVedicDate(new Date().toISOString().split('T')[0]);
 
-  // Pre-compute display values for the profile strip and template slots
   const prakritiDisplay = humanisePrakriti(user.prakriti_label);
   const cellClasses = computeDoshaCellClasses(user.vata_score, user.pitta_score, user.kapha_score);
   const primaryGoal = getPrimaryGoalDisplay(user.primary_goals);
   const secondaryGoal = getSecondaryGoalDisplay(user.primary_goals);
   const activeConcern = getActiveConcernDisplay(user.allergies, user.medical_conditions);
 
-  // Prepare the user_profile, vedic_month_context, and output_template blocks
   return `Generate the MAASIK monthly blueprint for the following user.
 
 <user_profile>
