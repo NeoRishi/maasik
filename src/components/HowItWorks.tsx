@@ -1,10 +1,15 @@
+'use client';
+
+import { motion, useReducedMotion } from 'framer-motion';
 import { COPY } from '@/lib/constants';
+import { MotionSection } from './motion/MotionSection';
 
 export function HowItWorks() {
+  const reduced = useReducedMotion();
   return (
     <section id="how-it-works" className="bg-cream w-full">
       <div className="max-w-6xl mx-auto px-6 md:px-8 lg:px-12 py-24 md:py-32 lg:py-40">
-        <div className="text-center">
+        <MotionSection className="text-center">
           <h2
             className="font-display font-normal text-ink"
             style={{
@@ -20,11 +25,21 @@ export function HowItWorks() {
           >
             {COPY.howItWorks.subheading}
           </p>
-        </div>
+        </MotionSection>
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
-          {COPY.howItWorks.steps.map((step) => (
-            <div key={step.number}>
+          {COPY.howItWorks.steps.map((step, idx) => (
+            <motion.div
+              key={step.number}
+              initial={{ opacity: 0, y: reduced ? 0 : 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-10% 0px' }}
+              transition={{
+                duration: 0.7,
+                ease: [0.16, 1, 0.3, 1],
+                delay: reduced ? 0 : 0.1 + idx * 0.12,
+              }}
+            >
               <div
                 className="font-display font-light text-terracotta leading-none"
                 style={{ fontSize: '96px' }}
@@ -37,7 +52,7 @@ export function HowItWorks() {
               <p className="font-body text-[15px] leading-relaxed text-ink-soft mt-3 max-w-[280px]">
                 {step.description}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

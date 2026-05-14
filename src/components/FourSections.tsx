@@ -1,26 +1,41 @@
+'use client';
+
+import { motion, useReducedMotion } from 'framer-motion';
 import { COPY } from '@/lib/constants';
+import { MotionSection } from './motion/MotionSection';
 
 export function FourSections() {
+  const reduced = useReducedMotion();
   return (
     <section id="four-sections" className="bg-cream w-full">
       <div className="max-w-6xl mx-auto px-6 md:px-8 lg:px-12 py-24 md:py-32 lg:py-40">
-        <p className="font-mono text-[11px] text-terracotta tracking-widest3 uppercase">
-          {COPY.fourSections.label}
-        </p>
-        <h2
-          className="font-display font-normal text-ink mt-6 max-w-3xl"
-          style={{
-            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-            lineHeight: 1.1,
-          }}
-        >
-          <em className="italic font-normal">{COPY.fourSections.heading}</em>
-        </h2>
+        <MotionSection>
+          <p className="font-mono text-[11px] text-terracotta tracking-widest3 uppercase">
+            {COPY.fourSections.label}
+          </p>
+          <h2
+            className="font-display font-normal text-ink mt-6 max-w-3xl"
+            style={{
+              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+              lineHeight: 1.1,
+            }}
+          >
+            <em className="italic font-normal">{COPY.fourSections.heading}</em>
+          </h2>
+        </MotionSection>
 
         <div className="mt-16 space-y-16">
-          {COPY.fourSections.cards.map((card) => (
-            <article
+          {COPY.fourSections.cards.map((card, idx) => (
+            <motion.article
               key={card.number}
+              initial={{ opacity: 0, y: reduced ? 0 : 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-8% 0px' }}
+              transition={{
+                duration: 0.7,
+                ease: [0.16, 1, 0.3, 1],
+                delay: reduced ? 0 : idx * 0.08,
+              }}
               className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 border-t border-sand pt-12"
             >
               <div className="md:col-span-1">
@@ -39,7 +54,7 @@ export function FourSections() {
                   {card.body}
                 </p>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>

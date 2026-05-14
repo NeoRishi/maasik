@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/maasik/supabase';
+import { createPaymentLink } from '@/lib/maasik/razorpay';
 import crypto from 'crypto';
 
 export const runtime = 'nodejs';
@@ -89,9 +90,31 @@ export async function POST(req: NextRequest) {
       event_data: { tally_response_id: payload.responseId, form_id: payload.formId },
     });
 
-    // 6. Build the Razorpay payment URL with prefill
-    const razorpayBaseUrl = process.env.NEXT_PUBLIC_RAZORPAY_PAYMENT_LINK_URL;
-    const paymentUrl = `${razorpayBaseUrl}?prefill[email]=${encodeURIComponent(user.email)}&prefill[name]=${encodeURIComponent(user.full_name)}&notes[user_id]=${user.id}`;
+    // 6. Create a fresh Razorpay Payment Link with user_id baked into notes
+    let paymentUrl: string;
+    try {
+      paymentUrl = await createPaymentLink({
+        user_id: user.id,
+        email: user.email,
+        name: user.full_name,
+        amount_inr: 99,
+        description: 'MAASIK first month, your personalised Vedic nutrition blueprint',
+        expires_in_days: 7,
+      });
+
+      // Log the payment link in maasik_events for audit
+      await supabase.from('maasik_events').insert({
+        user_id: user.id,
+        email: user.email,
+        event_type: 'payment_link_created',
+        event_source: 'tally-webhook',
+        event_data: { payment_url: paymentUrl, amount_inr: 99 },
+      });
+    } catch (err: any) {
+      console.error('Failed to create Razorpay Payment Link:', err);
+      // Fallback to the static link if API call fails
+      paymentUrl = process.env.NEXT_PUBLIC_RAZORPAY_PAYMENT_LINK_URL || '';
+    }
 
     return NextResponse.json({
       ok: true,
@@ -105,15 +128,8 @@ export async function POST(req: NextRequest) {
   }
 }
 
-/**
- * Parses Tally's `fields` array into our maasik_users schema.
- *
- * IMPORTANT: The exact field labels and types depend on how the Tally form
- * is built. The labels below are placeholders. After Deliverable B is built,
- * you will receive the exact mapping. For now, this uses label-matching as
- * a robust fallback.
- */
 function parseTallyFields(fields: TallyField[]): any {
+  // Helper: find a field by exact label match (case-insensitive substring)
   const get = (labelContains: string): any => {
     const f = fields.find((x) => x.label.toLowerCase().includes(labelContains.toLowerCase()));
     return f?.value;
@@ -121,19 +137,38 @@ function parseTallyFields(fields: TallyField[]): any {
 
   const getMultiSelect = (labelContains: string): string[] => {
     const v = get(labelContains);
-    if (Array.isArray(v)) return v.map(String);
-    if (typeof v === 'string') return [v];
+    if (Array.isArray(v)) {
+      // Tally returns multi-select as array of option labels or option IDs.
+      // Map them to our goal codes.
+      return v.map(mapGoalCode);
+    }
+    if (typeof v === 'string') return [mapGoalCode(v)];
     return [];
   };
 
-  // Prakriti question parser: maps the chosen option to a dosha code
+  const mapGoalCode = (label: string): string => {
+    const l = String(label).toLowerCase();
+    if (l.includes('lose weight') || l.includes('weight loss')) return 'weight_loss';
+    if (l.includes('energy') || l.includes('stamina')) return 'energy';
+    if (l.includes('digestion')) return 'digestion';
+    if (l.includes('sleep')) return 'sleep';
+    if (l.includes('stress')) return 'stress_relief';
+    if (l.includes('clarity') || l.includes('focus') || l.includes('mental')) return 'mental_clarity';
+    if (l.includes('muscle')) return 'muscle_gain';
+    if (l.includes('condition') || l.includes('medical')) return 'medical_support';
+    if (l.includes('wellness')) return 'general_wellness';
+    return 'other';
+  };
+
   const parsePrakritiAnswer = (labelContains: string): string | null => {
     const v = get(labelContains);
     if (!v) return null;
     const lower = String(v).toLowerCase();
-    if (lower.includes('vata-pitta') || lower.includes('vata pitta')) return 'vata_pitta';
-    if (lower.includes('pitta-kapha') || lower.includes('pitta kapha')) return 'pitta_kapha';
-    if (lower.includes('vata-kapha') || lower.includes('vata kapha')) return 'vata_kapha';
+    // Option strings contain "(Vata)", "(Pitta)", "(Kapha)" suffixes
+    if (lower.includes('(vata)')) return 'vata';
+    if (lower.includes('(pitta)')) return 'pitta';
+    if (lower.includes('(kapha)')) return 'kapha';
+    // Fallback for free-text or substring matching
     if (lower.includes('vata')) return 'vata';
     if (lower.includes('pitta')) return 'pitta';
     if (lower.includes('kapha')) return 'kapha';
@@ -144,10 +179,10 @@ function parseTallyFields(fields: TallyField[]): any {
     full_name: get('name') || '',
     email: get('email') || '',
     age: Number(get('age')) || null,
-    gender: String(get('gender') || '').toLowerCase().replace(/\s+/g, '_'),
+    gender: String(get('gender') || '').toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, ''),
     city: get('city') || '',
-    region: get('region') || null,
-    country: get('country') || 'India',
+    region: deriveRegion(get('city')),
+    country: 'India',
 
     height_cm: Number(get('height')) || null,
     weight_kg: Number(get('weight')) || null,
@@ -163,19 +198,58 @@ function parseTallyFields(fields: TallyField[]): any {
     prakriti_q_mind: parsePrakritiAnswer('mind'),
     prakriti_q_bowels: parsePrakritiAnswer('bowel'),
 
-    sleep_time: parseTime(get('sleep time') || get('go to sleep')),
+    sleep_time: parseTime(get('sleep time')),
     wake_time: parseTime(get('wake')),
-    work_type: get('work type') || null,
+    work_type: parseWorkType(get('work type')),
     stress_level: parseStressLevel(get('stress')),
-    meal_timing_pattern: get('meal timing') || null,
+    meal_timing_pattern: parseMealTiming(get('meal timing')),
 
     diet_type: parseDietType(get('diet')),
     favorite_foods: get('favorite') || null,
     disliked_foods: get('dislike') || null,
-    allergies: get('allerg') || null,
+    allergies: null,  // we combine medical and allergies into one field
     medical_conditions: get('medical') || null,
     expectations: get('expect') || null,
   };
+}
+
+function deriveRegion(city: any): string | null {
+  if (!city) return null;
+  const c = String(city).toLowerCase();
+  if (['delhi', 'lucknow', 'jaipur', 'chandigarh', 'kanpur', 'amritsar', 'agra'].some(x => c.includes(x))) {
+    return 'North India';
+  }
+  if (['mumbai', 'pune', 'ahmedabad', 'goa', 'surat', 'nagpur', 'nashik', 'thane'].some(x => c.includes(x))) {
+    return 'West India';
+  }
+  if (['bangalore', 'bengaluru', 'chennai', 'hyderabad', 'kochi', 'mysore', 'coimbatore', 'madurai'].some(x => c.includes(x))) {
+    return 'South India';
+  }
+  if (['kolkata', 'bhubaneswar', 'patna', 'guwahati', 'ranchi', 'siliguri'].some(x => c.includes(x))) {
+    return 'East India';
+  }
+  if (['bhopal', 'raipur', 'indore', 'jabalpur'].some(x => c.includes(x))) {
+    return 'Central India';
+  }
+  return null;
+}
+
+function parseWorkType(s: any): string | null {
+  if (!s) return null;
+  const str = String(s).toLowerCase();
+  if (str.includes('desk') || str.includes('screen') || str.includes('low physical')) return 'sedentary';
+  if (str.includes('mixed') || str.includes('some movement')) return 'moderate';
+  if (str.includes('physically') || str.includes('on my feet')) return 'active';
+  return 'sedentary';
+}
+
+function parseMealTiming(s: any): string | null {
+  if (!s) return null;
+  const str = String(s).toLowerCase();
+  if (str.includes('regular') || str.includes('consistent')) return 'regular';
+  if (str.includes('skipped') || str.includes('rushed')) return 'rushed';
+  if (str.includes('irregular') || str.includes('late')) return 'irregular';
+  return 'standard';
 }
 
 function parseTime(s: any): string | null {

@@ -2,29 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Primary */
-  --maasik-terracotta: #C84B31;
-  --maasik-terracotta-deep: #A6361F;
-  --maasik-terracotta-darker: #7A2818;
+@layer base {
+  :root {
+    /* MAASIK brand tokens (legacy, still used by existing components) */
+    --maasik-terracotta: #c84b31;
+    --maasik-terracotta-deep: #a6361f;
+    --maasik-terracotta-darker: #7a2818;
 
-  /* Surface */
-  --maasik-cream: #FAF3E7;
-  --maasik-cream-warm: #fdf8ee;
-  --maasik-cream-deep: #f3e9d4;
-  --maasik-sand: #e8dcc1;
-  --maasik-sand-deep: #d9c9a7;
+    --maasik-cream: #faf3e7;
+    --maasik-cream-warm: #fdf8ee;
+    --maasik-cream-deep: #f3e9d4;
+    --maasik-sand: #e8dcc1;
+    --maasik-sand-deep: #d9c9a7;
 
-  /* Ink */
-  --maasik-ink: #2D2A26;
-  --maasik-ink-soft: #4a3f31;
-  --maasik-ink-faded: #8a7d6a;
+    --maasik-ink: #2d2a26;
+    --maasik-ink-soft: #4a3f31;
+    --maasik-ink-faded: #8a7d6a;
 
-  /* Semantic */
-  --maasik-favor: #7A8450;
-  --maasik-favor-bg: #f4f6ec;
-  --maasik-avoid: #6b2a1a;
-  --maasik-avoid-bg: #fbf0ec;
+    --maasik-favor: #7a8450;
+    --maasik-favor-bg: #f4f6ec;
+    --maasik-avoid: #6b2a1a;
+    --maasik-avoid-bg: #fbf0ec;
+
+    /* shadcn semantic tokens mapped to MAASIK palette (HSL channels) */
+    --background: 38 64% 95%; /* cream */
+    --foreground: 31 8% 16%; /* ink */
+    --card: 38 75% 96%; /* cream-warm */
+    --card-foreground: 31 8% 16%;
+    --popover: 38 75% 96%;
+    --popover-foreground: 31 8% 16%;
+    --primary: 10 60% 49%; /* terracotta */
+    --primary-foreground: 38 64% 95%;
+    --secondary: 39 56% 89%; /* cream-deep */
+    --secondary-foreground: 34 19% 24%; /* ink-soft */
+    --muted: 39 56% 89%;
+    --muted-foreground: 36 13% 47%; /* ink-faded */
+    --accent: 40 49% 83%; /* sand */
+    --accent-foreground: 34 19% 24%;
+    --destructive: 11 60% 26%; /* avoid */
+    --destructive-foreground: 38 64% 95%;
+    --border: 38 41% 75%; /* sand-deep */
+    --input: 40 49% 83%;
+    --ring: 10 60% 49%;
+    --radius: 0.75rem;
+  }
 }
 
 html {
@@ -105,6 +126,22 @@ body {
       var(--maasik-cream-warm) 0%,
       var(--maasik-cream) 60%
     );
+}
+
+/* Subtle paper grain — applied via a utility class so any section can opt in.
+   Uses an inline SVG turbulence so no extra HTTP request, no asset to host. */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18 0 0 0 0 0.16 0 0 0 0 0.13 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 180px 180px;
 }
 
 /* Focus rings */

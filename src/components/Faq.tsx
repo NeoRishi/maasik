@@ -1,11 +1,18 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { COPY } from '@/lib/constants';
 import { track } from './PostHogProvider';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 export function Faq() {
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const [openValue, setOpenValue] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const fired = new Set<number>();
@@ -49,25 +56,43 @@ export function Faq() {
             <em className="italic font-normal">{COPY.faq.heading}</em>
           </h2>
 
-          <div className="mt-12 divide-y divide-sand">
+          <Accordion
+            type="single"
+            collapsible
+            value={openValue}
+            onValueChange={(v) => {
+              setOpenValue(v);
+              if (v) {
+                const idx = Number(v.replace('faq-', ''));
+                track('faq_question_open', {
+                  index: idx,
+                  question: COPY.faq.items[idx]?.q,
+                });
+              }
+            }}
+            className="mt-12"
+          >
             {COPY.faq.items.map((item, i) => (
-              <div
+              <AccordionItem
                 key={item.q}
-                ref={(el) => {
+                value={`faq-${i}`}
+                ref={(el: HTMLDivElement | null) => {
                   itemRefs.current[i] = el;
                 }}
                 data-faq-index={i}
-                className="py-8"
+                className="border-b border-sand last:border-b-0"
               >
-                <h3 className="font-display font-medium text-[18px] text-ink">
-                  {item.q}
-                </h3>
-                <p className="font-body text-[15px] leading-relaxed text-ink-soft mt-3">
+                <AccordionTrigger className="font-display font-medium text-[18px] text-ink py-6 hover:no-underline group">
+                  <span className="text-left pr-4 group-hover:text-terracotta-deep transition-colors">
+                    {item.q}
+                  </span>
+                </AccordionTrigger>
+                <AccordionContent className="font-body text-[15px] leading-relaxed text-ink-soft pb-7 pr-6">
                   {item.a}
-                </p>
-              </div>
+                </AccordionContent>
+              </AccordionItem>
             ))}
-          </div>
+          </Accordion>
         </div>
       </div>
     </section>

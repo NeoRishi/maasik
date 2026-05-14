@@ -195,37 +195,20 @@ export function humanisePaksha(paksha: 'shukla' | 'krishna' | string): string {
 // PRAKRITI HUMANISER
 // ============================================================================
 
-/**
- * Converts a prakriti label from the database into a human-readable display form.
- * Examples:
- *   'pitta_vata'      -> 'Pitta-Vata'
- *   'pitta_dominant'  -> 'Pitta-dominant'
- *   'tri_dosha'       -> 'Tri-doshic'
- */
 export function humanisePrakriti(label: string | null | undefined): string {
   if (!label) return 'Tri-doshic (assessment incomplete)';
 
-  // Special cases
-  if (label === 'tri_dosha' || label === 'tri-dosha' || label === 'tridosha') {
-    return 'Tri-doshic';
-  }
+  const map: Record<string, string> = {
+    'tri_dosha': 'Tri-doshic',
+    'vata_dominant': 'Vata-dominant',
+    'pitta_dominant': 'Pitta-dominant',
+    'kapha_dominant': 'Kapha-dominant',
+    'vata_pitta': 'Vata-Pitta',
+    'pitta_kapha': 'Pitta-Kapha',
+    'vata_kapha': 'Vata-Kapha',
+  };
 
-  // Dominant pattern: "pitta_dominant" -> "Pitta-dominant"
-  if (label.endsWith('_dominant')) {
-    const dosha = label.replace('_dominant', '');
-    return `${capitalize(dosha)}-dominant`;
-  }
-
-  // Dual dosha: "pitta_vata" -> "Pitta-Vata"
-  if (label.includes('_')) {
-    return label
-      .split('_')
-      .map(capitalize)
-      .join('-');
-  }
-
-  // Single word fallback
-  return capitalize(label);
+  return map[label] || capitalize(label.replace(/_/g, ' '));
 }
 
 function capitalize(s: string): string {

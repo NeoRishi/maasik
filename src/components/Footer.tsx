@@ -1,5 +1,8 @@
+'use client';
+
 import { COPY, finalHeadingDynamic } from '@/lib/constants';
 import { CtaButton } from './CtaButton';
+import { MotionSection } from './motion/MotionSection';
 
 type Props = { daysToNext: number };
 
@@ -8,7 +11,7 @@ export function Footer({ daysToNext }: Props) {
     <footer className="bg-cream-deep border-t border-sand w-full">
       <div className="max-w-6xl mx-auto px-6 md:px-8 lg:px-12">
         {/* Part 1: Final CTA banner */}
-        <div className="py-20 md:py-24 text-center">
+        <MotionSection className="py-20 md:py-24 text-center">
           <h2
             className="font-display font-normal text-ink max-w-[600px] mx-auto"
             style={{
@@ -34,7 +37,7 @@ export function Footer({ daysToNext }: Props) {
               {COPY.footer.finalCta}
             </CtaButton>
           </div>
-        </div>
+        </MotionSection>
 
         {/* Part 2: Legal row */}
         <div className="border-t border-b border-sand py-6 flex flex-col md:flex-row items-center md:justify-between gap-4 text-center">

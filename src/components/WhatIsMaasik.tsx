@@ -1,12 +1,14 @@
+'use client';
+
 import { COPY } from '@/lib/constants';
+import { MotionSection } from './motion/MotionSection';
 
 export function WhatIsMaasik() {
   return (
     <section id="what-is-maasik" className="bg-cream-warm w-full">
       <div className="max-w-6xl mx-auto px-6 md:px-8 lg:px-12 py-24 md:py-32 lg:py-40">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
-          {/* Left column 5/12 */}
-          <div className="md:col-span-5">
+          <MotionSection className="md:col-span-5">
             <p className="font-mono text-[11px] text-terracotta tracking-widest3 uppercase">
               {COPY.whatIsMaasik.label}
             </p>
@@ -19,10 +21,9 @@ export function WhatIsMaasik() {
             >
               {COPY.whatIsMaasik.sanskritTranslation}
             </p>
-          </div>
+          </MotionSection>
 
-          {/* Right column 7/12 */}
-          <div className="md:col-span-7">
+          <MotionSection delay={0.12} className="md:col-span-7">
             <h2
               className="font-display font-normal text-ink"
               style={{
@@ -44,7 +45,7 @@ export function WhatIsMaasik() {
                 </p>
               ))}
             </div>
-          </div>
+          </MotionSection>
         </div>
       </div>
     </section>
