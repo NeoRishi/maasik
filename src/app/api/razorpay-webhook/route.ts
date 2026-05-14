@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { waitUntil } from '@vercel/functions';
 import { getSupabaseAdmin } from '@/lib/maasik/supabase';
 import { sendWelcomeEmail } from '@/lib/maasik/resend';
 import crypto from 'crypto';
@@ -111,9 +112,24 @@ export async function POST(req: NextRequest) {
           }).catch(err => console.error('Welcome email failed:', err));
         }
 
-        // 5. Trigger report generation (fire and forget). Runs for both first payment and renewals.
-        triggerReportGeneration(userId).catch(err =>
-          console.error('Report trigger failed:', err)
+        // 5. Trigger report generation. waitUntil keeps the inner fetch alive after we
+        //    respond 200 to Razorpay — without it, Vercel can freeze the lambda before
+        //    /api/generate-report is even reached. On failure, log to maasik_events so
+        //    the daily cron sweep / ops can spot it instead of it dying in console logs.
+        waitUntil(
+          triggerReportGeneration(userId).catch(async err => {
+            console.error('Report trigger failed:', err);
+            await supabase.from('maasik_events').insert({
+              user_id: userId,
+              email: customerEmail,
+              event_type: 'report_trigger_failed',
+              event_source: 'razorpay-webhook',
+              event_data: {
+                error: String(err?.message || err),
+                payment_id: payment.id,
+              },
+            });
+          })
         );
       }
 
@@ -135,7 +151,7 @@ export async function POST(req: NextRequest) {
  */
 async function triggerReportGeneration(userId: string): Promise<void> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://maasik.neorishi.io';
-  await fetch(`${baseUrl}/api/generate-report`, {
+  const res = await fetch(`${baseUrl}/api/generate-report`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -143,4 +159,8 @@ async function triggerReportGeneration(userId: string): Promise<void> {
     },
     body: JSON.stringify({ user_id: userId }),
   });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`generate-report ${res.status}: ${body.slice(0, 500)}`);
+  }
 }
