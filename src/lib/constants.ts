@@ -204,5 +204,8 @@ export function finalHeadingDynamic(daysToNext: number): string {
 // Next Shukla Pratipada — Adhik Jyeshtha Shukla Pratipada
 export const NEXT_SHUKLA_PRATIPADA = '2026-05-17';
 
+// DEPRECATED: Tally onboarding replaced by the in-app /onboarding wizard on
+// 2026-05-14. Kept defined but unused for rollback safety. Do not remove the
+// NEXT_PUBLIC_TALLY_FORM_URL env var yet — schedule deletion with V1.1.
 export const TALLY_URL =
   process.env.NEXT_PUBLIC_TALLY_FORM_URL ?? 'https://tally.so/r/REPLACE_ME';

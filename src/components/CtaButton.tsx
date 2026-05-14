@@ -1,6 +1,5 @@
 'use client';
 
-import { TALLY_URL } from '@/lib/constants';
 import { track } from './PostHogProvider';
 
 type Location =
@@ -25,7 +24,7 @@ export function CtaButton({
   href,
   ariaLabel,
 }: Props) {
-  const target = href ?? TALLY_URL;
+  const target = href ?? '/onboarding';
   const handleClick = () => {
     track('cta_clicked', { location });
   };

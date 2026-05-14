@@ -76,10 +76,6 @@ export async function POST(req: NextRequest) {
 
     const supabase = getSupabaseAdmin();
 
-    // Compute BMI for convenience (height in cm, weight in kg)
-    const heightM = data.height_cm / 100;
-    const bmi = Number((data.weight_kg / (heightM * heightM)).toFixed(2));
-
     const profile: Record<string, unknown> = {
       full_name: data.full_name,
       email: data.email.trim().toLowerCase(),
@@ -92,7 +88,6 @@ export async function POST(req: NextRequest) {
 
       height_cm: data.height_cm,
       weight_kg: data.weight_kg,
-      bmi,
 
       primary_goal: data.primary_goal,
       // Maintain compatibility with existing helpers that read primary_goals[]

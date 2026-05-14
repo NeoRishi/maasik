@@ -1,3 +1,7 @@
+// DEPRECATED: This route is replaced by /api/onboarding-submit as of
+// 2026-05-14. Kept temporarily for rollback safety. Will be deleted in V1.1
+// after 30 days of successful WebUI traffic.
+
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/maasik/supabase';
 import { createPaymentLink } from '@/lib/maasik/razorpay';
