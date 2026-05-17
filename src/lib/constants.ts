@@ -40,25 +40,25 @@ export const COPY = {
   howItWorks: {
     heading: 'Three steps. Once.',
     subheading:
-      'Tell us about yourself once. Get personalized blueprints forever.',
+      'Set up once. New blueprint every month, automatically.',
     steps: [
       {
         number: '01',
-        title: 'Answer 25 questions',
+        title: 'Answer a short questionnaire',
         description:
-          'A three-minute onboarding. We learn your constitution, your goals, your city, your dietary preferences, and your active health concerns. No fluff.',
+          'Three minutes. Your build, energy, digestion, sleep, current goals. This becomes your Rhythm Profile.',
       },
       {
         number: '02',
         title: 'Pay ₹99 to start',
         description:
-          "A simple Razorpay checkout. ₹99 for your first month's blueprint. ₹299/month from month two onward. Cancel any time, no questions.",
+          "Razorpay checkout. ₹99 for your first issue. ₹299/month from month two onward. Cancel any time, one click.",
       },
       {
         number: '03',
-        title: 'Receive every Shukla Pratipada',
+        title: 'Receive a new issue every Vedic month',
         description:
-          "Each new Vedic month, your fresh PDF arrives by email at 7:00 AM IST. Calibrated to that month's Ritu and your profile. Open, print, follow.",
+          "Each Shukla Pratipada, a fresh 4-page PDF arrives in your inbox by 7:00 AM IST. Calibrated to your profile and the season. Open, read, follow.",
       },
     ],
   },
