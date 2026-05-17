@@ -1,9 +1,11 @@
 import { NavBar } from '@/components/NavBar';
 import { Hero } from '@/components/Hero';
 import { TheProblem } from '@/components/TheProblem';
+import { FourSections } from '@/components/FourSections';
 import { HowItWorks } from '@/components/HowItWorks';
 import { SamplePreview } from '@/components/SamplePreview';
-import { FourSections } from '@/components/FourSections';
+import { RhythmProfile } from '@/components/RhythmProfile';
+import { FounderNote } from '@/components/FounderNote';
 import { Pricing } from '@/components/Pricing';
 import { Faq } from '@/components/Faq';
 import { FirstObject } from '@/components/FirstObject';
@@ -21,6 +23,8 @@ export default function Page() {
         <FourSections />
         <HowItWorks />
         <SamplePreview />
+        <RhythmProfile />
+        <FounderNote />
         <Pricing />
         <Faq />
         <FirstObject />

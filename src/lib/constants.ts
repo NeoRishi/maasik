@@ -104,8 +104,29 @@ export const COPY = {
     ],
   },
 
+  rhythmProfile: {
+    label: '05 · THE RHYTHM PROFILE',
+    heading: 'What your Rhythm Profile is, plainly.',
+    body: [
+      "When you sign up, you answer a short set of questions about your build, energy patterns, digestion, sleep, and current life context. We map that into your Rhythm Profile, our shorthand for the kind of body and life you're operating with right now.",
+      'The Rhythm Profile is built on traditional Indian frameworks for how human bodies vary, translated into something a thinking adult can use without a Sanskrit dictionary. Your blueprint each month is built around it.',
+      'We update your profile lightly each season. The body changes. The blueprint should too.',
+    ],
+  },
+
+  founderNote: {
+    label: '06 · A NOTE FROM THE FOUNDER',
+    heading: 'A note from the founder.',
+    body: [
+      "For two years, alongside a long career in tech, I worked through a Master's in Yoga-Shastra. What I found there was not a wellness aesthetic. It was a set of systems for rhythm, attention, recovery, and food that, in many ways, fit modern professional life better than modern productivity culture does.",
+      "MAASIK is the first product I'm shipping from that work. It is not a diet plan. It is a calibration tool, 4 pages, every month, built for people who think for a living and want their food to keep up with their life.",
+    ],
+    signature: 'Hrishikesh',
+    role: 'Founder, NeoRishi',
+  },
+
   pricing: {
-    label: '04 — PRICING',
+    label: '07 · PRICING',
     heading: 'Less than a single dinner. Every month.',
     subheading:
       'Try MAASIK for ₹99. If the first blueprint changes how you eat, continue. If it does not, cancel in one click.',
