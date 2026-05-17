@@ -64,15 +64,15 @@ export const COPY = {
   },
 
   samplePreview: {
-    label: '02 — WHAT YOU RECEIVE',
-    heading: 'A real blueprint, blurred for privacy.',
+    label: '04 · WHAT IT LOOKS LIKE',
+    heading: 'A real issue, redacted for privacy.',
     subheading:
-      'This is the actual May 2026 issue for a Pitta-Vata user in Pune. Specific personal details are blurred. The structure and design are real.',
+      'This is the May 2026 issue for an example subscriber in Pune. Personal details are redacted. The structure and design are real.',
     pageAnnotations: [
-      { label: 'PAGE 01', caption: 'Cover with your Vedic month, ritu, and dates' },
-      { label: 'PAGE 02', caption: 'Month overview plus your personalized analysis' },
-      { label: 'PAGE 03', caption: 'Diet blueprint, food categories, your ideal day' },
-      { label: 'PAGE 04', caption: "Grocery list, do's and don'ts, your anchor" },
+      { label: 'PAGE 01', caption: 'Cover with your Vedic month and dates' },
+      { label: 'PAGE 02', caption: 'Seasonal frame and your Rhythm Profile snapshot' },
+      { label: 'PAGE 03', caption: 'Food plan, simple meal map, what to favour and skip' },
+      { label: 'PAGE 04', caption: "Grocery list, lifestyle anchors, closing note" },
     ],
     scrollHint: 'swipe →',
   },

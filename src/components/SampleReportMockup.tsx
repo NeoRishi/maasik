@@ -37,23 +37,23 @@ function CoverPage() {
     <Page>
       <Eyebrow>The MAASIK Blueprint</Eyebrow>
       <p className="mt-1 font-mono text-[8px] text-ink-faded tracking-widest2 uppercase">
-        Issue 01 · Shukla Paksha
+        Issue 01 · Vedic Month
       </p>
 
       <div className="mt-auto">
         <p className="font-sanskrit text-[10px] text-terracotta italic">
-          ज्येष्ठ · ग्रीष्म ऋतु
+          ज्येष्ठ
         </p>
         <h3 className="font-display italic text-[28px] leading-[1.05] text-ink mt-2">
           Jyeshtha
         </h3>
         <p className="font-display text-[11px] text-ink-soft mt-1.5">
-          The month of fierce sun &amp;<br />
+          The month of fierce sun and<br />
           quiet midday surrender.
         </p>
         <HairLine />
         <p className="font-mono text-[7px] text-ink-faded tracking-widest2 uppercase">
-          02 May → 16 May 2026
+          02 May to 16 May 2026
         </p>
         <p className="font-mono text-[7px] text-ink-faded tracking-widest2 uppercase mt-0.5">
           Vikram Samvat 2082
@@ -65,10 +65,10 @@ function CoverPage() {
           For
         </p>
         <p className="font-display italic text-[11px] text-ink mt-0.5">
-          Ananya R.
+          A. R.
         </p>
         <p className="font-mono text-[7px] text-ink-faded tracking-widest2 uppercase mt-0.5">
-          Pune · Pitta-Vata
+          Pune · Rhythm Profile
         </p>
       </div>
 
@@ -89,15 +89,15 @@ function ProfilePage() {
     <Page>
       <Eyebrow>Section 01 · Your Month</Eyebrow>
       <h3 className="font-display text-[16px] leading-tight text-ink mt-2">
-        Greeshma Ritu pacifies your <em className="italic">Pitta</em>.
+        A cooler rhythm for a hotter month.
       </h3>
 
       {/* Profile strip */}
       <div className="grid grid-cols-3 gap-1.5 mt-3">
         {[
-          { k: 'Prakriti', v: 'Pitta-Vata' },
-          { k: 'BMI', v: '22.4' },
-          { k: 'Goal', v: 'Energy' },
+          { k: 'Rhythm', v: 'Warm-Active' },
+          { k: 'Build', v: 'Medium' },
+          { k: 'Focus', v: 'Energy' },
         ].map((b) => (
           <div
             key={b.k}
@@ -112,24 +112,24 @@ function ProfilePage() {
       </div>
 
       <p className="font-body text-[8px] leading-[1.5] text-ink-soft mt-3">
-        Greeshma sharpens digestion in some and burns it out in others. For your
-        Pitta-Vata constitution, the next 14 days call for cooling sweetness,
-        not stimulation. Less salt. More coconut. Earlier dinners.
+        Summer sharpens appetite in some bodies and dulls it in others. For
+        your profile, the next 14 days call for cooling sweetness, not
+        stimulation. Less salt. More coconut. Earlier dinners.
       </p>
 
-      {/* Dosha bar */}
+      {/* Rhythm bars */}
       <div className="mt-3">
         <p className="font-mono text-[7px] text-terracotta tracking-widest2 uppercase">
-          Your Dosha Scores
+          Your Rhythm Snapshot
         </p>
         <div className="mt-1.5 space-y-1">
           {[
-            { d: 'Vata', w: 38, c: 'bg-ink-faded' },
-            { d: 'Pitta', w: 52, c: 'bg-terracotta' },
-            { d: 'Kapha', w: 22, c: 'bg-favor' },
+            { d: 'Movement', w: 38, c: 'bg-ink-faded' },
+            { d: 'Warmth', w: 52, c: 'bg-terracotta' },
+            { d: 'Ground', w: 22, c: 'bg-favor' },
           ].map((r) => (
             <div key={r.d} className="flex items-center gap-2">
-              <span className="font-mono text-[7px] text-ink w-7">{r.d}</span>
+              <span className="font-mono text-[7px] text-ink w-10">{r.d}</span>
               <div className="flex-1 h-1 bg-sand rounded-full overflow-hidden">
                 <div
                   className={cn('h-full rounded-full', r.c)}
@@ -146,8 +146,8 @@ function ProfilePage() {
 
       <div className="mt-auto bg-cream-deep/70 rounded-[3px] p-2 border-l-2 border-terracotta">
         <p className="font-display italic text-[8px] leading-snug text-ink">
-          &ldquo;Madhura rasa shamayati pitta&rdquo; — sweet taste pacifies
-          fire. Lean into ripe mango, coconut water, soaked almonds.
+          Sweet, cool, slightly oily foods steady the system this month.
+          Lean into ripe mango, coconut water, soaked almonds.
         </p>
       </div>
     </Page>
@@ -165,7 +165,7 @@ function DietPage() {
   ];
   return (
     <Page>
-      <Eyebrow>Section 02 · Diet Blueprint</Eyebrow>
+      <Eyebrow>Section 02 · Food Plan</Eyebrow>
       <h3 className="font-display text-[15px] leading-tight text-ink mt-2">
         What to favour. <em className="italic">What to skip.</em>
       </h3>
@@ -198,7 +198,7 @@ function DietPage() {
 
       <div className="mt-3">
         <p className="font-mono text-[7px] text-terracotta tracking-widest2 uppercase">
-          Your Ideal Day
+          A Simple Day
         </p>
         <ul className="mt-1 space-y-0.5">
           {[
@@ -222,7 +222,7 @@ function DietPage() {
 function GroceryPage() {
   return (
     <Page>
-      <Eyebrow>Section 03 · Grocery &amp; Routine</Eyebrow>
+      <Eyebrow>Section 03 · Grocery and Anchors</Eyebrow>
       <h3 className="font-display text-[15px] leading-tight text-ink mt-2">
         Two weeks of clarity.
       </h3>
@@ -249,21 +249,20 @@ function GroceryPage() {
             <li>· Drink iced water</li>
             <li>· Heavy late dinners</li>
             <li>· Caffeine after 2 PM</li>
-            <li>· Excessive sun 12–3</li>
+            <li>· Excessive sun 12 to 3</li>
           </ul>
         </div>
       </div>
 
       <div className="mt-3 border-t border-sand-deep/50 pt-2">
         <p className="font-mono text-[7px] text-terracotta tracking-widest2 uppercase">
-          Anchor Mantra
+          Lifestyle Anchors
         </p>
-        <p className="font-sanskrit text-[10px] text-ink mt-1 italic">
-          शीतलं मधुरं स्निग्धम्
-        </p>
-        <p className="font-display italic text-[8px] text-ink-soft mt-0.5 leading-snug">
-          Cool. Sweet. Unctuous. The three qualities of Greeshma food.
-        </p>
+        <ul className="mt-1 space-y-0.5 font-body text-[7px] text-ink-soft">
+          <li>· Sleep by 10:30 PM</li>
+          <li>· 20-min walk at dawn or dusk</li>
+          <li>· Cool, not cold, water through the day</li>
+        </ul>
       </div>
 
       <div className="mt-auto pt-2 border-t border-sand-deep/40">
@@ -271,7 +270,7 @@ function GroceryPage() {
           Next issue · Aashada · 17 May 2026
         </p>
         <p className="font-display italic text-[8px] text-ink mt-0.5">
-          Stay aligned, Ananya.
+          Stay aligned.
         </p>
       </div>
     </Page>
@@ -285,7 +284,7 @@ export function SampleReportMockup({ className }: { className?: string }) {
         'flex gap-3 md:gap-4 items-stretch',
         className,
       )}
-      aria-label="A composite preview of the four pages of a MAASIK monthly report"
+      aria-label="A composite preview of the four pages of a MAASIK monthly issue"
     >
       <CoverPage />
       <ProfilePage />
