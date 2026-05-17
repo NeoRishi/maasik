@@ -137,11 +137,11 @@ export const COPY = {
       slash: '/ first month',
       subline: 'First month ₹99. ₹299/month from month two onward.',
       bullets: [
-        'New 4-page PDF every Shukla Pratipada',
-        'Personalized to your Prakriti, city, and goals',
+        'New 4-page PDF on the first day of each Vedic month',
+        'Calibrated to your Rhythm Profile, city, and goals',
         'Cancel any time, one click',
       ],
-      cta: 'Start your first month for ₹99',
+      cta: 'Get my first blueprint for ₹99',
     },
     caveat:
       'Payments handled by Razorpay. UPI, cards, and net banking accepted. No auto-debit without consent. We will email you before each renewal.',
