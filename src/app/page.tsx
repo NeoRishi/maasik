@@ -6,6 +6,7 @@ import { SamplePreview } from '@/components/SamplePreview';
 import { FourSections } from '@/components/FourSections';
 import { Pricing } from '@/components/Pricing';
 import { Faq } from '@/components/Faq';
+import { FirstObject } from '@/components/FirstObject';
 import { Footer } from '@/components/Footer';
 import { daysUntilNextShuklaPratipada } from '@/lib/vedic-date';
 
@@ -22,6 +23,7 @@ export default function Page() {
         <FourSections />
         <Pricing />
         <Faq />
+        <FirstObject />
       </main>
       <Footer daysToNext={daysToNext} />
     </>
