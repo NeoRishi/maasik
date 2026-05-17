@@ -11,7 +11,7 @@ export function Hero() {
       id="hero"
       className="hero-bg paper-grain relative w-full min-h-[90vh] flex items-center overflow-hidden"
     >
-      {/* Moon — decorative, lazy-styled, hidden on small screens to protect LCP */}
+      {/* Moon decoration, lazy-styled, hidden on small screens to protect LCP */}
       <MoonVisual className="pointer-events-none absolute right-[-8%] top-[10%] hidden lg:block w-[520px] xl:w-[640px] opacity-90" />
 
       <div className="max-w-6xl mx-auto w-full px-6 md:px-8 lg:px-12 py-24 md:py-28 relative z-10">
