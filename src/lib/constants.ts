@@ -180,10 +180,12 @@ export const COPY = {
 
   footer: {
     finalSub: 'Subscribe today and your first blueprint arrives on the day.',
-    finalCta: 'Start your first month for ₹99',
+    finalCta: 'Get my first blueprint for ₹99',
     legalLeft: 'MAASIK · A NeoRishi product',
     legalCenter: ['Terms', 'Privacy', 'Contact: hello@neorishi.io'],
     legalRight: '© 2026 NeoRishi',
+    disclaimer:
+      'MAASIK provides educational lifestyle guidance grounded in traditional Indian nutrition systems. It is not medical advice and is not a substitute for consultation with a qualified healthcare provider.',
     closingSanskrit: 'सर्वे भवन्तु सुखिनः',
     closingTranslation: 'MAY ALL BE HEALTHY',
   },

@@ -40,7 +40,7 @@ export function Footer({ daysToNext }: Props) {
         </MotionSection>
 
         {/* Part 2: Legal row */}
-        <div className="border-t border-b border-sand py-6 flex flex-col md:flex-row items-center md:justify-between gap-4 text-center">
+        <div className="border-t border-sand py-6 flex flex-col md:flex-row items-center md:justify-between gap-4 text-center">
           <p className="font-mono text-[11px] text-ink-faded tracking-widest2 uppercase">
             {COPY.footer.legalLeft}
           </p>
@@ -63,6 +63,13 @@ export function Footer({ daysToNext }: Props) {
           </ul>
           <p className="font-mono text-[11px] text-ink-faded tracking-widest2 uppercase">
             {COPY.footer.legalRight}
+          </p>
+        </div>
+
+        {/* Part 2b: Disclaimer line */}
+        <div className="border-b border-sand py-4 text-center">
+          <p className="font-body text-[11px] leading-snug text-ink-faded max-w-3xl mx-auto">
+            {COPY.footer.disclaimer}
           </p>
         </div>
 
