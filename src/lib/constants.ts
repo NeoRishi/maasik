@@ -148,40 +148,32 @@ export const COPY = {
   },
 
   faq: {
-    label: '05 — QUESTIONS',
-    heading: 'What people ask before signing up.',
+    label: '08 · QUESTIONS WORTH ASKING',
+    heading: 'Questions worth asking.',
     items: [
       {
-        q: 'Is this Ayurvedic medicine? Will it replace my doctor?',
-        a: 'No. MAASIK is a nutrition and lifestyle blueprint based on classical Ayurvedic seasonal wisdom (Ritucharya). It complements, never replaces, medical care. If you have an active medical condition, talk to your doctor before making changes.',
+        q: 'Is this medical advice?',
+        a: 'No. MAASIK provides educational lifestyle guidance grounded in traditional Indian nutrition systems. It is not medical advice and is not a substitute for consultation with a qualified healthcare provider. If you have a diagnosed condition, please talk to your doctor before changing how you eat.',
       },
       {
-        q: "I don't know my Prakriti. Can I still subscribe?",
-        a: 'Yes. The onboarding asks seven questions about your body, sleep, digestion, energy, and emotional patterns. We compute your Prakriti tendency from those. It is directional, not clinical, but accurate enough to personalize your blueprint with high confidence.',
+        q: 'Why a monthly PDF instead of an app?',
+        a: 'Because food rhythms do not need a daily push notification. The decisions worth making are seasonal, not hourly. One quiet artifact, once a month, is enough.',
       },
       {
-        q: 'What if I have allergies or a medical condition?',
-        a: 'Tell us in the onboarding. Your blueprint accounts for allergies, intolerances, and conditions like acidity, diabetes, hypertension, thyroid issues, IBS, and so on. Foods that aggravate your condition are explicitly avoided.',
+        q: 'Why does it arrive on the first day of the Vedic month and not the first of the English calendar?',
+        a: 'The Indian calendar tracks the moon as well as the sun, so its months align more closely with how the body actually shifts through the year. The first day of each Vedic month, called Shukla Pratipada, is a natural reset point. We use it as the delivery anchor.',
       },
       {
-        q: 'Is this vegetarian only?',
-        a: 'We support vegetarian, eggetarian, non-vegetarian, and vegan diets. Your onboarding answer locks the diet type. The blueprint adapts.',
+        q: "What if I'm vegetarian, vegan, allergic to something, or on a specific clinical diet?",
+        a: "Tell us in the form. The blueprint accounts for it. If you are on a clinically prescribed diet, MAASIK sits alongside your doctor's plan, not in place of it.",
       },
       {
-        q: 'When does the first report arrive?',
-        a: 'Within 30 minutes of payment, you receive your first issue calibrated to the current Vedic month. From then on, a fresh blueprint arrives every Shukla Pratipada (the first day of each new Vedic lunar month) by 7:00 AM IST.',
+        q: 'Can I cancel anytime?',
+        a: 'Yes. One click, no calls. You keep access to any issues you have already received.',
       },
       {
-        q: 'Can I cancel?',
-        a: 'Yes, any time, one click. You will keep access to issues you have already paid for. We do not send a cancellation survey or ask why.',
-      },
-      {
-        q: 'Why is the first month ₹99?',
-        a: 'So you can read a full blueprint before committing. If the first issue does not feel like ₹299 of value, do not continue. Most users continue.',
-      },
-      {
-        q: 'Who is behind MAASIK?',
-        a: "MAASIK is built by NeoRishi, founded by Hrishikesh, who holds a Master's in Yoga Shastra. The blueprints are generated with AI calibrated to classical Ayurvedic texts (Charaka Samhita, Ashtanga Hridayam) and reviewed against a curated Ritucharya knowledge base. We aim to grow with a panel of Ayurvedic vaidyas advising us.",
+        q: 'Who is this for?',
+        a: 'Knowledge workers and professionals, roughly 25 to 45, who think for a living and want their nutrition to be intelligent rather than aggressive. If you want a six-pack in six weeks, this is not your product.',
       },
     ],
   },
