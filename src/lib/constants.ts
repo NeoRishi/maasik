@@ -78,28 +78,28 @@ export const COPY = {
   },
 
   fourSections: {
-    label: '03 — THE FOUR SECTIONS, EXPLAINED',
-    heading: 'Four sections. One coherent month.',
+    label: '02 · INSIDE EACH ISSUE',
+    heading: 'Inside each issue.',
     cards: [
       {
         number: '01.',
-        title: 'Your month overview',
-        body: 'Each month, the report opens with what this Vedic month means in classical Ayurveda — the climate, the dominant dosha, the typical health risks. Then we connect that directly to your profile in a personalized callout that explains exactly why this month matters for you.',
+        title: 'A seasonal frame for the month',
+        body: "What's shifting in your body right now. What to eat more of, what to ease back on.",
       },
       {
         number: '02.',
-        title: 'Your diet blueprint',
-        body: "A full categorized food table — grains, pulses, vegetables, fruits, dairy, beverages, spices, snacks — split into 'favour' and 'avoid' columns. Plus an ideal-day meal map from 6:30 AM to 9:30 PM, with specific timing, portions, and substitutions for your constitution.",
+        title: 'A nutrition plan calibrated to your Rhythm Profile',
+        body: 'Specific foods, simple meal patterns, timing notes. Practical enough to act on this week.',
       },
       {
         number: '03.',
-        title: 'Your grocery list',
-        body: 'A complete shopping list organized by category, calibrated to your meal map and dosha. Stick it on your fridge. Hand it to your house help. You will not need to think about what to buy for two weeks.',
+        title: 'A small set of lifestyle anchors',
+        body: 'Two or three rhythm cues for the month (sleep, movement, hydration) that work alongside the food plan.',
       },
       {
         number: '04.',
-        title: 'Your routine and anchor',
-        body: "The non-food half of the report: a side-by-side do's and don'ts for the month, a Sanskrit verse to anchor your practice, and a personal closing paragraph that connects your specific symptoms to one root cause and one concrete action for this month.",
+        title: 'A short reading list, when relevant',
+        body: 'One or two pointers to deeper context if you want to go further. No filler.',
       },
     ],
   },
