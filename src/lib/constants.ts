@@ -11,20 +11,21 @@ export const COPY = {
   },
 
   hero: {
-    eyebrow: 'PERSONALIZED · MONTHLY · VEDIC',
-    headlineLineOne: 'Your nutrition,',
-    headlineLineTwoBefore: '',
-    headlineLineTwoItalic: 'aligned',
-    headlineLineTwoAfter: ' with the moon.',
+    headlineLineOne: 'Your body switches seasons.',
+    headlineLineTwoBefore: 'Most diet plans ',
+    headlineLineTwoItalic: "don't",
+    headlineLineTwoAfter: '.',
     subheadline:
-      'A premium monthly blueprint, built around your Ayurvedic constitution, your goals, and the season you are actually living in.',
-    body: 'Every Shukla Pratipada, a four-page nutrition guide arrives in your inbox. Calibrated to your Prakriti, your city, your goals, and this exact Vedic month. Not a generic diet plan. A new one each month, as the season changes.',
-    primaryCta: 'Start your first month for ₹99',
-    secondaryCta: 'See a sample report ↓',
-    trustLine:
-      '₹99 first month · ₹299/month from month two onward · Cancel anytime',
+      'MAASIK is a personalized monthly nutrition blueprint, recalibrated to the season your body is actually in. A 4-page PDF, delivered on the first day of each new month.',
+    primaryCta: 'Get my first blueprint for ₹99',
+    secondaryCta: 'See a sample issue ↓',
+    trustStrip: [
+      'Built on traditional Indian nutrition systems',
+      '4-page PDF, delivered to your inbox',
+      'No app to install, no daily notifications',
+    ],
     monthMetaLabel:
-      'THIS MONTH: JYESHTHA · GREESHMA RITU · 02 MAY TO 16 MAY 2026',
+      'THIS MONTH: JYESHTHA · 02 MAY TO 16 MAY 2026',
   },
 
   whatIsMaasik: {
