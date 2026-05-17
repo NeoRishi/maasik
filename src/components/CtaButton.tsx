@@ -2,12 +2,7 @@
 
 import { track } from './PostHogProvider';
 
-type Location =
-  | 'hero'
-  | 'nav'
-  | 'pricing_monthly'
-  | 'pricing_annual'
-  | 'footer';
+type Location = 'hero' | 'nav' | 'pricing' | 'footer';
 
 type Props = {
   location: Location;

@@ -48,7 +48,7 @@ export async function createPaymentLink(args: CreatePaymentLinkArgs): Promise<st
     notes: {
       user_id: args.user_id,
       product: 'maasik',
-      tier: args.amount_inr === 99 ? 'first_month' : args.amount_inr === 499 ? 'monthly' : 'annual',
+      tier: args.amount_inr === 99 ? 'first_month' : args.amount_inr === 299 ? 'monthly' : 'other',
     },
     callback_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment-success`,
     callback_method: 'get',

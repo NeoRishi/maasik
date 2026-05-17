@@ -45,7 +45,7 @@ export default function CompletionScreen({
         <p className="text-[13px] text-ink-faded">for your first month</p>
         <div className="my-3" style={{ height: 1, background: '#e8dcc1' }} />
         <p className="text-[12px] text-ink-faded leading-relaxed">
-          ₹499/month or ₹4,999/year thereafter.
+          ₹299/month from month two onward.
         </p>
       </div>
 

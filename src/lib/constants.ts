@@ -19,10 +19,10 @@ export const COPY = {
     subheadline:
       'A premium monthly blueprint, built around your Ayurvedic constitution, your goals, and the season you are actually living in.',
     body: 'Every Shukla Pratipada, a four-page nutrition guide arrives in your inbox. Calibrated to your Prakriti, your city, your goals, and this exact Vedic month. Not a generic diet plan. A new one each month, as the season changes.',
-    primaryCta: 'Get Your Blueprint — ₹99',
+    primaryCta: 'Start your first month for ₹99',
     secondaryCta: 'See a sample report ↓',
     trustLine:
-      '₹99 first month · ₹499/month or ₹4,999/year after · Cancel anytime',
+      '₹99 first month · ₹299/month from month two onward · Cancel anytime',
     monthMetaLabel:
       'THIS MONTH: JYESHTHA · GREESHMA RITU · 02 MAY TO 16 MAY 2026',
   },
@@ -54,7 +54,7 @@ export const COPY = {
         number: '02',
         title: 'Pay ₹99 to start',
         description:
-          "A simple Razorpay checkout. ₹99 for your first month's blueprint. Then ₹499/month or ₹4,999/year. Cancel any time, no questions.",
+          "A simple Razorpay checkout. ₹99 for your first month's blueprint. ₹299/month from month two onward. Cancel any time, no questions.",
       },
       {
         number: '03',
@@ -111,36 +111,19 @@ export const COPY = {
     heading: 'Less than a single dinner. Every month.',
     subheading:
       'Try MAASIK for ₹99. If the first blueprint changes how you eat, continue. If it does not, cancel in one click.',
-    tiers: [
-      {
-        id: 'monthly',
-        label: 'MONTHLY',
-        price: '₹499',
-        slash: 'per Vedic month',
-        bullets: [
-          'First month: ₹99 (instead of ₹499)',
-          'New 4-page PDF every Shukla Pratipada',
-          'Personalized to your Prakriti + city + goals',
-          'Cancel any time, one click',
-        ],
-        cta: 'Start Monthly — ₹99 first month',
-        badge: null as string | null,
-      },
-      {
-        id: 'annual',
-        label: 'ANNUAL',
-        price: '₹4,999',
-        slash: 'for 12 months · save ₹1,000',
-        bullets: [
-          'All 12 Vedic months delivered',
-          'Includes Adhik Maas issues when they occur',
-          'Priority email support',
-          'First month still ₹99, then ₹4,999 covers months 2 to 13',
-        ],
-        cta: 'Start Annual — ₹99 first month',
-        badge: 'BEST VALUE' as string | null,
-      },
-    ],
+    tier: {
+      label: 'MONTHLY',
+      priceStrike: '₹299',
+      price: '₹99',
+      slash: '/ first month',
+      subline: 'First month ₹99. ₹299/month from month two onward.',
+      bullets: [
+        'New 4-page PDF every Shukla Pratipada',
+        'Personalized to your Prakriti, city, and goals',
+        'Cancel any time, one click',
+      ],
+      cta: 'Start your first month for ₹99',
+    },
     caveat:
       'Payments handled by Razorpay. UPI, cards, and net banking accepted. No auto-debit without consent. We will email you before each renewal.',
   },
@@ -175,7 +158,7 @@ export const COPY = {
       },
       {
         q: 'Why is the first month ₹99?',
-        a: 'So you can read a full blueprint before committing. If the first issue does not feel like ₹499 of value, do not continue. Most users continue.',
+        a: 'So you can read a full blueprint before committing. If the first issue does not feel like ₹299 of value, do not continue. Most users continue.',
       },
       {
         q: 'Who is behind MAASIK?',
@@ -186,7 +169,7 @@ export const COPY = {
 
   footer: {
     finalSub: 'Subscribe today and your first blueprint arrives on the day.',
-    finalCta: 'Get Your Blueprint — ₹99',
+    finalCta: 'Start your first month for ₹99',
     legalLeft: 'MAASIK · A NeoRishi product',
     legalCenter: ['Terms', 'Privacy', 'Contact: hello@neorishi.io'],
     legalRight: '© 2026 NeoRishi',
