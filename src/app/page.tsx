@@ -1,6 +1,6 @@
 import { NavBar } from '@/components/NavBar';
 import { Hero } from '@/components/Hero';
-import { WhatIsMaasik } from '@/components/WhatIsMaasik';
+import { TheProblem } from '@/components/TheProblem';
 import { HowItWorks } from '@/components/HowItWorks';
 import { SamplePreview } from '@/components/SamplePreview';
 import { FourSections } from '@/components/FourSections';
@@ -17,10 +17,10 @@ export default function Page() {
       <NavBar />
       <main id="top">
         <Hero />
-        <WhatIsMaasik />
+        <TheProblem />
+        <FourSections />
         <HowItWorks />
         <SamplePreview />
-        <FourSections />
         <Pricing />
         <Faq />
         <FirstObject />

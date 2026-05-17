@@ -28,15 +28,12 @@ export const COPY = {
       'THIS MONTH: JYESHTHA · 02 MAY TO 16 MAY 2026',
   },
 
-  whatIsMaasik: {
-    label: '01 — THE IDEA',
-    sanskritVerse: 'ऋतुचर्या रसायनम्',
-    sanskritTranslation: 'Seasonal living is the true rejuvenation.',
-    heading: "Ayurveda's oldest insight, in your inbox each month.",
+  theProblem: {
+    label: '01 · THE PROBLEM',
+    heading: "Most diet plans treat the calendar like a coincidence.",
     body: [
-      'Classical Ayurveda has always taught that what you eat in May should not match what you ate in November. Your digestive fire, your hydration needs, your dosha levels, all of these shift with the Vedic season. Most modern diets ignore this completely.',
-      'MAASIK fixes that. Once each Vedic month, you receive a four-page PDF that maps the next 14 to 30 days of eating to four variables we calculate for you: your Prakriti (Ayurvedic constitution), your goals, your active health concerns, and the current Ritu. The output is a grocery list, a meal map, and a routine that all fit on a single document you can stick on your refrigerator.',
-      'This is not a meal-kit subscription. There is no app to check daily. It is a quiet, monthly arrival of clarity, designed for people who want to eat well without thinking about it every day.',
+      'Modern nutrition advice runs on yearly defaults. Eat the same salad in May that you ate in November. Drink eight glasses no matter what the season is doing to your skin, your sleep, or your appetite.',
+      'Traditional Indian systems noticed, a long time ago, that the body is not the same body in every season. Digestion shifts. Hydration needs change. Energy moves. MAASIK is built on that observation. Once a month, we send you a blueprint that takes the new season seriously.',
     ],
   },
 
