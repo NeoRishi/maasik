@@ -550,6 +550,7 @@
 
     <div class="cover-quote">
       <div class="cover-quote-eng">"[[COVER_VERSE_ENGLISH]]"</div>
+      <!-- Devanagari script only (U+0900-U+097F). No transliteration. See Part D5 of the system prompt. -->
       <div class="cover-quote-sans">[[COVER_VERSE_SANSKRIT]]</div>
     </div>
   </div>
@@ -847,15 +848,22 @@
       7 rows beneath the chart. ANCHOR_TABLE_ROWS receives 7 complete row blocks.
 
       Row format (one per anchor):
-        DIV class="row"
-          DIV class="time" : HH:MM
-          DIV class="meal-name" : NAME
-          DIV class="meal-detail" : One-line detail (max 12 words)
-        END DIV
+        <div class="row">
+          <div class="time">06:30 AM</div>           // 12-hour with AM/PM, leading zero. Never 24-hour.
+          <div class="meal-name">On waking</div>     // exact label from vocabulary below
+          <div class="meal-detail">One glass of room-temperature water with 5 soaked raisins. Skip refrigerated water; the gut tends to be delicate in summer mornings.</div>
+        </div>
 
-      The 7 anchors are: wake / breakfast / mid-morning / lunch / tea / dinner / bedtime.
-      Times are adjusted to the user's actual wake_time and sleep_time, but anchored
-      around the standard slots. Lunch always labeled "Lunch \u00b7 largest", dinner "Dinner \u00b7 light".
+      Meal-name vocabulary (use EXACTLY these labels, in this order):
+        On waking, Breakfast, Mid-morning, Lunch (largest), Evening, Dinner (light), Bedtime
+        Use parentheses for "(largest)" and "(light)", not the middle dot. Never "Wake" or "Tea".
+
+      Detail style: 1 to 2 short sentences, 16 to 24 words total. Lead with the action/food,
+      close with a one-clause seasonal rationale, a "Skip..." warning, or a sleep cap.
+      Plain English. No em-dashes.
+
+      Times are adjusted to the user's actual wake_time and sleep_time but anchored
+      around the standard slots (06:30 / 07:30 / 10:30 / 01:00 / 04:30 / 07:00 / 09:30).
     -->
     <div class="anchor-table">
       [[ANCHOR_TABLE_ROWS]]
@@ -969,6 +977,7 @@
 
     <div class="closing-line">
       <div class="closing-eng">"[[CLOSING_VERSE_ENGLISH]]"</div>
+      <!-- Devanagari script only (U+0900-U+097F). Must differ from the cover verse. See Part D5. -->
       <div class="closing-sans">[[CLOSING_VERSE_SANSKRIT]]</div>
     </div>
   </div>

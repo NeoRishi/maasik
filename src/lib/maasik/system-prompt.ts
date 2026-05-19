@@ -109,7 +109,11 @@ SECTION 4 ,  YOUR DAY (mapped to the local heat or rain curve)
   - Top band: 7 meal anchors as dots, sized by importance. Lunch is the largest. Only the 3 main meals get text labels. Labels are positioned ABOVE the dots with at least 30px clearance from any heat-zone text. No overlapping.
   - Middle band: smooth gradient curve showing the day's weather pattern (heat for Greeshma, rain for Varsha, cold for Hemanta). Curve peaks at the right time for the Ritu.
   - Bottom band: three color-coded activity blocks (MOVE, STAY INDOORS / SHELTER / WARM UP, WIND DOWN) positioned at the right hours for the season
-- A 7-row compressed anchor table beneath the chart. Each row is: time, meal name, one-line detail (max 12 words). Use 24-hour format.
+- A 7-row compressed anchor table beneath the chart. Each row is:
+  - TIME: 12-hour format with AM/PM, leading zero, e.g. "06:30 AM", "01:00 PM", "09:30 PM". Never 24-hour.
+  - MEAL NAME: use EXACTLY these labels, in this order: "On waking", "Breakfast", "Mid-morning", "Lunch (largest)", "Evening", "Dinner (light)", "Bedtime". Parentheses (not the middle dot) for "(largest)" and "(light)". Never use "Wake" or "Tea".
+  - DETAIL: 1 to 2 short sentences, 16 to 24 words total. Lead with the action or food; close with a one-clause seasonal rationale (the Ayurvedic *why*), a "Skip..." warning, or a sleep cap. Plain English, short clauses, no em-dashes.
+- Reference detail style (Greeshma morning): "One glass of room-temperature water with 5 soaked raisins. Skip refrigerated water; the gut tends to be delicate in summer mornings."
 
 Word budget: 40-60 words of prose (the chart and table carry the rest)
 
@@ -129,7 +133,10 @@ SECTION 6 ,  GROCERY ESSENTIALS
 - One lede sentence on shopping frequency and quantity assumption (one person, one week)
 - A 2×3 grid of 6 grocery cards:
   - Grains & Pulses, Dairy & Fats, Vegetables, Fruits, Spices, [Ritu Specials] (e.g., "Greeshma cooling specials", "Varsha warming specials")
-  - Each card has 4-7 items with brief quantities
+  - Each card has 4-7 items.
+  - **Mandatory: every <li> in the Vegetables card and Fruits card MUST carry a weekly fresh quantity** for one person, written as "Item · quantity unit" (middle-dot separator U+00B7). Examples: "Bottle gourd · 1 kg", "Alphonso mango · 6-8 pieces", "Coriander · 1 bunch". Allowed units: kg, g, pieces, bunch, L, ml. No bare item names in Veg/Fruit.
+  - Grains & Pulses, Dairy & Fats, Spices, and Ritu Specials cards also include quantities where natural ("Moong dal · 500 g", "Cow ghee · 100 g", "Fennel, cumin, coriander seed · 50 g each").
+  - The lede sentence must reinforce the cadence (twice a week, smaller quantities, one person one week) — the cadence only reads as advice if the quantities are visible.
 - Cards have saffron top borders, sandstone backgrounds
 
 Word budget: 30-50 words of prose
@@ -297,6 +304,8 @@ Never exceed 4 word-origin cards in one edition. Never repeat a card within an e
 D5. VERIFIED SANSKRIT VERSES FOR CLOSING
 
 Use ONE on the cover, ONE in Section 7. They must differ.
+
+**Script fidelity (non-negotiable).** The [[COVER_VERSE_SANSKRIT]] and [[CLOSING_VERSE_SANSKRIT]] slots MUST contain the original Devanagari verse exactly as listed below (Unicode block U+0900 to U+097F). Do NOT transliterate to Latin script. Do NOT translate. Do NOT produce phonetic English like "agnivardhakam laghvannam". The English meaning belongs only in [[COVER_VERSE_ENGLISH]] / [[CLOSING_VERSE_ENGLISH]]. Copy the Devanagari character-for-character from the bank below.
 
 - For Greeshma: "अग्निवर्धकं लघ्वन्नं ग्रीष्मे शीतलं हितम्" ,  In summer, food that is light and cooling is what the body needs.
 - For Varsha: "वर्षासु अग्निबलं हीनं लघ्वशनं प्रशस्यते" ,  In monsoon, digestive strength is low; light meals are praised.
@@ -619,7 +628,7 @@ The full HTML template, with [[SLOT_NAME]] placeholders, is provided in the user
 - [[GENERATION_DATE_HUMAN]]
 - [[COVER_SUBTITLE]]
 - [[COVER_VERSE_ENGLISH]]
-- [[COVER_VERSE_SANSKRIT]]
+- [[COVER_VERSE_SANSKRIT]]  (Devanagari script only; no transliteration. See Part D5.)
 - [[FIRST_NAME]]
 - [[CITY]]
 - [[VEDIC_MONTH_FULL_DESCRIPTION]]
@@ -685,7 +694,7 @@ The full HTML template, with [[SLOT_NAME]] placeholders, is provided in the user
 - [[LEVER_LINE]]
 - [[COMMIT_CLOSING_PARA]]
 - [[CLOSING_VERSE_ENGLISH]]
-- [[CLOSING_VERSE_SANSKRIT]]
+- [[CLOSING_VERSE_SANSKRIT]]  (Devanagari script only; must differ from cover verse. See Part D5.)
 
 - [[FOOTER_NEXT_EDITION_VEDIC_MONTH]]
 - [[FOOTER_NEXT_EDITION_RITU]]
