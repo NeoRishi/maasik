@@ -26,7 +26,7 @@ export function MoonVisual({ className }: Props) {
             <stop offset="100%" stopColor="#FAF3E7" stopOpacity="0" />
           </radialGradient>
 
-          {/* Crescent shading — terracotta blush on the dark limb */}
+          {/* Crescent shading: terracotta blush on the dark limb */}
           <radialGradient id="moon-body" cx="40%" cy="40%" r="65%">
             <stop offset="0%" stopColor="#fdf8ee" />
             <stop offset="60%" stopColor="#f3e9d4" />
@@ -68,7 +68,7 @@ export function MoonVisual({ className }: Props) {
         {/* Outer halo */}
         <circle cx="300" cy="300" r="290" fill="url(#moon-glow)" />
 
-        {/* Full disc — slightly visible behind crescent for depth */}
+        {/* Full disc, slightly visible behind crescent for depth */}
         <circle cx="300" cy="300" r="220" fill="url(#moon-body)" opacity="0.35" />
 
         {/* The crescent itself */}

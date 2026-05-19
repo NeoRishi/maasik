@@ -11,7 +11,7 @@ export function Hero() {
       id="hero"
       className="hero-bg paper-grain relative w-full min-h-[90vh] flex items-center overflow-hidden"
     >
-      {/* Moon — decorative, lazy-styled, hidden on small screens to protect LCP */}
+      {/* Moon decoration, lazy-styled, hidden on small screens to protect LCP */}
       <MoonVisual className="pointer-events-none absolute right-[-8%] top-[10%] hidden lg:block w-[520px] xl:w-[640px] opacity-90" />
 
       <div className="max-w-6xl mx-auto w-full px-6 md:px-8 lg:px-12 py-24 md:py-28 relative z-10">
@@ -19,22 +19,16 @@ export function Hero() {
           <MotionStaggerItem className="h-px w-[60px] bg-terracotta mb-10" />
 
           <MotionStaggerItem
-            as="p"
-            className="font-mono text-[11px] text-terracotta tracking-widest3 uppercase"
-          >
-            {COPY.hero.eyebrow}
-          </MotionStaggerItem>
-
-          <MotionStaggerItem
             as="h1"
-            className="font-display font-light text-ink mt-6 leading-[1.02]"
+            className="font-display font-light text-ink leading-[1.02]"
           >
             <span
               className="block"
-              style={{ fontSize: 'clamp(3.5rem, 12vw, 8rem)' }}
+              style={{ fontSize: 'clamp(2.75rem, 8vw, 6rem)' }}
             >
               <span className="block">{COPY.hero.headlineLineOne}</span>
               <span className="block">
+                {COPY.hero.headlineLineTwoBefore}
                 <em className="italic font-light">
                   {COPY.hero.headlineLineTwoItalic}
                 </em>
@@ -49,22 +43,15 @@ export function Hero() {
           >
             <span
               style={{
-                fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
-                lineHeight: 1.4,
+                fontSize: 'clamp(1.125rem, 2.2vw, 1.5rem)',
+                lineHeight: 1.45,
               }}
             >
               {COPY.hero.subheadline}
             </span>
           </MotionStaggerItem>
 
-          <MotionStaggerItem
-            as="p"
-            className="font-body text-[1.125rem] leading-relaxed text-ink mt-6 max-w-copy"
-          >
-            {COPY.hero.body}
-          </MotionStaggerItem>
-
-          <MotionStaggerItem className="mt-12 flex flex-col items-start gap-4">
+          <MotionStaggerItem className="mt-10 flex flex-col items-start gap-4">
             <CtaButton
               location="hero"
               className="inline-flex items-center justify-center bg-terracotta hover:bg-terracotta-deep text-cream font-body font-medium text-[16px] rounded-[4px] px-8 py-4 transition-all hover:shadow-cta hover:-translate-y-0.5 duration-200"
@@ -79,11 +66,20 @@ export function Hero() {
             </a>
           </MotionStaggerItem>
 
-          <MotionStaggerItem
-            as="p"
-            className="mt-8 font-body text-[13px] text-ink-faded"
-          >
-            {COPY.hero.trustLine}
+          <MotionStaggerItem className="mt-8 max-w-copy">
+            <ul className="flex flex-col md:flex-row md:flex-wrap md:items-center gap-x-6 gap-y-2 font-body text-[13px] text-ink-faded">
+              {COPY.hero.trustStrip.map((line, i) => (
+                <li key={line} className="flex items-center gap-2">
+                  {i > 0 && (
+                    <span
+                      aria-hidden="true"
+                      className="hidden md:inline-block h-3 w-px bg-sand"
+                    />
+                  )}
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
           </MotionStaggerItem>
 
           <MotionStaggerItem className="mt-20">

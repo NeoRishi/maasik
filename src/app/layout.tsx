@@ -35,21 +35,21 @@ const notoDevanagari = Noto_Serif_Devanagari({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://maasik.neorishi.io'),
-  title: 'MAASIK — Personalized Monthly Vedic Nutrition Blueprints | NeoRishi',
+  title: 'MAASIK | A monthly nutrition blueprint, calibrated to your rhythm',
   description:
-    'A premium monthly nutrition guide aligned to the Vedic calendar. Personalized to your Ayurvedic constitution, city, and goals. ₹99 first month.',
+    'A personalized 4-page nutrition blueprint, delivered each month and built around the season your body is actually in. From NeoRishi.',
   openGraph: {
-    title: 'MAASIK — Your Nutrition, Aligned with the Moon',
+    title: "Your body switches seasons. Most diet plans don't.",
     description:
-      'Premium monthly Vedic nutrition blueprints. Calibrated to your Prakriti, your city, your goals.',
+      'MAASIK is a monthly nutrition blueprint, recalibrated to the season your body is actually in. 4 pages. Delivered to your inbox.',
     images: ['/og-image.png'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MAASIK — Your Nutrition, Aligned with the Moon',
+    title: "Your body switches seasons. Most diet plans don't.",
     description:
-      'Premium monthly Vedic nutrition blueprints. Calibrated to your Prakriti, your city, your goals.',
+      'MAASIK is a monthly nutrition blueprint, recalibrated to the season your body is actually in. 4 pages. Delivered to your inbox.',
     images: ['/og-image.png'],
   },
 };

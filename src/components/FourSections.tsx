@@ -3,11 +3,12 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { COPY } from '@/lib/constants';
 import { MotionSection } from './motion/MotionSection';
+import { Card, CardContent } from '@/components/ui/card';
 
 export function FourSections() {
   const reduced = useReducedMotion();
   return (
-    <section id="four-sections" className="bg-cream w-full">
+    <section id="inside-each-issue" className="bg-cream w-full">
       <div className="max-w-6xl mx-auto px-6 md:px-8 lg:px-12 py-24 md:py-32 lg:py-40">
         <MotionSection>
           <p className="font-mono text-[11px] text-terracotta tracking-widest3 uppercase">
@@ -24,11 +25,11 @@ export function FourSections() {
           </h2>
         </MotionSection>
 
-        <div className="mt-16 space-y-16">
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {COPY.fourSections.cards.map((card, idx) => (
-            <motion.article
+            <motion.div
               key={card.number}
-              initial={{ opacity: 0, y: reduced ? 0 : 20 }}
+              initial={{ opacity: 0, y: reduced ? 0 : 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-8% 0px' }}
               transition={{
@@ -36,25 +37,24 @@ export function FourSections() {
                 ease: [0.16, 1, 0.3, 1],
                 delay: reduced ? 0 : idx * 0.08,
               }}
-              className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 border-t border-sand pt-12"
             >
-              <div className="md:col-span-1">
-                <div
-                  className="font-display font-light text-terracotta leading-none"
-                  style={{ fontSize: '64px' }}
-                >
-                  {card.number}
-                </div>
-              </div>
-              <div className="md:col-span-3 max-w-[640px]">
-                <h3 className="font-display font-normal text-ink text-[24px]">
-                  {card.title}
-                </h3>
-                <p className="font-body text-[15px] leading-relaxed text-ink-soft mt-3">
-                  {card.body}
-                </p>
-              </div>
-            </motion.article>
+              <Card className="h-full bg-cream-warm border border-sand rounded-[6px] shadow-none hover:shadow-cta transition-shadow duration-300">
+                <CardContent className="p-8 md:p-10 flex flex-col h-full">
+                  <div
+                    className="font-display font-light text-terracotta leading-none"
+                    style={{ fontSize: '48px' }}
+                  >
+                    {card.number}
+                  </div>
+                  <h3 className="font-display font-normal text-ink text-[22px] mt-6 leading-snug">
+                    {card.title}
+                  </h3>
+                  <p className="font-body text-[15px] leading-relaxed text-ink-soft mt-4">
+                    {card.body}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
       </div>

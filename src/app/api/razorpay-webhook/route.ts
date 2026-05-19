@@ -54,8 +54,8 @@ export async function POST(req: NextRequest) {
           status: 'captured',
           customer_email: customerEmail,
           customer_phone: payment.contact,
-          // Payment type bucketing assumes V1 pricing: 99/499/4999. Update when pricing changes.
-          payment_type: amountInr === 99 ? 'first_month' : amountInr === 499 ? 'monthly_renewal' : amountInr === 4999 ? 'annual' : 'one_time',
+          // Payment type bucketing for V1 pricing: 99 first month, 299 monthly renewal.
+          payment_type: amountInr === 99 ? 'first_month' : amountInr === 299 ? 'monthly_renewal' : 'one_time',
           raw_webhook_payload: payload,
           webhook_received_at: new Date().toISOString(),
         },
@@ -76,11 +76,7 @@ export async function POST(req: NextRequest) {
 
         const now = new Date();
         const periodEnd = new Date(now);
-        if (amountInr === 4999) {
-          periodEnd.setFullYear(periodEnd.getFullYear() + 1);
-        } else {
-          periodEnd.setMonth(periodEnd.getMonth() + 1);
-        }
+        periodEnd.setMonth(periodEnd.getMonth() + 1);
 
         const { data: user } = await supabase
           .from('maasik_users')

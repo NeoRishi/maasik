@@ -15,7 +15,7 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           MAASIK
         </p>
         <h1 className="font-display text-3xl md:text-4xl text-ink leading-tight">
-          Your Personalized Vedic Monthly Blueprint
+          Map your Rhythm Profile
         </h1>
         <div
           className="mt-6 mx-auto"
@@ -26,9 +26,9 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
       <section className="mb-8">
         <h2 className="font-display text-xl text-ink mb-3">What you’ll get</h2>
         <ul className="diamond-list space-y-2 text-[15px] leading-relaxed text-ink-soft">
-          <li>A 4-page personalized PDF report every Vedic month</li>
-          <li>Built on Ritu-Charya (seasonal Ayurveda) + your unique profile</li>
-          <li>Delivered on Shukla Pratipada — the first day of each Vedic month</li>
+          <li>A personalized 4-page PDF every Vedic month</li>
+          <li>Built on traditional Indian nutrition systems, calibrated to your Rhythm Profile</li>
+          <li>Delivered on the first day of each Vedic month (Shukla Pratipada)</li>
         </ul>
       </section>
 
@@ -71,9 +71,9 @@ export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
             of your life.
           </p>
           <p>
-            There is no right answer. We use these inputs to compute a high-level estimate of your
-            Vedic constitution (Prakriti) and your current life context. The output report will be
-            calibrated to you, not a generic template.
+            There is no right answer. We use these inputs to map your Rhythm Profile and your
+            current life context. The output blueprint will be calibrated to you, not a generic
+            template.
           </p>
         </div>
       </section>
