@@ -52,13 +52,13 @@ export default function WizardNumberInput({
         disabled={disabled}
         style={{
           flex: 1,
-          height: 52,
-          padding: '0 16px',
+          height: 56,
+          padding: '0 18px',
           borderRadius: 12,
           border: `1.5px solid ${SAND_DEEP}`,
           background: CREAM_WARM,
           color: INK,
-          fontSize: 16,
+          fontSize: 17,
           fontFamily: 'inherit',
           outline: 'none',
           opacity: disabled ? 0.5 : 1,

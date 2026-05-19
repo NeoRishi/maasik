@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/maasik/supabase';
-import { createPaymentLink } from '@/lib/maasik/razorpay';
+import { createOrder } from '@/lib/maasik/razorpay';
 import { OnboardingSchema } from '@/app/onboarding/_lib/validation';
 
 export const runtime = 'nodejs';
@@ -61,6 +61,10 @@ export async function POST(req: NextRequest) {
     const data = parsed.data;
 
     const otherFields = {
+      primary_goal_other:
+        typeof (rawBody as Record<string, unknown>).primary_goal_other === 'string'
+          ? ((rawBody as Record<string, unknown>).primary_goal_other as string)
+          : null,
       gender_other: typeof (rawBody as Record<string, unknown>).gender_other === 'string'
         ? ((rawBody as Record<string, unknown>).gender_other as string)
         : null,
@@ -79,6 +83,7 @@ export async function POST(req: NextRequest) {
     const profile: Record<string, unknown> = {
       full_name: data.full_name,
       email: data.email.trim().toLowerCase(),
+      phone: data.phone,
       age: data.age,
       gender: data.gender,
       gender_other: otherFields.gender_other,
@@ -89,9 +94,11 @@ export async function POST(req: NextRequest) {
       height_cm: data.height_cm,
       weight_kg: data.weight_kg,
 
-      primary_goal: data.primary_goal,
-      // Maintain compatibility with existing helpers that read primary_goals[]
-      primary_goals: [data.primary_goal],
+      // Q1 is multi-select; keep the scalar column populated with the first pick
+      // and the array column with the full list for downstream helpers.
+      // primary_goal_other is not stored on the profile (no column); it lives in events.event_data below.
+      primary_goal: data.primary_goal[0],
+      primary_goals: data.primary_goal,
       success_vision: data.success_vision,
       expectations: data.success_vision,
 
@@ -152,52 +159,55 @@ export async function POST(req: NextRequest) {
       event_type: 'form_submitted',
       event_source: 'onboarding_webui',
       event_data: {
-        primary_goal: data.primary_goal,
+        primary_goal: data.primary_goal[0],
+        primary_goals: data.primary_goal,
+        primary_goal_other: otherFields.primary_goal_other,
+        phone: data.phone,
         activity_level: data.activity_level,
         diet_type: data.diet_type,
       },
     });
 
-    // 4. Create Razorpay Payment Link
-    let paymentUrl: string;
+    // 4. Create Razorpay Order for inline Checkout
     try {
-      paymentUrl = await createPaymentLink({
+      const order = await createOrder({
         user_id: user.id,
         email: user.email,
         name: user.full_name,
         amount_inr: 99,
-        description: 'MAASIK first month, your personalised Vedic nutrition blueprint',
-        expires_in_days: 7,
       });
 
       await supabase.from('maasik_events').insert({
         user_id: user.id,
         email: user.email,
-        event_type: 'payment_link_created',
+        event_type: 'order_created',
         event_source: 'onboarding_webui',
-        event_data: { payment_url: paymentUrl, amount_inr: 99 },
+        event_data: {
+          order_id: order.order_id,
+          amount_inr: 99,
+          currency: order.currency,
+        },
+      });
+
+      return NextResponse.json({
+        ok: true,
+        user_id: user.id,
+        order_id: order.order_id,
+        amount: order.amount,
+        currency: order.currency,
+        key_id: order.key_id,
       });
     } catch (err) {
-      console.error('Failed to create Razorpay Payment Link:', err);
-      const fallback = process.env.NEXT_PUBLIC_RAZORPAY_PAYMENT_LINK_URL;
-      if (!fallback) {
-        return NextResponse.json(
-          {
-            ok: false,
-            error: 'Payment link unavailable. Please try again in a moment.',
-            user_id: user.id,
-          },
-          { status: 502 },
-        );
-      }
-      paymentUrl = fallback;
+      console.error('Failed to create Razorpay Order:', err);
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Payment is temporarily unavailable. Please try again in a moment.',
+          user_id: user.id,
+        },
+        { status: 502 },
+      );
     }
-
-    return NextResponse.json({
-      ok: true,
-      user_id: user.id,
-      payment_url: paymentUrl,
-    });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('onboarding-submit error:', err);

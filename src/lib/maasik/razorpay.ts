@@ -57,3 +57,58 @@ export async function createPaymentLink(args: CreatePaymentLinkArgs): Promise<st
 
   return link.short_url;  // e.g., "https://rzp.io/i/AbCd1234"
 }
+
+export interface CreateOrderArgs {
+  user_id: string;
+  email: string;
+  name: string;
+  amount_inr: number;
+}
+
+export interface CreatedOrder {
+  order_id: string;
+  amount: number; // paise
+  currency: string;
+  key_id: string;
+}
+
+/**
+ * Creates a Razorpay Order for the inline Checkout modal flow.
+ * Returns the order_id plus key_id/amount/currency that the client
+ * needs to open Razorpay Checkout.
+ */
+export async function createOrder(args: CreateOrderArgs): Promise<CreatedOrder> {
+  const razorpay = getRazorpay();
+  const keyId = process.env.RAZORPAY_KEY_ID;
+  if (!keyId) {
+    throw new Error('RAZORPAY_KEY_ID not set');
+  }
+
+  const amount = args.amount_inr * 100; // paise
+  const receipt = `maasik_${args.user_id.slice(0, 8)}_${Date.now().toString(36)}`;
+
+  const order: any = await razorpay.orders.create({
+    amount,
+    currency: 'INR',
+    receipt,
+    notes: {
+      user_id: args.user_id,
+      email: args.email,
+      name: args.name,
+      product: 'maasik',
+      tier:
+        args.amount_inr === 99
+          ? 'first_month'
+          : args.amount_inr === 299
+            ? 'monthly'
+            : 'other',
+    },
+  });
+
+  return {
+    order_id: order.id,
+    amount: Number(order.amount),
+    currency: String(order.currency),
+    key_id: keyId,
+  };
+}

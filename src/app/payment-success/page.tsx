@@ -94,9 +94,9 @@ function PaymentSuccessInner() {
               Namaste. Your <em className="italic">blueprint</em> is being prepared.
             </h1>
             <p className="font-body text-[14px] text-ink-soft mt-3 leading-relaxed">
-              Your first‑month payment is confirmed. We’re generating your
-              personalised Vedic nutrition blueprint right now — it will arrive in
-              your inbox within a few minutes.
+              Your first-month payment is confirmed. We’re generating your
+              personalised Vedic nutrition blueprint right now. It will arrive in
+              your inbox within the next 30 to 60 minutes.
             </p>
 
             <div className="mt-7 rounded-md border border-terracotta/30 bg-cream px-5 py-5">
@@ -139,8 +139,9 @@ function PaymentSuccessInner() {
             <div className="mt-6 flex items-start gap-2 border-t border-sand-deep/40 pt-4">
               <Mail className="h-4 w-4 text-favor shrink-0 mt-0.5" aria-hidden />
               <p className="font-body text-[12px] text-ink-faded leading-snug">
-                Watch your inbox (and spam folder, just in case) for an email
-                from MAASIK by NeoRishi with your blueprint attached.
+                Watch your inbox (and spam folder, just in case) over the next
+                30-60 minutes for an email from MAASIK by NeoRishi with your
+                blueprint attached.
               </p>
             </div>
 

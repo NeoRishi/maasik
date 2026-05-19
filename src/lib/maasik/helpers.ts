@@ -6,9 +6,19 @@
  * route and the user message builder.
  */
 
+import type { SupabaseClient } from '@supabase/supabase-js';
+
 // ============================================================================
 // TYPES
 // ============================================================================
+
+export type Ritu =
+  | 'Shishira'
+  | 'Vasanta'
+  | 'Greeshma'
+  | 'Varsha'
+  | 'Sharad'
+  | 'Hemanta';
 
 export interface VedicMonth {
   vedic_month: string;
@@ -373,4 +383,144 @@ export function computeReportCostInr(usage: {
   const outputCostUsd = (usage.output_tokens / 1_000_000) * 15;
   const totalInr = (inputCostUsd + outputCostUsd) * 83;
   return Number(totalInr.toFixed(4));
+}
+
+// ============================================================================
+// V2 RITU CALIBRATIONS (Part E / F7 of MAASIK v2 spec)
+// ============================================================================
+
+const RITU_COLORS: Record<Ritu, { primary: string; accent: string }> = {
+  Greeshma: { primary: '#B85C3A', accent: '#C99A4D' },
+  Varsha:   { primary: '#5A6F4D', accent: '#7E8B9E' },
+  Sharad:   { primary: '#C99A4D', accent: '#E8DCC4' },
+  Hemanta:  { primary: '#8E3F26', accent: '#4A2E2A' },
+  Shishira: { primary: '#3D4F6B', accent: '#C99A4D' },
+  Vasanta:  { primary: '#6B7F4F', accent: '#C99A4D' },
+};
+
+/** Returns the cover-signature primary and accent hex colors for the Ritu. */
+export function getRituColors(ritu: string): { primary: string; accent: string } {
+  return RITU_COLORS[ritu as Ritu] ?? RITU_COLORS.Greeshma;
+}
+
+export interface RituActivityZone {
+  label: string;
+  startHour: number;
+  endHour: number;
+  color: string;
+}
+
+const RITU_ACTIVITY_ZONES: Record<Ritu, RituActivityZone[]> = {
+  Greeshma: [
+    { label: 'WALK',          startHour: 6,  endHour: 9,  color: '#6B7F4F' },
+    { label: 'STAY INDOORS',  startHour: 10, endHour: 17, color: '#B85C3A' },
+    { label: 'WIND DOWN',     startHour: 19, endHour: 22, color: '#4A2E2A' },
+  ],
+  Varsha: [
+    { label: 'STRETCH INDOORS', startHour: 6,  endHour: 9,  color: '#6B7F4F' },
+    { label: 'STAY DRY',        startHour: 10, endHour: 18, color: '#7E8B9E' },
+    { label: 'WARM EVENING',    startHour: 19, endHour: 22, color: '#4A2E2A' },
+  ],
+  Sharad: [
+    { label: 'WALK',          startHour: 6,  endHour: 9,  color: '#6B7F4F' },
+    { label: 'MODERATE SUN',  startHour: 10, endHour: 15, color: '#C99A4D' },
+    { label: 'WIND DOWN',     startHour: 19, endHour: 22, color: '#4A2E2A' },
+  ],
+  Hemanta: [
+    { label: 'BRISK WALK',    startHour: 6,  endHour: 9,  color: '#6B7F4F' },
+    { label: 'STEADY DAY',    startHour: 10, endHour: 17, color: '#C99A4D' },
+    { label: 'WARM EVENING',  startHour: 19, endHour: 22, color: '#4A2E2A' },
+  ],
+  Shishira: [
+    { label: 'MOVEMENT AFTER SUN', startHour: 8,  endHour: 10, color: '#6B7F4F' },
+    { label: 'WARM DAY',           startHour: 11, endHour: 16, color: '#C99A4D' },
+    { label: 'DEEP REST',          startHour: 20, endHour: 22, color: '#3D4F6B' },
+  ],
+  Vasanta: [
+    { label: 'ACTIVE MORNING', startHour: 6,  endHour: 9,  color: '#6B7F4F' },
+    { label: 'MILD SUN',       startHour: 10, endHour: 15, color: '#8FA854' },
+    { label: 'WIND DOWN',      startHour: 19, endHour: 22, color: '#4A2E2A' },
+  ],
+};
+
+/** Returns the three day-chart activity zones for Section 4, keyed by Ritu. */
+export function getRituActivityZones(ritu: string): RituActivityZone[] {
+  return RITU_ACTIVITY_ZONES[ritu as Ritu] ?? RITU_ACTIVITY_ZONES.Greeshma;
+}
+
+const RITU_LEVER_TEMPLATES: Record<Ritu, string> = {
+  Greeshma: 'Lunch big. Dinner small. Walk before 8.',
+  Varsha:   'Warm food only. No raw. Sleep by 10.',
+  Sharad:   'Cool food. Calm pace. Bed by 11.',
+  Hemanta:  'Eat richly. Move daily. Sleep deep.',
+  Shishira: 'Warm food. Daily movement. Early bed.',
+  Vasanta:  'Light food. Move daily. No naps.',
+};
+
+/** Returns the default Section 7 lever-line template for the Ritu. */
+export function getRituLeverTemplate(ritu: string): string {
+  return RITU_LEVER_TEMPLATES[ritu as Ritu] ?? RITU_LEVER_TEMPLATES.Greeshma;
+}
+
+const RITU_SECTION2_TITLES: Record<Ritu, string> = {
+  Greeshma: 'The fire turns inward',
+  Varsha:   'The body returns to digestion',
+  Sharad:   'The heat lingers, the body steadies',
+  Hemanta:  'The fire builds, the body harvests',
+  Shishira: 'The cold deepens, the body holds',
+  Vasanta:  'Kapha melts, the body lightens',
+};
+
+/** Returns the Section 2 title used above the heat-flow diagram. */
+export function getRituSection2Title(ritu: string): string {
+  return RITU_SECTION2_TITLES[ritu as Ritu] ?? RITU_SECTION2_TITLES.Greeshma;
+}
+
+const RITU_LEGEND_LABELS: Record<Ritu, { leanIn: string; easeOff: string }> = {
+  Greeshma: { leanIn: 'Lean in · cooling tastes',          easeOff: 'Ease off · heating tastes' },
+  Varsha:   { leanIn: 'Lean in · warming tastes',          easeOff: 'Ease off · cooling and raw tastes' },
+  Sharad:   { leanIn: 'Lean in · cooling sweet tastes',    easeOff: 'Ease off · sour and pungent tastes' },
+  Hemanta:  { leanIn: 'Lean in · nourishing heavy tastes', easeOff: 'Ease off · light dry foods' },
+  Shishira: { leanIn: 'Lean in · warming oily tastes',     easeOff: 'Ease off · cold light dry foods' },
+  Vasanta:  { leanIn: 'Lean in · light pungent bitter tastes', easeOff: 'Ease off · heavy sweet sour foods' },
+};
+
+/** Returns the two legend pill labels for the Section 3 taste map. */
+export function getRituLegendLabels(ritu: string): { leanIn: string; easeOff: string } {
+  return RITU_LEGEND_LABELS[ritu as Ritu] ?? RITU_LEGEND_LABELS.Greeshma;
+}
+
+const RITU_GROCERY_SPECIALS_TITLES: Record<Ritu, string> = {
+  Greeshma: 'Greeshma cooling specials',
+  Varsha:   'Varsha warming specials',
+  Sharad:   'Sharad cooling specials',
+  Hemanta:  'Hemanta nourishing specials',
+  Shishira: 'Shishira warming specials',
+  Vasanta:  'Vasanta lightening specials',
+};
+
+/** Returns the Section 6 specials-card title for the Ritu. */
+export function getRituGrocerySpecialsTitle(ritu: string): string {
+  return RITU_GROCERY_SPECIALS_TITLES[ritu as Ritu] ?? RITU_GROCERY_SPECIALS_TITLES.Greeshma;
+}
+
+// ============================================================================
+// NEXT-DELIVERY DATE LOOKUP
+// ============================================================================
+
+/** Async: returns the next Vedic month's Shukla Pratipada Gregorian date (YYYY-MM-DD) or null. */
+export async function getNextDeliveryDate(
+  supabase: SupabaseClient,
+  currentMonth: VedicMonth
+): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('maasik_vedic_calendar')
+    .select('shukla_pratipada_date, gregorian_start')
+    .gt('gregorian_start', currentMonth.gregorian_end)
+    .order('gregorian_start', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return (data.shukla_pratipada_date as string | null) ?? null;
 }

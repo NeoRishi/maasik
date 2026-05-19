@@ -73,8 +73,8 @@ export default function WizardMultiSelectInput({
               display: 'flex',
               alignItems: 'flex-start',
               gap: 12,
-              minHeight: 52,
-              padding: '14px 16px',
+              minHeight: 60,
+              padding: '16px 18px',
               borderRadius: 12,
               border: isSelected
                 ? `2px solid ${TERRACOTTA}`
@@ -117,7 +117,7 @@ export default function WizardMultiSelectInput({
             <div style={{ flex: 1, minWidth: 0 }}>
               <span
                 style={{
-                  fontSize: 14,
+                  fontSize: 'clamp(15px, 1.4vw, 17px)',
                   fontWeight: 500,
                   color: INK,
                   lineHeight: 1.4,

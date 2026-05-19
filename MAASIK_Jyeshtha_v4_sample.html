@@ -1,34 +1,9 @@
-/**
- * MAASIK Report Template v2.0
- *
- * Source: report-template-v2.html (immutable; do not edit this string directly)
- * Placeholder count: 95 unique tokens
- * See MAASIK_claude_api_prompt_v2.md Part J for the full slot inventory.
- *
- * This template is consumed by lib/maasik/system-prompt.ts and lib/maasik/user-message.ts.
- * Claude fills the placeholders during generation; the route validates output.
- */
-export const HTML_TEMPLATE = `<!--
-  MAASIK Report Template v2.0
-  =====================================================
-  PURPOSE: This is the HTML shell Claude fills in to produce each monthly edition.
-  Every dynamic content slot is marked with double-square-brackets and must be replaced.
-
-  PLACEHOLDER COUNT: 86 total (see Part J of MAASIK_claude_api_prompt_v2.md)
-
-  FIXED FROM V1:
-  - Day chart label overlap (YOUR ANCHORS removed, BREAKFAST repositioned)
-  - Fire-flow icons (no text inside filled shapes; outline body silhouettes used)
-
-  USAGE: Wrap in TypeScript as \`export const HTML_TEMPLATE = \\\`...\\\`\`
-  in lib/maasik/html-template.ts. Escape any literal backticks (there should be none).
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAASIK · [[VEDIC_MONTH]] · Edition [[EDITION_NUMBER]]</title>
+<title>MAASIK · Jyeshtha · Edition 02</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -51,9 +26,6 @@ export const HTML_TEMPLATE = `<!--
     --mulberry: #4A2E2A;
     --rule: rgba(26, 22, 17, 0.12);
 
-    --cover-primary: [[COVER_PRIMARY_COLOR]];
-    --cover-accent: [[COVER_ACCENT_COLOR]];
-
     --serif-display: 'Fraunces', Georgia, serif;
     --serif-body: 'Newsreader', Georgia, serif;
     --sans: 'Manrope', system-ui, sans-serif;
@@ -73,7 +45,7 @@ export const HTML_TEMPLATE = `<!--
     position: relative;
   }
 
-  /* paper grain texture, applied subtly */
+  /* subtle paper grain */
   body::before {
     content: "";
     position: fixed;
@@ -81,16 +53,20 @@ export const HTML_TEMPLATE = `<!--
     pointer-events: none;
     z-index: 0;
     opacity: 0.5;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.07  0 0 0 0 0.04  0 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.07  0 0 0 0 0.04  0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   }
 
   body > * { position: relative; z-index: 1; }
 
   @media (min-width: 768px) { body { font-size: 18px; } }
 
-  .page { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
 
-  /* ------- shared atoms ------- */
+  /* ---------- shared ---------- */
 
   .label {
     font-family: var(--sans);
@@ -100,6 +76,7 @@ export const HTML_TEMPLATE = `<!--
     text-transform: uppercase;
     color: var(--khus-deep);
   }
+
   .label-light {
     font-family: var(--sans);
     font-size: 11px;
@@ -109,7 +86,7 @@ export const HTML_TEMPLATE = `<!--
     color: var(--ink-mute);
   }
 
-  /* ------- word origin card ------- */
+  /* ---------- WORD ORIGIN CARD ---------- */
 
   .word-origin {
     display: grid;
@@ -122,9 +99,11 @@ export const HTML_TEMPLATE = `<!--
     margin: 28px 0;
     align-items: start;
   }
+
   @media (max-width: 540px) {
     .word-origin { grid-template-columns: 1fr; gap: 8px; padding: 16px 18px; }
   }
+
   .wo-marker {
     font-family: var(--sans);
     font-size: 9px;
@@ -134,6 +113,7 @@ export const HTML_TEMPLATE = `<!--
     color: var(--saffron);
     padding-top: 3px;
   }
+
   .wo-term {
     font-family: var(--serif-display);
     font-style: italic;
@@ -144,6 +124,7 @@ export const HTML_TEMPLATE = `<!--
     margin-bottom: 4px;
     letter-spacing: -0.005em;
   }
+
   .wo-meaning {
     font-family: var(--serif-body);
     font-size: 14px;
@@ -151,16 +132,20 @@ export const HTML_TEMPLATE = `<!--
     color: var(--ink-soft);
     line-height: 1.5;
   }
-  .wo-meaning em { font-style: normal; color: var(--terracotta-deep); }
 
-  /* ------- COVER ------- */
+  .wo-meaning em {
+    font-style: normal;
+    color: var(--terracotta-deep);
+  }
+
+  /* ---------- COVER (locked) ---------- */
 
   .cover {
     min-height: 100vh;
     padding: 48px 24px 56px;
     background:
-      radial-gradient(ellipse 80% 60% at 70% 20%, var(--cover-accent), transparent 55%),
-      radial-gradient(ellipse 100% 70% at 30% 80%, var(--cover-primary), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 70% 20%, rgba(201, 154, 77, 0.18), transparent 55%),
+      radial-gradient(ellipse 100% 70% at 30% 80%, rgba(184, 92, 58, 0.12), transparent 60%),
       var(--cream);
     display: flex;
     flex-direction: column;
@@ -210,10 +195,11 @@ export const HTML_TEMPLATE = `<!--
   .meta-block .label-light { margin-bottom: 6px; }
   .meta-block-value { font-family: var(--serif-body); font-size: 16px; color: var(--ink); line-height: 1.3; }
 
-  /* ------- sections shared ------- */
+  /* ---------- SECTIONS shared ---------- */
 
   section { padding: 80px 0; position: relative; }
   @media (min-width: 768px) { section { padding: 112px 0; } }
+
   .section-num { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.25em; color: var(--terracotta); margin-bottom: 16px; }
 
   .h2 {
@@ -254,7 +240,7 @@ export const HTML_TEMPLATE = `<!--
     font-variation-settings: "opsz" 144;
   }
 
-  /* ------- SECTION 01: ARCHETYPE ------- */
+  /* ---------- SECTION 01 — ARCHETYPE ---------- */
 
   .archetype-section {
     background:
@@ -330,6 +316,7 @@ export const HTML_TEMPLATE = `<!--
     border-bottom: 1px solid var(--rule);
   }
   @media (min-width: 600px) { .tendency-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+
   .tendency .t-label { font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 10px; }
   .tendency .t-value { font-family: var(--serif-display); font-weight: 500; font-style: italic; font-size: 18px; color: var(--terracotta-deep); line-height: 1.25; }
 
@@ -358,7 +345,7 @@ export const HTML_TEMPLATE = `<!--
   .archetype-readout span { padding: 0 8px; }
   .archetype-readout .sep { color: var(--saffron); }
 
-  /* ------- SECTION 02: WHAT'S HAPPENING ------- */
+  /* ---------- SECTION 02 ---------- */
 
   .heat-flow {
     display: flex;
@@ -393,7 +380,7 @@ export const HTML_TEMPLATE = `<!--
   .front-title { font-family: var(--serif-display); font-weight: 500; font-size: 22px; line-height: 1.2; margin-bottom: 12px; color: var(--ink); }
   .front-body { font-family: var(--serif-body); font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
 
-  /* ------- SECTION 03: TASTE MAP ------- */
+  /* ---------- SECTION 03 — proportional taste strip ---------- */
 
   .taste-strip {
     display: grid;
@@ -435,7 +422,7 @@ export const HTML_TEMPLATE = `<!--
   .food-col li:last-child { border-bottom: 0; }
   .food-col li strong { font-family: var(--sans); font-weight: 600; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; display: block; margin-bottom: 2px; color: var(--ink); }
 
-  /* ------- SECTION 04: DAY CHART ------- */
+  /* ---------- SECTION 04 — horizontal day chart ---------- */
 
   .day-chart-wrap {
     margin: 32px 0;
@@ -444,6 +431,7 @@ export const HTML_TEMPLATE = `<!--
     border: 1px solid var(--rule);
     border-radius: 2px;
   }
+
   .day-chart { width: 100%; height: auto; display: block; }
 
   .anchor-table { margin-top: 28px; border-top: 1px solid var(--rule); }
@@ -464,7 +452,7 @@ export const HTML_TEMPLATE = `<!--
   .anchor-table .meal-name { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); }
   .anchor-table .meal-detail { font-family: var(--serif-body); font-size: 14px; color: var(--ink-soft); line-height: 1.45; }
 
-  /* ------- SECTION 05: ANCHORS ------- */
+  /* ---------- SECTION 05 ---------- */
 
   .anchor-numbered { list-style: none; padding: 0; counter-reset: anchor; margin: 32px 0; }
   .anchor-numbered li { counter-increment: anchor; padding: 20px 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: start; }
@@ -477,9 +465,9 @@ export const HTML_TEMPLATE = `<!--
   .avoid-tight ul { list-style: none; padding: 0; }
   .avoid-tight li { padding: 8px 0; font-size: 14px; color: var(--ink-soft); border-bottom: 1px dashed var(--rule); }
   .avoid-tight li:last-child { border-bottom: 0; }
-  .avoid-tight li::before { content: "\\2717  "; color: var(--terracotta); font-weight: 700; }
+  .avoid-tight li::before { content: "✕  "; color: var(--terracotta); font-weight: 700; }
 
-  /* ------- SECTION 06: GROCERY ------- */
+  /* ---------- SECTION 06 ---------- */
 
   .grocery-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
   @media (min-width: 600px) { .grocery-grid { grid-template-columns: 1fr 1fr; } }
@@ -489,13 +477,14 @@ export const HTML_TEMPLATE = `<!--
   .grocery-card li { font-size: 13px; padding: 5px 0; color: var(--ink-soft); line-height: 1.4; border-bottom: 1px dashed var(--rule); }
   .grocery-card li:last-child { border-bottom: 0; }
 
-  /* ------- SECTION 07: COMMITMENT ------- */
+  /* ---------- SECTION 07 ---------- */
 
   .commitment {
     background:
       radial-gradient(ellipse 60% 50% at 50% 30%, rgba(201, 154, 77, 0.12), transparent 70%),
       var(--cream-deep);
   }
+
   .commit-card { background: var(--cream); border: 1px solid var(--rule); padding: 40px 28px; margin: 40px 0; position: relative; }
   @media (min-width: 768px) { .commit-card { padding: 56px 48px; } }
   .commit-card::before { content: ""; position: absolute; top: -1px; left: -1px; width: 60px; height: 3px; background: var(--terracotta); }
@@ -515,6 +504,7 @@ export const HTML_TEMPLATE = `<!--
     border-top: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
   }
+
   .lever-line {
     display: block;
     font-family: var(--sans);
@@ -531,7 +521,7 @@ export const HTML_TEMPLATE = `<!--
   .closing-eng { font-family: var(--serif-display); font-weight: 300; font-style: italic; font-size: clamp(20px, 4vw, 26px); line-height: 1.35; color: var(--khus-deep); margin-bottom: 12px; }
   .closing-sans { font-family: var(--serif-body); font-size: 14px; color: var(--ink-mute); letter-spacing: 0.05em; }
 
-  /* ------- FOOTER ------- */
+  /* ---------- FOOTER ---------- */
 
   footer { padding: 40px 24px 56px; text-align: center; background: var(--cream); border-top: 1px solid var(--rule); }
   .footer-edition { font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink); margin-bottom: 8px; }
@@ -546,56 +536,56 @@ export const HTML_TEMPLATE = `<!--
 </head>
 <body>
 
-<!-- =================== COVER =================== -->
+<!-- ========================= COVER (locked) ========================= -->
 <section class="cover">
   <div class="cover-top">
     <div class="cover-brand">MAASIK · NEORISHI</div>
-    <div class="cover-edition">Edition [[EDITION_NUMBER]] · [[GENERATION_DATE_HUMAN]]</div>
+    <div class="cover-edition">Edition 02 · 17 May 2026</div>
   </div>
 
   <div>
     <div class="label">Your Monthly Blueprint</div>
-    <h1 class="cover-title">[[VEDIC_MONTH]]</h1>
-    <p class="cover-subtitle">[[COVER_SUBTITLE]]</p>
+    <h1 class="cover-title">Jyesh<em>tha</em></h1>
+    <p class="cover-subtitle">The eldest month. When Pune's summer reaches its peak, your body asks you to slow down.</p>
 
     <div class="cover-quote">
-      <div class="cover-quote-eng">"[[COVER_VERSE_ENGLISH]]"</div>
-      <div class="cover-quote-sans">[[COVER_VERSE_SANSKRIT]]</div>
+      <div class="cover-quote-eng">"In summer, food that is light and cooling is what the body needs."</div>
+      <div class="cover-quote-sans">अग्निवर्धकं लघन्नं ग्रीष्मे शीतलं हितम्</div>
     </div>
   </div>
 
   <div class="cover-meta">
     <div class="meta-block">
       <div class="label-light">Prepared for</div>
-      <div class="meta-block-value">[[FIRST_NAME]]<br>[[CITY]]</div>
+      <div class="meta-block-value">Hrishikesh<br>Pune</div>
     </div>
     <div class="meta-block">
       <div class="label-light">Vedic Month</div>
-      <div class="meta-block-value">[[VEDIC_MONTH_FULL_DESCRIPTION]]</div>
+      <div class="meta-block-value">Jyeshtha Shukla<br>Vikram Samvat 2083</div>
     </div>
     <div class="meta-block">
       <div class="label-light">Window</div>
-      <div class="meta-block-value">[[VEDIC_WINDOW_GREGORIAN]]</div>
+      <div class="meta-block-value">17 May to<br>15 Jun 2026</div>
     </div>
     <div class="meta-block">
       <div class="label-light">Season (Ritu)</div>
-      <div class="meta-block-value">[[RITU_NAME_WITH_DESCRIPTOR]]</div>
+      <div class="meta-block-value">Greeshma<br>Peak Summer</div>
     </div>
   </div>
 </section>
 
-<!-- =================== SECTION 01: ARCHETYPE =================== -->
+<!-- ========================= SECTION 01 ========================= -->
 <section class="archetype-section">
   <div class="page">
     <div class="section-num">01 · YOUR ARCHETYPE</div>
-    <h2 class="h2">Who you arrive as, <em>this [[RITU_NAME]]</em></h2>
-    <p class="lede">[[SECTION_01_LEDE]]</p>
+    <h2 class="h2">Who you arrive as, <em>this Greeshma</em></h2>
+    <p class="lede">NeoRishi maps each person to a living archetype, shaped by how the body tends to operate, how the mind tends to work, and what the season is asking.</p>
 
     <div class="word-origin">
       <div class="wo-marker">Word Origin</div>
       <div>
-        <div class="wo-term">[[MONTH_WORD_ORIGIN_TERM]]</div>
-        <div class="wo-meaning">[[MONTH_WORD_ORIGIN_MEANING]]</div>
+        <div class="wo-term">Jyeshtha</div>
+        <div class="wo-meaning">Sanskrit for <em>eldest</em>. As in <em>jyeshtha bhrata</em>, the elder brother. This is the senior month of summer, named for its rank in the heat.</div>
       </div>
     </div>
 
@@ -609,218 +599,171 @@ export const HTML_TEMPLATE = `<!--
         </svg>
       </div>
 
-      <div class="archetype-season">[[RITU_NAME]] · [[RITU_DESCRIPTOR]]</div>
+      <div class="archetype-season">Greeshma · Peak Summer</div>
 
-      <h3 class="archetype-name">[[ARCHETYPE_NAME]]</h3>
+      <h3 class="archetype-name">The Anchored Builder</h3>
 
-      <p class="archetype-tagline">[[ARCHETYPE_TAGLINE]]</p>
+      <p class="archetype-tagline">Warm in build. Focused in mind. Building things slowly, on purpose.</p>
 
       <div class="tendency-grid">
         <div class="tendency">
           <div class="t-label">Body tends to be</div>
-          <div class="t-value">[[TENDENCY_BODY]]</div>
+          <div class="t-value">Warm &amp; Steady</div>
         </div>
         <div class="tendency">
           <div class="t-label">Mind tends to be</div>
-          <div class="t-value">[[TENDENCY_MIND]]</div>
+          <div class="t-value">Focused &amp; Methodical</div>
         </div>
         <div class="tendency">
           <div class="t-label">This season asks</div>
-          <div class="t-value">[[TENDENCY_SEASON_ASKS]]</div>
+          <div class="t-value">Cool &amp; Lighten</div>
         </div>
       </div>
 
-      <p class="archetype-verse">[[IDENTITY_VERSE]]</p>
+      <p class="archetype-verse">"I work with depth, not speed.<br>This summer asks me to cool, not push."</p>
 
-      <div class="archetype-readout">[[READOUT_STRIP]]</div>
+      <div class="archetype-readout">
+        <span>Pune</span><span class="sep">·</span><span>BMI 29.1</span><span class="sep">·</span><span>Sedentary Work</span>
+      </div>
     </div>
 
-    <p class="has-dropcap">[[SECTION_01_BODY_PARA]]</p>
+    <p class="has-dropcap">In cooler months, this archetype is your strength. In Greeshma, two patterns tend to compound. The internal warmth that fuels your focus stacks with the season's heat. The structural steadiness that gives your work depth tends to hold weight when desk hours replace movement.</p>
 
-    <p>[[SECTION_01_CLOSING_LINE]]</p>
+    <p>The rest of this blueprint is built around easing both.</p>
   </div>
 </section>
 
-<!-- =================== SECTION 02: WHAT'S HAPPENING =================== -->
+<!-- ========================= SECTION 02 ========================= -->
 <section>
   <div class="page">
     <div class="section-num">02 · WHAT'S HAPPENING</div>
-    <h2 class="h2">[[SECTION_02_TITLE]]</h2>
-    <p class="lede">[[SECTION_02_LEDE]]</p>
+    <h2 class="h2">The fire turns <em>inward</em></h2>
+    <p class="lede">Here is the surprise: in summer, your digestion tends to get weaker, not stronger.</p>
 
-    <!--
-      HEAT-FLOW DIAGRAM (Section 2)
-      =====================================================
-      The two icons below are outline body silhouettes with a fire indicator.
-      LEFT side shows the previous-Ritu state. RIGHT side shows this-Ritu state.
-      Labels go BENEATH the icons (never inside filled shapes).
-
-      Each [[HEAT_FLOW_*_ICON_SVG]] placeholder receives the inner SVG content
-      (paths + circles only, no <svg> wrapper). The wrapper viewBox is 0 0 56 56.
-
-      For Greeshma example:
-        LEFT (cold months): body outline + bright concentrated dot at gut (cx=28, cy=32, r=5)
-        RIGHT (peak summer): faded body outline + dashed elliptical glow around the body
-        (showing heat radiating to skin)
-    -->
     <div class="heat-flow" aria-hidden="true">
       <div class="hf-side">
         <div class="hf-icon">
           <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-            [[HEAT_FLOW_LEFT_ICON_SVG]]
+            <circle cx="28" cy="28" r="22" fill="none" stroke="#6B7F4F" stroke-width="1" opacity="0.4"/>
+            <circle cx="28" cy="28" r="9" fill="#B85C3A" opacity="0.85"/>
+            <text x="28" y="32" text-anchor="middle" font-family="Manrope" font-size="9" font-weight="600" fill="white" letter-spacing="1">FIRE</text>
           </svg>
         </div>
-        <div class="hf-season">[[HEAT_FLOW_LEFT_LABEL]]</div>
-        <div class="hf-state">[[HEAT_FLOW_LEFT_STATE]]</div>
+        <div class="hf-season">Cold Months</div>
+        <div class="hf-state">heat held in the gut</div>
       </div>
 
-      <div class="hf-arrow" aria-hidden="true">\\u2192</div>
+      <div class="hf-arrow" aria-hidden="true">→</div>
 
       <div class="hf-side">
         <div class="hf-icon">
           <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-            [[HEAT_FLOW_RIGHT_ICON_SVG]]
+            <circle cx="28" cy="28" r="22" fill="none" stroke="#B85C3A" stroke-width="1.5" opacity="0.85"/>
+            <circle cx="28" cy="28" r="5" fill="#B85C3A" opacity="0.45"/>
+            <text x="28" y="31" text-anchor="middle" font-family="Manrope" font-size="8" font-weight="600" fill="#8E3F26" letter-spacing="1">FIRE</text>
           </svg>
         </div>
-        <div class="hf-season">[[HEAT_FLOW_RIGHT_LABEL]]</div>
-        <div class="hf-state">[[HEAT_FLOW_RIGHT_STATE]]</div>
+        <div class="hf-season">Peak Summer</div>
+        <div class="hf-state">heat moves to the skin</div>
       </div>
     </div>
 
-    <p>The digestive fire moves with the season. Knowing where it is right now tends to change how much, and what, you eat.</p>
+    <p>In peak summer, your body pushes heat outward to cool you down. The gut runs quieter. Hungry people still feel heavy after heavy meals.</p>
 
     <div class="word-origin">
       <div class="wo-marker">Word Origin</div>
       <div>
         <div class="wo-term">Agni</div>
-        <div class="wo-meaning">[[SECTION_02_AGNI_MEANING]]</div>
+        <div class="wo-meaning">Literally <em>fire</em>. In Ayurveda, the metabolic fire that digests food. The same Sanskrit root gives English <em>igneous</em>, rocks formed from fire.</div>
       </div>
     </div>
 
-    <p>[[SECTION_02_INTERSECTION_PARA]]</p>
+    <p>For an <strong>Anchored Builder</strong>, two patterns tend to compound. Your body already runs warm, so the season's heat lands on a warm system. Your build holds weight when desk work replaces movement.</p>
 
     <p>The plan splits in two.</p>
 
     <div class="two-front">
       <div class="front-card front-pitta">
         <div class="label">Front 1</div>
-        <div class="front-title">[[FRONT_1_TITLE]]</div>
-        <div class="front-body">[[FRONT_1_BODY]]</div>
+        <div class="front-title">Cool the internal heat</div>
+        <div class="front-body">Cooling foods. Smaller portions. No chillies, no fermented food. Coconut water and cumin-fennel tea instead of coffee and cold drinks.</div>
       </div>
       <div class="front-card front-kapha">
         <div class="label">Front 2</div>
-        <div class="front-title">[[FRONT_2_TITLE]]</div>
-        <div class="front-body">[[FRONT_2_BODY]]</div>
+        <div class="front-title">Lighten the structural load</div>
+        <div class="front-body">Lighter dinners. Morning movement before the heat. Fewer fried and heavy foods. No daytime nap over 20 minutes.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- =================== SECTION 03: TASTE MAP =================== -->
+<!-- ========================= SECTION 03 ========================= -->
 <section style="background: rgba(232, 220, 196, 0.25);">
   <div class="page">
     <div class="section-num">03 · EATING FOR THE SEASON</div>
     <h2 class="h2">The <em>taste map</em></h2>
-    <p class="lede">[[SECTION_03_LEDE]]</p>
+    <p class="lede">Ayurveda groups all food by six tastes. Three tend to cool the body. Three tend to heat it. The width of each cell below shows how much you lean on it this month.</p>
 
     <div class="taste-legend">
-      <span><span class="legend-dot" style="background: var(--khus);"></span><strong>[[LEGEND_LEAN_LABEL]]</strong></span>
-      <span><span class="legend-dot" style="background: var(--terracotta);"></span><strong>[[LEGEND_EASE_LABEL]]</strong></span>
+      <span><span class="legend-dot" style="background: var(--khus);"></span><strong>Lean in</strong> · cooling tastes</span>
+      <span><span class="legend-dot" style="background: var(--terracotta);"></span><strong>Ease off</strong> · heating tastes</span>
     </div>
 
-    <!--
-      TASTE STRIP (Section 3)
-      =====================================================
-      The grid uses proportional widths: 4fr for favored, 1.4fr for avoided.
-      This communicates "lean hard on these 3" visually.
-
-      Per-Ritu, the 3 favored vs 3 avoided tastes change. See spec Part D2:
-        Greeshma/Sharad: favor sweet/bitter/astringent, avoid salty/sour/pungent
-        Varsha: favor sour/salty/sweet, avoid astringent/bitter/pungent
-        Shishira/Hemanta: favor sweet/sour/salty, avoid bitter/astringent/pungent
-        Vasanta: favor bitter/pungent/astringent, avoid sweet/sour/salty
-    -->
     <div class="taste-strip">
-      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_1_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_1_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_2_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_2_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_3_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_3_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_1_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_1_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_2_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_2_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_3_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_3_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-favor"><div class="taste-name">Sweet</div><div class="taste-sanskrit">Madhura</div></div>
+      <div class="taste-cell taste-favor"><div class="taste-name">Bitter</div><div class="taste-sanskrit">Tikta</div></div>
+      <div class="taste-cell taste-favor"><div class="taste-name">Astringent</div><div class="taste-sanskrit">Kashaya</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name">Salty</div><div class="taste-sanskrit">Lavana</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name">Sour</div><div class="taste-sanskrit">Amla</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name">Pungent</div><div class="taste-sanskrit">Katu</div></div>
     </div>
 
-    <p class="taste-caption">[[SECTION_03_CAPTION]]</p>
+    <p class="taste-caption">Sweet does not mean dessert. In Ayurveda, sweet covers rice, milk, ripe fruit, ghee. The heating tastes live in pickles, chillies, fried snacks, tangy chutneys.</p>
 
-    <!--
-      FOOD COLUMNS (Section 3)
-      =====================================================
-      Each column has 6 rows of category + items, formatted as <li> with <strong>CATEGORY</strong>items.
-      [[FOOD_FAVOR_ROWS]] and [[FOOD_AVOID_ROWS]] each receive 6 complete <li> elements.
-
-      Example row format:
-        <li><strong>Grains</strong>Rice, jowar roti, thin chapati, poha</li>
-
-      User's favourite_foods that fall in the avoid category MUST appear by name in the avoid column.
-    -->
     <div class="food-cols">
       <div class="food-col favor">
         <h3>Eat freely</h3>
         <ul>
-          [[FOOD_FAVOR_ROWS]]
+          <li><strong>Grains</strong>Rice, jowar roti, thin chapati, poha</li>
+          <li><strong>Pulses</strong>Moong dal, lightly cooked moong sprouts</li>
+          <li><strong>Vegetables</strong>Bottle gourd, ridge gourd, ash gourd, drumstick, cucumber</li>
+          <li><strong>Fruits</strong>Ripe mango (1 daily), watermelon, muskmelon, sweet lime, coconut</li>
+          <li><strong>Drinks</strong>Coconut water, rose sherbet, cumin-fennel tea</li>
+          <li><strong>Dairy</strong>Cool milk, fresh curd, thin buttermilk, 1 tsp ghee</li>
         </ul>
       </div>
       <div class="food-col avoid">
         <h3>Eat less, or skip</h3>
         <ul>
-          [[FOOD_AVOID_ROWS]]
+          <li><strong>Grains</strong>Maida bread, instant noodles, heavy parathas</li>
+          <li><strong>Pulses</strong>Urad dal, rajma, chole, raw sprout salads</li>
+          <li><strong>Vegetables</strong>Brinjal, raw onion, pickled vegetables</li>
+          <li><strong>Fruits</strong>Sour raw mango, pineapple, citrus excess</li>
+          <li><strong>Drinks</strong>Coffee in excess, cold sodas, alcohol, packaged juice</li>
+          <li><strong>Snacks</strong>Pani puri, pizza, burger, fried street food</li>
         </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- =================== SECTION 04: DAY CHART =================== -->
+<!-- ========================= SECTION 04 ========================= -->
 <section>
   <div class="page">
     <div class="section-num">04 · YOUR DAY</div>
-    <h2 class="h2">[[SECTION_04_TITLE]]</h2>
-    <p class="lede">[[SECTION_04_LEDE]]</p>
+    <h2 class="h2">Your day, <em>mapped to Pune's heat</em></h2>
+    <p class="lede">Read this chart in one glance: when to eat, how much, and when to stay out of the sun.</p>
 
     <div class="word-origin">
       <div class="wo-marker">Word Origin</div>
       <div>
         <div class="wo-term">Dinacharya</div>
-        <div class="wo-meaning">[[DINACHARYA_MEANING]]</div>
+        <div class="wo-meaning">From <em>dina</em> (day) and <em>charya</em> (movement). The Ayurvedic word for daily routine. Not what you must do, but the rhythm the body tends to thrive in.</div>
       </div>
     </div>
 
-    <!--
-      DAY CHART (Section 4 centerpiece)
-      =====================================================
-      A horizontal SVG chart with three stacked bands. SVG viewBox is 0 0 700 320.
-
-      Layout:
-        y=20-60: anchors band (dots + labels ABOVE the dots)
-        y=60-260: weather curve band
-        y=288-306: activity zones band
-
-      Hour-to-x formula: x = 25 + (hour - 6) * 40.625
-        So 6 AM = x25, 7 AM = x65.625, ... 9 PM = x675
-
-      The "PUNE'S HEAT CURVE" header (top-left at y=20) was REMOVED to prevent
-      overlap with the BREAKFAST label. The curve's right-side label survives.
-
-      [[DAY_CHART_DYNAMIC_CONTENT]] receives 4 distinct SVG groups in this order:
-        1. <g id="anchor-dots">: 7 anchor circles at appropriate x positions
-        2. <g id="anchor-labels">: 3 labels for breakfast/lunch/dinner above their dots
-        3. <path id="heat-curve">: the weather curve path (peak shape varies by Ritu)
-        4. <g id="activity-zones">: 3 rect+text pairs at the bottom (Walk/Stay/Wind Down)
-
-      All coordinates are computed per Ritu and per user wake/sleep time.
-      See spec Part F1 for exact specifications.
-    -->
     <div class="day-chart-wrap">
-      <svg class="day-chart" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Daily timeline showing meal anchors mapped to local weather curve">
+      <svg class="day-chart" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Daily timeline showing meal anchors mapped to Pune's heat curve">
         <defs>
           <linearGradient id="tempGrad" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stop-color="#6B7F4F" stop-opacity="0.85"/>
@@ -836,10 +779,48 @@ export const HTML_TEMPLATE = `<!--
           </linearGradient>
         </defs>
 
-        [[DAY_CHART_DYNAMIC_CONTENT]]
+        <!-- Heat zone background, 10 AM to 5 PM, x = 25 + 4*40.625 to 25 + 11*40.625 = 187.5 to 472.7 -->
+        <rect x="187" y="60" width="286" height="190" fill="url(#heatBg)"/>
 
-        <!-- Time axis (always 6 AM to 9 PM, hardcoded) -->
+        <!-- Heat curve, peaks around 2 PM (x=350) -->
+        <path d="M 25,222 C 110,228 175,150 320,98 C 460,82 540,165 675,222" 
+              stroke="url(#tempGrad)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+
+        <!-- HEAT label -->
+        <text x="675" y="195" text-anchor="end" font-family="Manrope, sans-serif" font-size="10" font-weight="700" fill="#B85C3A" letter-spacing="2.2">PUNE'S HEAT CURVE</text>
+
+        <!-- ANCHORS label, top left -->
+        <text x="25" y="20" font-family="Manrope, sans-serif" font-size="10" font-weight="700" fill="#6B5D52" letter-spacing="2.2">YOUR ANCHORS</text>
+
+        <!-- Minor anchors (small dots, no labels) -->
+        <!-- 6:30 wake x=45.3 -->
+        <circle cx="45" cy="55" r="3.5" fill="#6B7F4F" opacity="0.6"/>
+        <!-- 10:30 mid-morning x=207.8 -->
+        <circle cx="208" cy="55" r="3.5" fill="#C99A4D" opacity="0.6"/>
+        <!-- 4:30 evening x=451.6 -->
+        <circle cx="452" cy="55" r="3.5" fill="#C99A4D" opacity="0.6"/>
+        <!-- 9:30 sleep x=654.7 -->
+        <circle cx="655" cy="55" r="3.5" fill="#4A2E2A" opacity="0.6"/>
+
+        <!-- Major anchors with labels -->
+        <!-- BREAKFAST 7:30 x=85.9 -->
+        <text x="86" y="26" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" font-weight="600" fill="#6B5D52" letter-spacing="1.5">BREAKFAST</text>
+        <text x="86" y="40" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" fill="#6B5D52">7:30</text>
+        <circle cx="86" cy="55" r="6" fill="#6B7F4F"/>
+
+        <!-- LUNCH 1 PM x=309.4 -->
+        <text x="309" y="22" text-anchor="middle" font-family="Manrope, sans-serif" font-size="12" font-weight="700" fill="#8E3F26" letter-spacing="2.5">LUNCH</text>
+        <text x="309" y="37" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" font-weight="500" fill="#8E3F26">1:00 PM · largest</text>
+        <circle cx="309" cy="55" r="13" fill="#B85C3A"/>
+
+        <!-- DINNER 7 PM x=553.1 -->
+        <text x="553" y="26" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" font-weight="600" fill="#8E3F26" letter-spacing="1.5">DINNER</text>
+        <text x="553" y="40" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" fill="#6B5D52">7:00 · light</text>
+        <circle cx="553" cy="55" r="9" fill="#8E3F26"/>
+
+        <!-- Time axis -->
         <line x1="25" y1="254" x2="675" y2="254" stroke="#6B5D52" stroke-width="0.5" opacity="0.35"/>
+
         <g font-family="Manrope, sans-serif" font-size="11" font-weight="500" fill="#6B5D52" letter-spacing="1.2">
           <text x="25" y="272" text-anchor="middle">6 AM</text>
           <text x="147" y="272" text-anchor="middle">9 AM</text>
@@ -848,151 +829,204 @@ export const HTML_TEMPLATE = `<!--
           <text x="513" y="272" text-anchor="middle">6 PM</text>
           <text x="635" y="272" text-anchor="middle">9 PM</text>
         </g>
+
+        <!-- Activity bars -->
+        <!-- WALK 6 AM to 9 AM, x=25 to x=146.9, width 122 -->
+        <rect x="25" y="288" width="122" height="18" fill="#6B7F4F" opacity="0.8" rx="2"/>
+        <text x="86" y="300" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" font-weight="700" fill="white" letter-spacing="2">WALK</text>
+
+        <!-- STAY INDOORS 10 AM to 5 PM, x=187.5 to x=472.7, width 285 -->
+        <rect x="187" y="288" width="286" height="18" fill="#B85C3A" opacity="0.8" rx="2"/>
+        <text x="330" y="300" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" font-weight="700" fill="white" letter-spacing="2">STAY INDOORS</text>
+
+        <!-- WIND DOWN 7 PM to 10 PM, x=553.1 to x=675, width 122 -->
+        <rect x="553" y="288" width="122" height="18" fill="#4A2E2A" opacity="0.8" rx="2"/>
+        <text x="614" y="300" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" font-weight="700" fill="white" letter-spacing="2">WIND DOWN</text>
       </svg>
     </div>
 
-    <!--
-      ANCHOR TABLE (Section 4)
-      =====================================================
-      7 rows beneath the chart. ANCHOR_TABLE_ROWS receives 7 complete row blocks.
-
-      Row format (one per anchor):
-        DIV class="row"
-          DIV class="time" : HH:MM
-          DIV class="meal-name" : NAME
-          DIV class="meal-detail" : One-line detail (max 12 words)
-        END DIV
-
-      The 7 anchors are: wake / breakfast / mid-morning / lunch / tea / dinner / bedtime.
-      Times are adjusted to the user's actual wake_time and sleep_time, but anchored
-      around the standard slots. Lunch always labeled "Lunch \\u00b7 largest", dinner "Dinner \\u00b7 light".
-    -->
     <div class="anchor-table">
-      [[ANCHOR_TABLE_ROWS]]
+      <div class="row">
+        <div class="time">06:30</div>
+        <div class="meal-name">Wake</div>
+        <div class="meal-detail">Room-temp water with 5 soaked raisins. No cold water.</div>
+      </div>
+      <div class="row">
+        <div class="time">07:30</div>
+        <div class="meal-name">Breakfast</div>
+        <div class="meal-detail">Poha or moong dal chilla. Small glass of room-temp milk.</div>
+      </div>
+      <div class="row">
+        <div class="time">10:30</div>
+        <div class="meal-name">Mid-morning</div>
+        <div class="meal-detail">Coconut water, or one small bowl of ripe mango.</div>
+      </div>
+      <div class="row">
+        <div class="time">01:00</div>
+        <div class="meal-name">Lunch · largest</div>
+        <div class="meal-detail">Two rotis, bottle gourd sabzi, moong dal, small rice, cumin buttermilk.</div>
+      </div>
+      <div class="row">
+        <div class="time">04:30</div>
+        <div class="meal-name">Tea</div>
+        <div class="meal-detail">Roasted makhana with fennel, or cucumber with mint chutney.</div>
+      </div>
+      <div class="row">
+        <div class="time">07:00</div>
+        <div class="meal-name">Dinner · light</div>
+        <div class="meal-detail">Moong dal khichadi with ghee, or one roti with ridge gourd.</div>
+      </div>
+      <div class="row">
+        <div class="time">09:30</div>
+        <div class="meal-name">Bedtime</div>
+        <div class="meal-detail">Warm milk with cardamom. Sleep by 11 PM.</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- =================== SECTION 05: FIVE ANCHORS =================== -->
+<!-- ========================= SECTION 05 ========================= -->
 <section>
   <div class="page">
     <div class="section-num">05 · FIVE ANCHORS</div>
     <h2 class="h2">Five rules that <em>carry the rest</em></h2>
-    <p class="lede">[[SECTION_05_LEDE]]</p>
+    <p class="lede">If you hold only these five, the rest of the blueprint follows.</p>
 
     <ol class="anchor-numbered">
       <li><div>
-        <h4>[[ANCHOR_01_TITLE]]</h4>
-        <p>[[ANCHOR_01_DETAIL]]</p>
+        <h4>Lunch is your biggest meal</h4>
+        <p>12:30 to 1:30. Eat enough that you do not need a 4 PM rescue.</p>
       </div></li>
       <li><div>
-        <h4>[[ANCHOR_02_TITLE]]</h4>
-        <p>[[ANCHOR_02_DETAIL]]</p>
+        <h4>Dinner is light, before 7:30</h4>
+        <p>Khichadi, soup, or one roti and a vegetable. Visibly smaller than lunch.</p>
       </div></li>
       <li><div>
-        <h4>[[ANCHOR_03_TITLE]]</h4>
-        <p>[[ANCHOR_03_DETAIL]]</p>
+        <h4>Walk before 8 AM</h4>
+        <p>Twenty minutes. After 10 AM the heat tends to work against you.</p>
       </div></li>
       <li><div>
-        <h4>[[ANCHOR_04_TITLE]]</h4>
-        <p>[[ANCHOR_04_DETAIL]]</p>
+        <h4>Coconut water replaces snacks</h4>
+        <p>Same 4:30 PM break. Less load on the body.</p>
       </div></li>
       <li><div>
-        <h4>[[ANCHOR_05_TITLE]]</h4>
-        <p>[[ANCHOR_05_DETAIL]]</p>
+        <h4>Sleep by 11 PM</h4>
+        <p>Coconut oil on the soles tends to help settle the heat before bed.</p>
       </div></li>
     </ol>
 
     <div class="avoid-tight">
       <div class="label">Three things to actively avoid</div>
       <ul>
-        <li>[[AVOID_01]]</li>
-        <li>[[AVOID_02]]</li>
-        <li>[[AVOID_03]]</li>
+        <li>Pani puri, pizza, burger more than twice this month.</li>
+        <li>Outdoor exercise between 10 AM and 5 PM.</li>
+        <li>Coffee after 2 PM.</li>
       </ul>
     </div>
   </div>
 </section>
 
-<!-- =================== SECTION 06: GROCERY =================== -->
+<!-- ========================= SECTION 06 ========================= -->
 <section style="background: rgba(232, 220, 196, 0.25);">
   <div class="page">
     <div class="section-num">06 · GROCERY</div>
     <h2 class="h2">What to <em>actually buy</em></h2>
-    <p class="lede">[[SECTION_06_LEDE]]</p>
+    <p class="lede">Shop twice a week in smaller quantities. Greeshma produce spoils fast. One person, one week.</p>
 
-    <!--
-      GROCERY CARDS (Section 6)
-      =====================================================
-      Six cards in a 2-column grid. The first 5 have stable titles.
-      The 6th card's title varies by Ritu (e.g., "Greeshma cooling specials").
-
-      Each grocery card receives a list of li elements via the items placeholder, like:
-        <li>Moong dal \\u00b7 500 g</li>
-    -->
     <div class="grocery-grid">
       <div class="grocery-card">
         <h3>Grains &amp; Pulses</h3>
-        <ul>[[GROCERY_CARD_1_ITEMS]]</ul>
+        <ul>
+          <li>Moong dal · 500 g</li>
+          <li>White rice · 1 kg</li>
+          <li>Jowar flour · 500 g</li>
+          <li>Wheat flour · 500 g</li>
+          <li>Thick poha · 250 g</li>
+        </ul>
       </div>
       <div class="grocery-card">
         <h3>Dairy &amp; Fats</h3>
-        <ul>[[GROCERY_CARD_2_ITEMS]]</ul>
+        <ul>
+          <li>Fresh whole milk · 2 L</li>
+          <li>Cow ghee · 100 g</li>
+          <li>Fresh curd · 500 g</li>
+          <li>Groundnut oil · 250 ml</li>
+        </ul>
       </div>
       <div class="grocery-card">
         <h3>Vegetables</h3>
-        <ul>[[GROCERY_CARD_3_ITEMS]]</ul>
+        <ul>
+          <li>Bottle gourd · 1 kg</li>
+          <li>Ridge gourd · 500 g</li>
+          <li>Ash gourd · 500 g</li>
+          <li>Drumstick · 4-6 pieces</li>
+          <li>Tender cucumber · 500 g</li>
+          <li>Coriander, mint · 1 bunch each</li>
+        </ul>
       </div>
       <div class="grocery-card">
         <h3>Fruits</h3>
-        <ul>[[GROCERY_CARD_4_ITEMS]]</ul>
+        <ul>
+          <li>Alphonso or Kesar mango · 6-8 pieces</li>
+          <li>Watermelon · half medium</li>
+          <li>Muskmelon · 1 medium</li>
+          <li>Sweet lime · 4 pieces</li>
+          <li>Fresh coconut · 1 piece</li>
+        </ul>
       </div>
       <div class="grocery-card">
         <h3>Spices</h3>
-        <ul>[[GROCERY_CARD_5_ITEMS]]</ul>
+        <ul>
+          <li>Fennel, cumin, coriander seed · 50 g each</li>
+          <li>Green cardamom · 20 g</li>
+          <li>Turmeric · 50 g</li>
+          <li>Rock salt · 100 g</li>
+        </ul>
       </div>
       <div class="grocery-card">
-        <h3>[[GROCERY_SPECIALS_TITLE]]</h3>
-        <ul>[[GROCERY_CARD_6_ITEMS]]</ul>
+        <h3>Greeshma specials</h3>
+        <ul>
+          <li>Tender coconut water · 4-6 pieces</li>
+          <li>Makhana · 100 g</li>
+          <li>Gulkand · 1 small jar</li>
+          <li>Mishri (rock sugar) · 50 g</li>
+          <li>Khus (vetiver) syrup · 1 bottle</li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- =================== SECTION 07: COMMITMENT =================== -->
+<!-- ========================= SECTION 07 ========================= -->
 <section class="commitment">
   <div class="page">
     <div class="section-num">07 · YOUR COMMITMENT</div>
     <h2 class="h2">The <em>one thing</em></h2>
 
     <div class="commit-card">
-      <h3>[[COMMIT_OPENING]]</h3>
-      <p>[[COMMIT_THREAD_PARA]]</p>
+      <h3>Hrishikesh, here is the thread.</h3>
+      <p>Your archetype runs on depth and steadiness. The same density that gives your work weight (the good kind) tends to hold weight (the bodily kind) when desk work replaces movement. Greeshma's heat layers warming on top.</p>
+      <p>The pizza, the burger, the pani puri are not failures. They are heating and heavy at once, the one combination this body and this season can least afford.</p>
 
       <div class="lever">
-        "[[LEVER_LINE]]"
+        "Lunch big. Dinner small. Walk before 8."
         <span class="lever-line">Repeat for thirty days</span>
       </div>
 
-      <p style="margin-bottom: 0;">[[COMMIT_CLOSING_PARA]]</p>
+      <p style="margin-bottom: 0;">Jyeshtha is not asking you to give things up. It is asking you to slow, cool, and eat with the season. That is not a restriction. It is a return.</p>
     </div>
 
     <div class="closing-line">
-      <div class="closing-eng">"[[CLOSING_VERSE_ENGLISH]]"</div>
-      <div class="closing-sans">[[CLOSING_VERSE_SANSKRIT]]</div>
+      <div class="closing-eng">"Eat wholesomely, eat moderately, eat in tune with the season."</div>
+      <div class="closing-sans">हितभुक् मितभुक् ऋतुभुक्</div>
     </div>
   </div>
 </section>
 
-<!-- =================== FOOTER =================== -->
 <footer>
-  <div class="footer-edition">MAASIK · Edition [[EDITION_NUMBER]] · [[GENERATION_DATE_HUMAN]]</div>
-  <div class="footer-next">Your next edition, [[FOOTER_NEXT_EDITION_VEDIC_MONTH]] ([[FOOTER_NEXT_EDITION_RITU]]), arrives [[FOOTER_NEXT_DELIVERY_DATE]].</div>
+  <div class="footer-edition">MAASIK · Edition 02 · 17 May 2026</div>
+  <div class="footer-next">Your next edition, Ashadha (Varsha Ritu, the monsoon), arrives 16 June 2026.</div>
 </footer>
 
 </body>
 </html>
-`;
-
-export const HTML_TEMPLATE_VERSION = 'v2.0';
-export const HTML_TEMPLATE_PLACEHOLDER_COUNT = 95;

@@ -65,7 +65,10 @@ const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export const OnboardingSchema = z.object({
   // Part 1
-  primary_goal: z.enum(PRIMARY_GOAL_VALUES),
+  primary_goal: z
+    .array(z.enum(PRIMARY_GOAL_VALUES))
+    .min(1, { message: 'Pick at least one goal.' }),
+  primary_goal_other: z.string().trim().max(300).optional().nullable(),
   success_vision: z
     .string()
     .trim()
@@ -94,7 +97,7 @@ export const OnboardingSchema = z.object({
     .min(30, { message: 'Please double-check your weight.' })
     .max(200, { message: 'Please double-check your weight.' }),
 
-  // Part 3 — Prakriti
+  // Part 3, Prakriti
   prakriti_q_build: z.enum(PRAKRITI_VALUES),
   prakriti_q_skin: z.enum(PRAKRITI_VALUES),
   prakriti_q_digestion: z.enum(PRAKRITI_VALUES),
@@ -136,6 +139,12 @@ export const OnboardingSchema = z.object({
     .trim()
     .min(1, { message: 'Please enter your email.' })
     .email({ message: 'Please enter a valid email.' }),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+91[6-9]\d{9}$/, {
+      message: 'Please enter a valid 10-digit Indian mobile number.',
+    }),
 });
 
 export type OnboardingPayload = z.infer<typeof OnboardingSchema>;
@@ -145,6 +154,7 @@ export type OnboardingDraft = {
   [K in keyof OnboardingPayload]: OnboardingPayload[K] | null;
 } & {
   // Other-text fields are always optional strings
+  primary_goal_other?: string | null;
   gender_other?: string | null;
   medical_conditions_other?: string | null;
   allergies_other?: string | null;
@@ -152,6 +162,7 @@ export type OnboardingDraft = {
 
 export const EMPTY_DRAFT: OnboardingDraft = {
   primary_goal: null,
+  primary_goal_other: null,
   success_vision: null,
   age: null,
   gender: null,
@@ -180,6 +191,7 @@ export const EMPTY_DRAFT: OnboardingDraft = {
   disliked_foods: null,
   full_name: null,
   email: null,
+  phone: null,
 };
 
 /** Returns the per-field error map for the given part. Empty object = valid. */
@@ -212,7 +224,9 @@ function validateField(q: Question, draft: OnboardingDraft): string | null {
   // Required field checks
   if (q.type === 'multi_select') {
     if (!Array.isArray(value) || value.length === 0) {
-      return "Pick at least one option, or select 'None of the above'.";
+      return q.field === 'primary_goal'
+        ? 'Pick at least one goal.'
+        : "Pick at least one option, or select 'None of the above'.";
     }
     // Check "other" specify-text presence
     if (q.revealsTextOn && q.otherField && (value as string[]).includes(q.revealsTextOn)) {
@@ -245,7 +259,7 @@ function validateField(q: Question, draft: OnboardingDraft): string | null {
     return null;
   }
 
-  if (q.type === 'short_answer' || q.type === 'long_answer') {
+  if (q.type === 'short_answer' || q.type === 'long_answer' || q.type === 'city_autocomplete') {
     if (!value || typeof value !== 'string' || value.trim().length === 0) {
       return 'This field is required.';
     }
@@ -265,9 +279,17 @@ function validateField(q: Question, draft: OnboardingDraft): string | null {
     return null;
   }
 
-  if (q.type === 'number') {
+  if (q.type === 'phone') {
+    if (!value || typeof value !== 'string') return 'Please enter your number.';
+    if (!/^\+91[6-9]\d{9}$/.test(value)) {
+      return 'Please enter a valid 10-digit Indian mobile number.';
+    }
+    return null;
+  }
+
+  if (q.type === 'number' || q.type === 'select') {
     if (value === null || value === undefined || typeof value !== 'number' || Number.isNaN(value)) {
-      return 'Please enter a number.';
+      return q.type === 'select' ? 'Please pick a value.' : 'Please enter a number.';
     }
     if (q.min !== undefined && value < q.min) return `Minimum is ${q.min}.`;
     if (q.max !== undefined && value > q.max) return `Maximum is ${q.max}.`;
@@ -297,6 +319,8 @@ export function validateAll(
   // Strip non-payload fields that are nullable strings ("" -> null) to satisfy zod
   const candidate = { ...draft };
   // Drop _other fields if empty
+  if (!candidate.primary_goal_other)
+    delete (candidate as Record<string, unknown>).primary_goal_other;
   if (!candidate.gender_other) delete (candidate as Record<string, unknown>).gender_other;
   if (!candidate.medical_conditions_other)
     delete (candidate as Record<string, unknown>).medical_conditions_other;

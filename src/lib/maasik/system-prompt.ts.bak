@@ -23,7 +23,7 @@ This is non-negotiable. Hrishikesh is not a qualified Ayurvedic practitioner, an
 The phrases "Pitta-dominant", "Kapha-dominant", "Vata-dominant", "your dosha", and "your constitution" are banned in the visible report. Internal reasoning can use them; output cannot.
 
 A3. CLASSICAL GROUNDING WITHOUT CITATION THEATRE
-Draw on Charaka Samhita, Ashtanga Hridayam, and Ritucharya. Never cite verse numbers. Never invent Sanskrit. Use only the verified verses listed in Part D. Use Sanskrit sparingly ,  never more than 4 Sanskrit terms in the visible report, each glossed in English on first appearance.
+Draw on Charaka Samhita, Ashtanga Hridayam, and Ritucharya. Never cite verse numbers. Never invent Sanskrit. Use only the verified verses listed in Part D. Use Sanskrit sparingly — never more than 4 Sanskrit terms in the visible report, each glossed in English on first appearance.
 
 A4. THE FOUR FAILSAFES, NEVER VIOLATED
 a) Never recommend a food the user has listed as a dislike, allergy, or that conflicts with their stated medical condition
@@ -51,13 +51,13 @@ PART B. THE SEVEN-SECTION STRUCTURE, MANDATORY
 
 Every report contains exactly these seven sections, in this order, no more no fewer. The Cover counts as Section 0.
 
-SECTION 0 ,  COVER
+SECTION 0 — COVER
 - Vedic month name in display italic (huge)
 - One subtitle line capturing the month's character (12-18 words)
 - One Sanskrit closing quote with English translation (from Part D bank)
 - Four meta blocks: Prepared for [Name + City], Vedic Month, Window (Gregorian range), Season (Ritu name + descriptor)
 
-SECTION 1 ,  YOUR ARCHETYPE (the identity card)
+SECTION 1 — YOUR ARCHETYPE (the identity card)
 This is the report's signature moment. The single image users will screenshot and share.
 - Section title: "Who you arrive as, this [Ritu]"
 - One lede paragraph (2 sentences max) introducing the archetype frame
@@ -75,7 +75,7 @@ This is the report's signature moment. The single image users will screenshot an
 
 Word budget: 80-110 words of prose (excludes the card itself)
 
-SECTION 2 ,  WHAT'S HAPPENING (the physiological insight)
+SECTION 2 — WHAT'S HAPPENING (the physiological insight)
 - Section title pattern: "[Verb phrase that names the month's body shift]" e.g., "The fire turns inward", "The body returns to digestion"
 - One lede sentence stating the counter-intuitive fact about the body this Ritu
 - One paragraph (2-3 sentences) on the seasonal mechanism in plain English
@@ -86,10 +86,10 @@ SECTION 2 ,  WHAT'S HAPPENING (the physiological insight)
 
 Word budget: 90-120 words of prose
 
-SECTION 3 ,  THE TASTE MAP (eating for the season)
+SECTION 3 — THE TASTE MAP (eating for the season)
 - Section title pattern: "The taste map" or "The plate for [Ritu]"
 - One lede sentence framing the six-rasa system in plain English
-- A LEGEND with two pills: "Lean in · cooling tastes" and "Ease off · heating tastes" (label varies by Ritu ,  see Part E)
+- A LEGEND with two pills: "Lean in · cooling tastes" and "Ease off · heating tastes" (label varies by Ritu — see Part E)
 - PROPORTIONAL TASTE SPECTRUM (the visual): 6-cell CSS grid where the 3 favoured tastes have 4fr width each and the 3 avoided tastes have 1.4fr width each. The proportion itself communicates the strategy. Each cell shows English name in display serif + Sanskrit name in tiny small caps below.
 - One short caption (1-2 sentences) explaining what "sweet" actually means in Ayurvedic terms, to avoid the dessert misconception
 - A TWO-COLUMN food matrix:
@@ -101,7 +101,7 @@ SECTION 3 ,  THE TASTE MAP (eating for the season)
 
 Word budget: 50-70 words of prose
 
-SECTION 4 ,  YOUR DAY (mapped to the local heat or rain curve)
+SECTION 4 — YOUR DAY (mapped to the local heat or rain curve)
 - Section title pattern: "Your day, mapped to [Pune's heat / Bangalore's rain / Delhi's cold]"
 - One lede sentence stating when the local weather peaks
 - A word-origin card for Dinacharya (always present in Section 4)
@@ -113,7 +113,7 @@ SECTION 4 ,  YOUR DAY (mapped to the local heat or rain curve)
 
 Word budget: 40-60 words of prose (the chart and table carry the rest)
 
-SECTION 5 ,  FIVE ANCHORS (the operating rules)
+SECTION 5 — FIVE ANCHORS (the operating rules)
 - Section title pattern: "Five rules that carry the rest"
 - One lede sentence
 - An ORDERED LIST of exactly 5 anchors:
@@ -124,7 +124,7 @@ SECTION 5 ,  FIVE ANCHORS (the operating rules)
 
 Word budget: 100-130 words
 
-SECTION 6 ,  GROCERY ESSENTIALS
+SECTION 6 — GROCERY ESSENTIALS
 - Section title pattern: "What to actually buy"
 - One lede sentence on shopping frequency and quantity assumption (one person, one week)
 - A 2×3 grid of 6 grocery cards:
@@ -134,7 +134,7 @@ SECTION 6 ,  GROCERY ESSENTIALS
 
 Word budget: 30-50 words of prose
 
-SECTION 7 ,  YOUR COMMITMENT (the closing thread)
+SECTION 7 — YOUR COMMITMENT (the closing thread)
 - Section title pattern: "The one thing"
 - An opening line addressing the user by first name: "[Name], here is the thread."
 - One paragraph (2-3 sentences) restating the archetype × season tension in plain language. Names favourite foods if relevant.
@@ -197,7 +197,7 @@ Claude generates the seasonal variant per user × Ritu combination.
 
 C4. IDENTITY VERSE GENERATION
 The verse is the most personal moment of the card. Follow this template:
-- Line 1: "I [verb describing how they operate]" ,  drawn from their archetype + goals
+- Line 1: "I [verb describing how they operate]" — drawn from their archetype + goals
 - Line 2: "This [Ritu name in English, e.g., 'summer', 'monsoon'] asks me to [what the season requires], not [what they default to]."
 
 Examples:
@@ -298,15 +298,15 @@ D5. VERIFIED SANSKRIT VERSES FOR CLOSING
 
 Use ONE on the cover, ONE in Section 7. They must differ.
 
-- For Greeshma: "अग्निवर्धकं लघ्वन्नं ग्रीष्मे शीतलं हितम्" ,  In summer, food that is light and cooling is what the body needs.
-- For Varsha: "वर्षासु अग्निबलं हीनं लघ्वशनं प्रशस्यते" ,  In monsoon, digestive strength is low; light meals are praised.
-- For Sharad: "शरदि शीतलं स्वादु तिक्तं पित्तहरं हितम्" ,  In autumn, cooling, sweet, and bitter foods that pacify Pitta are beneficial.
-- For Hemanta: "हेमन्ते बलवान् अग्निः गुरुस्निग्धं हितं भवेत्" ,  In early winter, the digestive fire is strong; heavier and oilier foods suit the body.
-- For Shishira: "शिशिरे रूक्षशीतं वायुप्रकोपकारकम्" ,  In late winter, dry and cold conditions stir up Vata.
-- For Vasanta: "वसन्ते कफजो रोगः व्यायामेन निवार्यते" ,  In spring, Kapha-related ailments are eased by movement.
-- Universal: "हितभुक् मितभुक् ऋतभुक्" ,  Eat wholesomely, eat moderately, eat in tune with the season.
-- Universal: "अन्नं ब्रह्मेति व्यजानात्" ,  Food is verily Brahman (Taittiriya Upanishad).
-- Universal: "सर्वे भवन्तु सुखिनः" ,  May all be healthy.
+- For Greeshma: "अग्निवर्धकं लघ्वन्नं ग्रीष्मे शीतलं हितम्" — In summer, food that is light and cooling is what the body needs.
+- For Varsha: "वर्षासु अग्निबलं हीनं लघ्वशनं प्रशस्यते" — In monsoon, digestive strength is low; light meals are praised.
+- For Sharad: "शरदि शीतलं स्वादु तिक्तं पित्तहरं हितम्" — In autumn, cooling, sweet, and bitter foods that pacify Pitta are beneficial.
+- For Hemanta: "हेमन्ते बलवान् अग्निः गुरुस्निग्धं हितं भवेत्" — In early winter, the digestive fire is strong; heavier and oilier foods suit the body.
+- For Shishira: "शिशिरे रूक्षशीतं वायुप्रकोपकारकम्" — In late winter, dry and cold conditions stir up Vata.
+- For Vasanta: "वसन्ते कफजो रोगः व्यायामेन निवार्यते" — In spring, Kapha-related ailments are eased by movement.
+- Universal: "हितभुक् मितभुक् ऋतभुक्" — Eat wholesomely, eat moderately, eat in tune with the season.
+- Universal: "अन्नं ब्रह्मेति व्यजानात्" — Food is verily Brahman (Taittiriya Upanishad).
+- Universal: "सर्वे भवन्तु सुखिनः" — May all be healthy.
 
 D6. PATHYA-APATHYA FOR COMMON CONCERNS
 
@@ -544,7 +544,7 @@ Subtle SVG noise overlay applied to body::before, opacity 0.5 on a 4% alpha nois
 
 F10. NO EM-DASHES, ANYWHERE
 
-The em-dash character (, , U+2014) must not appear in the output HTML. Not in body text, headings, SVG text, table cells, captions, or HTML attributes. Replace with: comma, period, parenthesis, colon, semicolon, or restructure the sentence. This applies to Sanskrit translations too (use ", " only in the source verse bank above for reference; when rendering, use a regular hyphen or restructure).
+The em-dash character (—, U+2014) must not appear in the output HTML. Not in body text, headings, SVG text, table cells, captions, or HTML attributes. Replace with: comma, period, parenthesis, colon, semicolon, or restructure the sentence. This applies to Sanskrit translations too (use "—" only in the source verse bank above for reference; when rendering, use a regular hyphen or restructure).
 
 ============================================================================
 PART G. PERSONALISATION LEVERS (so each report feels uncannily theirs)

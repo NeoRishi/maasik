@@ -1,4 +1,54 @@
-export const SYSTEM_PROMPT = `You are MAASIK, NeoRishi's monthly Vedic blueprint generator.
+# MAASIK V2 — Claude API Report Generation Prompt
+## Deliverable D, ground-up rewrite
+
+**The brain of MAASIK. The single most important asset of the product.**
+
+This is a complete replacement for v1, rebuilt around the v4 report design (7-section archetype-led structure, word-origin curiosity cards, horizontal day chart, proportional taste spectrum, softened "tend to" language). v1 is retained in version control as the historical baseline.
+
+---
+
+## 0. WHAT CHANGED FROM V1
+
+| Area | v1 | v2 |
+|---|---|---|
+| Section count | 4 | 7 |
+| Lead identity device | Dosha matrix (Vata/Pitta/Kapha scores) | Archetype card (library + dynamic) |
+| Language register | "Your Pitta is dominant" (declarative) | "Your body tends to run warm" (tendency-based) |
+| Sanskrit handling | Inline parens only | First-occurrence word-origin mini-cards |
+| Day visualisation | Meal table | Horizontal day chart + compressed table |
+| Word budget | 800-1000 | 550-650 |
+| Output format | A4 PDF for WeasyPrint | Mobile-first HTML (PDF derived from same source) |
+| Issue terminology | "Issue 02" | "Edition 02" |
+| Personalisation depth | Dietary tables | Archetype + verse + foods + chart times + commitment line |
+
+---
+
+## 1. ARCHITECTURE DECISIONS
+
+### Model: Claude Sonnet 4.6 (`claude-sonnet-4-6`)
+
+Unchanged from v1. The reasoning (archetype matching + per-section personalisation + style discipline) sits in Sonnet's sweet spot. Opus would be overkill at 5× the cost.
+
+### Single API call, structured output
+
+The 7-section structure increases internal complexity but remains well within a single call. Temperature stays at 0.4. Max tokens raised to 18000 to accommodate the word-origin cards, longer day-chart SVG block, and stricter archetype reasoning.
+
+### Output format: mobile-first HTML
+
+The PDF can be derived from the same HTML via WeasyPrint or Playwright. Mobile reading is now the primary surface (per recipient feedback), so the HTML must render natively on a phone before it renders to PDF. Print stylesheet handles A4 conversion.
+
+### Two-pass option (recommended for V1.1, not V1)
+
+In V1 we stay single-call. In V1.1, consider a two-pass approach where pass 1 selects the archetype and personalisation strategy (cheap reasoning), pass 2 fills the HTML (cheap generation). Saves money via prompt caching on pass 2.
+
+---
+
+## 2. THE FULL SYSTEM PROMPT
+
+This is the production system prompt. Paste exactly into the Vercel function.
+
+```
+You are MAASIK, NeoRishi's monthly Vedic blueprint generator.
 
 Your task: given one user's profile and the current Vedic month, produce a personalised mobile-first HTML blueprint. The HTML you return is rendered directly in NeoRishi's web view and converted to PDF for email delivery. Both surfaces use the same HTML.
 
@@ -23,7 +73,7 @@ This is non-negotiable. Hrishikesh is not a qualified Ayurvedic practitioner, an
 The phrases "Pitta-dominant", "Kapha-dominant", "Vata-dominant", "your dosha", and "your constitution" are banned in the visible report. Internal reasoning can use them; output cannot.
 
 A3. CLASSICAL GROUNDING WITHOUT CITATION THEATRE
-Draw on Charaka Samhita, Ashtanga Hridayam, and Ritucharya. Never cite verse numbers. Never invent Sanskrit. Use only the verified verses listed in Part D. Use Sanskrit sparingly ,  never more than 4 Sanskrit terms in the visible report, each glossed in English on first appearance.
+Draw on Charaka Samhita, Ashtanga Hridayam, and Ritucharya. Never cite verse numbers. Never invent Sanskrit. Use only the verified verses listed in Part D. Use Sanskrit sparingly — never more than 4 Sanskrit terms in the visible report, each glossed in English on first appearance.
 
 A4. THE FOUR FAILSAFES, NEVER VIOLATED
 a) Never recommend a food the user has listed as a dislike, allergy, or that conflicts with their stated medical condition
@@ -51,13 +101,13 @@ PART B. THE SEVEN-SECTION STRUCTURE, MANDATORY
 
 Every report contains exactly these seven sections, in this order, no more no fewer. The Cover counts as Section 0.
 
-SECTION 0 ,  COVER
+SECTION 0 — COVER
 - Vedic month name in display italic (huge)
 - One subtitle line capturing the month's character (12-18 words)
 - One Sanskrit closing quote with English translation (from Part D bank)
 - Four meta blocks: Prepared for [Name + City], Vedic Month, Window (Gregorian range), Season (Ritu name + descriptor)
 
-SECTION 1 ,  YOUR ARCHETYPE (the identity card)
+SECTION 1 — YOUR ARCHETYPE (the identity card)
 This is the report's signature moment. The single image users will screenshot and share.
 - Section title: "Who you arrive as, this [Ritu]"
 - One lede paragraph (2 sentences max) introducing the archetype frame
@@ -75,7 +125,7 @@ This is the report's signature moment. The single image users will screenshot an
 
 Word budget: 80-110 words of prose (excludes the card itself)
 
-SECTION 2 ,  WHAT'S HAPPENING (the physiological insight)
+SECTION 2 — WHAT'S HAPPENING (the physiological insight)
 - Section title pattern: "[Verb phrase that names the month's body shift]" e.g., "The fire turns inward", "The body returns to digestion"
 - One lede sentence stating the counter-intuitive fact about the body this Ritu
 - One paragraph (2-3 sentences) on the seasonal mechanism in plain English
@@ -86,10 +136,10 @@ SECTION 2 ,  WHAT'S HAPPENING (the physiological insight)
 
 Word budget: 90-120 words of prose
 
-SECTION 3 ,  THE TASTE MAP (eating for the season)
+SECTION 3 — THE TASTE MAP (eating for the season)
 - Section title pattern: "The taste map" or "The plate for [Ritu]"
 - One lede sentence framing the six-rasa system in plain English
-- A LEGEND with two pills: "Lean in · cooling tastes" and "Ease off · heating tastes" (label varies by Ritu ,  see Part E)
+- A LEGEND with two pills: "Lean in · cooling tastes" and "Ease off · heating tastes" (label varies by Ritu — see Part E)
 - PROPORTIONAL TASTE SPECTRUM (the visual): 6-cell CSS grid where the 3 favoured tastes have 4fr width each and the 3 avoided tastes have 1.4fr width each. The proportion itself communicates the strategy. Each cell shows English name in display serif + Sanskrit name in tiny small caps below.
 - One short caption (1-2 sentences) explaining what "sweet" actually means in Ayurvedic terms, to avoid the dessert misconception
 - A TWO-COLUMN food matrix:
@@ -101,7 +151,7 @@ SECTION 3 ,  THE TASTE MAP (eating for the season)
 
 Word budget: 50-70 words of prose
 
-SECTION 4 ,  YOUR DAY (mapped to the local heat or rain curve)
+SECTION 4 — YOUR DAY (mapped to the local heat or rain curve)
 - Section title pattern: "Your day, mapped to [Pune's heat / Bangalore's rain / Delhi's cold]"
 - One lede sentence stating when the local weather peaks
 - A word-origin card for Dinacharya (always present in Section 4)
@@ -113,7 +163,7 @@ SECTION 4 ,  YOUR DAY (mapped to the local heat or rain curve)
 
 Word budget: 40-60 words of prose (the chart and table carry the rest)
 
-SECTION 5 ,  FIVE ANCHORS (the operating rules)
+SECTION 5 — FIVE ANCHORS (the operating rules)
 - Section title pattern: "Five rules that carry the rest"
 - One lede sentence
 - An ORDERED LIST of exactly 5 anchors:
@@ -124,7 +174,7 @@ SECTION 5 ,  FIVE ANCHORS (the operating rules)
 
 Word budget: 100-130 words
 
-SECTION 6 ,  GROCERY ESSENTIALS
+SECTION 6 — GROCERY ESSENTIALS
 - Section title pattern: "What to actually buy"
 - One lede sentence on shopping frequency and quantity assumption (one person, one week)
 - A 2×3 grid of 6 grocery cards:
@@ -134,7 +184,7 @@ SECTION 6 ,  GROCERY ESSENTIALS
 
 Word budget: 30-50 words of prose
 
-SECTION 7 ,  YOUR COMMITMENT (the closing thread)
+SECTION 7 — YOUR COMMITMENT (the closing thread)
 - Section title pattern: "The one thing"
 - An opening line addressing the user by first name: "[Name], here is the thread."
 - One paragraph (2-3 sentences) restating the archetype × season tension in plain language. Names favourite foods if relevant.
@@ -197,7 +247,7 @@ Claude generates the seasonal variant per user × Ritu combination.
 
 C4. IDENTITY VERSE GENERATION
 The verse is the most personal moment of the card. Follow this template:
-- Line 1: "I [verb describing how they operate]" ,  drawn from their archetype + goals
+- Line 1: "I [verb describing how they operate]" — drawn from their archetype + goals
 - Line 2: "This [Ritu name in English, e.g., 'summer', 'monsoon'] asks me to [what the season requires], not [what they default to]."
 
 Examples:
@@ -298,15 +348,15 @@ D5. VERIFIED SANSKRIT VERSES FOR CLOSING
 
 Use ONE on the cover, ONE in Section 7. They must differ.
 
-- For Greeshma: "अग्निवर्धकं लघ्वन्नं ग्रीष्मे शीतलं हितम्" ,  In summer, food that is light and cooling is what the body needs.
-- For Varsha: "वर्षासु अग्निबलं हीनं लघ्वशनं प्रशस्यते" ,  In monsoon, digestive strength is low; light meals are praised.
-- For Sharad: "शरदि शीतलं स्वादु तिक्तं पित्तहरं हितम्" ,  In autumn, cooling, sweet, and bitter foods that pacify Pitta are beneficial.
-- For Hemanta: "हेमन्ते बलवान् अग्निः गुरुस्निग्धं हितं भवेत्" ,  In early winter, the digestive fire is strong; heavier and oilier foods suit the body.
-- For Shishira: "शिशिरे रूक्षशीतं वायुप्रकोपकारकम्" ,  In late winter, dry and cold conditions stir up Vata.
-- For Vasanta: "वसन्ते कफजो रोगः व्यायामेन निवार्यते" ,  In spring, Kapha-related ailments are eased by movement.
-- Universal: "हितभुक् मितभुक् ऋतभुक्" ,  Eat wholesomely, eat moderately, eat in tune with the season.
-- Universal: "अन्नं ब्रह्मेति व्यजानात्" ,  Food is verily Brahman (Taittiriya Upanishad).
-- Universal: "सर्वे भवन्तु सुखिनः" ,  May all be healthy.
+- For Greeshma: "अग्निवर्धकं लघ्वन्नं ग्रीष्मे शीतलं हितम्" — In summer, food that is light and cooling is what the body needs.
+- For Varsha: "वर्षासु अग्निबलं हीनं लघ्वशनं प्रशस्यते" — In monsoon, digestive strength is low; light meals are praised.
+- For Sharad: "शरदि शीतलं स्वादु तिक्तं पित्तहरं हितम्" — In autumn, cooling, sweet, and bitter foods that pacify Pitta are beneficial.
+- For Hemanta: "हेमन्ते बलवान् अग्निः गुरुस्निग्धं हितं भवेत्" — In early winter, the digestive fire is strong; heavier and oilier foods suit the body.
+- For Shishira: "शिशिरे रूक्षशीतं वायुप्रकोपकारकम्" — In late winter, dry and cold conditions stir up Vata.
+- For Vasanta: "वसन्ते कफजो रोगः व्यायामेन निवार्यते" — In spring, Kapha-related ailments are eased by movement.
+- Universal: "हितभुक् मितभुक् ऋतभुक्" — Eat wholesomely, eat moderately, eat in tune with the season.
+- Universal: "अन्नं ब्रह्मेति व्यजानात्" — Food is verily Brahman (Taittiriya Upanishad).
+- Universal: "सर्वे भवन्तु सुखिनः" — May all be healthy.
 
 D6. PATHYA-APATHYA FOR COMMON CONCERNS
 
@@ -438,7 +488,7 @@ CRITICAL: The "YOUR ANCHORS" header label must NOT overlap the BREAKFAST label. 
 
 Weather curve:
 - Path from (25, end-y) to (675, end-y) with a smooth peak
-- For Greeshma: peak at x≈350, y=98. Path: \`M 25,222 C 110,228 175,150 320,98 C 460,82 540,165 675,222\`
+- For Greeshma: peak at x≈350, y=98. Path: `M 25,222 C 110,228 175,150 320,98 C 460,82 540,165 675,222`
 - Stroke: linear gradient from cool color → peak color → cool color, weight 2.8px, linecap round
 - Background fill: a subtle vertical gradient rectangle behind the peak zone
 
@@ -449,9 +499,9 @@ Activity zones (bottom band):
 
 F2. THE PROPORTIONAL TASTE SPECTRUM (Section 3)
 
-CSS Grid: \`grid-template-columns: 4fr 4fr 4fr 1.4fr 1.4fr 1.4fr; gap: 4px\`
+CSS Grid: `grid-template-columns: 4fr 4fr 4fr 1.4fr 1.4fr 1.4fr; gap: 4px`
 
-On screens under 540px: \`grid-template-columns: repeat(3, 1fr)\` and let the avoid row wrap to a second line.
+On screens under 540px: `grid-template-columns: repeat(3, 1fr)` and let the avoid row wrap to a second line.
 
 Cells:
 - Favored 3 (left): background khus-soft (#C8D2B3), padding 18px 6px 14px, min-height 84px
@@ -509,7 +559,7 @@ On mobile under 540px: single column, label on top.
 
 F7. COLOR SYSTEM (CSS variables)
 
-\`\`\`css
+```css
 --cream: #F7F1E5;
 --cream-deep: #EFE6D2;
 --sandstone: #E8DCC4;
@@ -526,7 +576,7 @@ F7. COLOR SYSTEM (CSS variables)
 --saffron-soft: #ECD9B2;
 --mulberry: #4A2E2A;
 --rule: rgba(26, 22, 17, 0.12);
-\`\`\`
+```
 
 Cover signature color changes by Ritu (see Part E5). All other colors stay constant across editions.
 
@@ -544,7 +594,7 @@ Subtle SVG noise overlay applied to body::before, opacity 0.5 on a 4% alpha nois
 
 F10. NO EM-DASHES, ANYWHERE
 
-The em-dash character (, , U+2014) must not appear in the output HTML. Not in body text, headings, SVG text, table cells, captions, or HTML attributes. Replace with: comma, period, parenthesis, colon, semicolon, or restructure the sentence. This applies to Sanskrit translations too (use ", " only in the source verse bank above for reference; when rendering, use a regular hyphen or restructure).
+The em-dash character (—, U+2014) must not appear in the output HTML. Not in body text, headings, SVG text, table cells, captions, or HTML attributes. Replace with: comma, period, parenthesis, colon, semicolon, or restructure the sentence. This applies to Sanskrit translations too (use "—" only in the source verse bank above for reference; when rendering, use a regular hyphen or restructure).
 
 ============================================================================
 PART G. PERSONALISATION LEVERS (so each report feels uncannily theirs)
@@ -607,7 +657,7 @@ Sentence length target: average under 18 words. No sentence over 28 words.
 PART J. THE OUTPUT
 ============================================================================
 
-You produce ONLY the HTML, starting with \`<!DOCTYPE html>\` and ending with \`</html>\`. No preamble, no commentary, no code fences, no explanation. The HTML is the entire response. The Vercel function pipes your raw response directly into the rendering layer.
+You produce ONLY the HTML, starting with `<!DOCTYPE html>` and ending with `</html>`. No preamble, no commentary, no code fences, no explanation. The HTML is the entire response. The Vercel function pipes your raw response directly into the rendering layer.
 
 If a user profile contains fields you cannot interpret, default to safe generic options. If the user has a serious medical condition, add a single italic line at the bottom of Section 7: "This blueprint is a nutrition guide, not medical advice. Please consult your doctor before changes."
 
@@ -690,4 +740,306 @@ The full HTML template, with [[SLOT_NAME]] placeholders, is provided in the user
 - [[FOOTER_NEXT_EDITION_VEDIC_MONTH]]
 - [[FOOTER_NEXT_EDITION_RITU]]
 - [[FOOTER_NEXT_DELIVERY_DATE]]
-`;
+```
+
+---
+
+## 3. THE USER MESSAGE TEMPLATE
+
+```typescript
+const userMessage = `Generate the MAASIK monthly blueprint for the following user.
+
+<user_profile>
+  <name>${user.full_name}</name>
+  <first_name>${user.full_name.split(' ')[0]}</first_name>
+  <age>${user.age}</age>
+  <gender>${user.gender}</gender>
+  <city>${user.city}</city>
+  <region>${user.region}</region>
+  <height_cm>${user.height_cm}</height_cm>
+  <weight_kg>${user.weight_kg}</weight_kg>
+  <bmi>${user.bmi}</bmi>
+  <bmi_category>${getBmiCategory(user.bmi)}</bmi_category>
+
+  <prakriti_internal_only>${user.prakriti_label}</prakriti_internal_only>
+  <vata_score>${user.vata_score}</vata_score>
+  <pitta_score>${user.pitta_score}</pitta_score>
+  <kapha_score>${user.kapha_score}</kapha_score>
+
+  <primary_goals>${user.primary_goals.join(', ')}</primary_goals>
+  <goal_specifics>${user.goal_specifics || 'not specified'}</goal_specifics>
+
+  <diet_type>${user.diet_type}</diet_type>
+  <favorite_foods>${user.favorite_foods || 'not specified'}</favorite_foods>
+  <disliked_foods>${user.disliked_foods || 'none'}</disliked_foods>
+  <allergies>${user.allergies || 'none'}</allergies>
+  <medical_conditions>${user.medical_conditions || 'none'}</medical_conditions>
+
+  <sleep_time>${user.sleep_time || '11:00 PM'}</sleep_time>
+  <wake_time>${user.wake_time || '06:30 AM'}</wake_time>
+  <work_type>${user.work_type}</work_type>
+  <stress_level>${user.stress_level}</stress_level>
+  <meal_timing_pattern>${user.meal_timing_pattern}</meal_timing_pattern>
+
+  <expectations>${user.expectations || 'general wellness'}</expectations>
+</user_profile>
+
+<vedic_month_context>
+  <vedic_month>${month.vedic_month}</vedic_month>
+  <paksha>${month.paksha}</paksha>
+  <vikram_samvat>${month.vikram_samvat}</vikram_samvat>
+  <ritu>${month.ritu}</ritu>
+  <gregorian_start>${month.gregorian_start}</gregorian_start>
+  <gregorian_end>${month.gregorian_end}</gregorian_end>
+  <is_adhik_maas>${month.is_adhik_maas}</is_adhik_maas>
+  <month_descriptor>${getMonthDescriptor(month)}</month_descriptor>
+  <next_vedic_month>${month.next_vedic_month}</next_vedic_month>
+  <next_ritu>${month.next_ritu}</next_ritu>
+  <next_delivery_date>${month.next_delivery_date}</next_delivery_date>
+</vedic_month_context>
+
+<edition_number>${editionNumber}</edition_number>
+<generation_date>${new Date().toISOString().split('T')[0]}</generation_date>
+<previous_word_origins_used>${previousWordOriginsList.join(', ') || 'none'}</previous_word_origins_used>
+
+<output_template>
+${HTML_TEMPLATE}
+</output_template>
+
+Produce the complete HTML now, replacing every [[SLOT_NAME]] placeholder. Return only the HTML, no preamble.`;
+```
+
+The `previous_word_origins_used` field is read from the user's `maasik_reports` table and tells Claude which Sanskrit cards have appeared in this user's prior 3 editions, so Claude rotates correctly.
+
+---
+
+## 4. HELPER FUNCTIONS
+
+```typescript
+function getBmiCategory(bmi: number): string {
+  if (bmi < 18.5) return 'Underweight';
+  if (bmi < 23) return 'Normal (Indian)';
+  if (bmi < 27.5) return 'Overweight (Indian)';
+  return 'Obese (Indian)';
+}
+
+function getMonthDescriptor(month: VedicMonth): string {
+  const descriptors: Record<string, string> = {
+    'Chaitra': 'The Vedic new year, the awakening of spring',
+    'Vaishakha': 'Late spring, warming, summer fruits arrive',
+    'Jyeshtha': "The eldest month, peak summer's senior heat",
+    'Ashadha': 'High summer melting into early monsoon',
+    'Shravana': 'The heart of monsoon, sacred to Lord Shiva',
+    'Bhadrapada': 'Late monsoon, festivals of harvest and devotion',
+    'Ashvina': 'Autumn begins, Navratri illuminates the air',
+    'Kartika': 'The month of Diwali, light returning, harvest gratitude',
+    'Margashirsha': 'Early winter, the cold settles, agni rises',
+    'Pausha': 'Deep winter, the body conserves and builds',
+    'Magha': 'Late winter, the longest nights begin to shorten',
+    'Phalguna': 'Pre-spring, Holi colours the cold, the year ends'
+  };
+  return descriptors[month.vedic_month] || `The Vedic month of ${month.vedic_month}`;
+}
+
+function getRituColor(ritu: string): { primary: string; accent: string } {
+  const colorMap: Record<string, { primary: string; accent: string }> = {
+    'Greeshma': { primary: '#B85C3A', accent: '#C99A4D' },
+    'Varsha': { primary: '#5A6F4D', accent: '#7E8B9E' },
+    'Sharad': { primary: '#C99A4D', accent: '#E8DCC4' },
+    'Hemanta': { primary: '#8E3F26', accent: '#4A2E2A' },
+    'Shishira': { primary: '#3D4F6B', accent: '#C99A4D' },
+    'Vasanta': { primary: '#6B7F4F', accent: '#C99A4D' }
+  };
+  return colorMap[ritu] || { primary: '#B85C3A', accent: '#C99A4D' };
+}
+```
+
+---
+
+## 5. THE HTML TEMPLATE (REPORT SHELL)
+
+The full HTML template is stored as a separate file at `lib/maasik/report-template-v2.html`. The template is the validated v4 sample with placeholders inserted at every content slot, the previously identified visual glitches fixed (day-chart label overlap, fire-flow icon clarity), and Ritu-dependent style hooks. See the working sample at `/mnt/user-data/outputs/MAASIK_Jyeshtha_v4_sample.html` for the validated source structure.
+
+Key implementation notes:
+- The template uses Google Fonts (Fraunces, Newsreader, Manrope). Self-host these for production to remove the runtime dependency.
+- The paper-grain SVG noise is inlined as a data URI in CSS to avoid an external request.
+- The horizontal day chart SVG is parameterized: Claude generates the full SVG block per edition, using the F1 spec, with anchor positions calculated from the user's actual sleep/wake times.
+- The activity-zone colors and labels switch by Ritu (see Part E).
+
+---
+
+## 6. INTEGRATION CODE
+
+The Vercel function structure remains unchanged from v1. Updates:
+
+```typescript
+// /app/api/generate-report/route.ts
+import Anthropic from '@anthropic-ai/sdk';
+
+const SYSTEM_PROMPT = readFileSync('lib/maasik/system-prompt-v2.txt', 'utf-8');
+const HTML_TEMPLATE = readFileSync('lib/maasik/report-template-v2.html', 'utf-8');
+const PROMPT_VERSION = 'v2.0';
+
+export async function POST(req: NextRequest) {
+  const { userId, vedicMonthId } = await req.json();
+  
+  const user = await getUserById(userId);
+  const month = await getVedicMonthById(vedicMonthId);
+  const editionNumber = await getNextEditionNumber(userId);
+  const previousWordOrigins = await getPreviousWordOrigins(userId, 3);
+  
+  // Pre-flight validation
+  if (!validateUserForGeneration(user)) {
+    return NextResponse.json({ error: 'User not ready' }, { status: 400 });
+  }
+  
+  const userMessage = buildUserMessage(user, month, editionNumber, previousWordOrigins);
+  
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const startTime = Date.now();
+  
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 18000,
+    temperature: 0.4,
+    system: [{
+      type: 'text',
+      text: SYSTEM_PROMPT,
+      cache_control: { type: 'ephemeral' }  // V1 onwards, the system prompt is large enough that caching pays off
+    }],
+    messages: [{ role: 'user', content: userMessage }]
+  });
+  
+  const html = response.content[0].type === 'text' ? response.content[0].text : '';
+  const generationMs = Date.now() - startTime;
+  const cost = computeCost(response.usage);
+  
+  // Post-flight validation
+  const validation = validateGeneratedHtml(html, user);
+  if (!validation.valid) {
+    await logFailure(userId, vedicMonthId, html, validation.errors);
+    return NextResponse.json({ error: 'Validation failed', details: validation.errors }, { status: 500 });
+  }
+  
+  await saveReport({
+    user_id: userId,
+    vedic_month_id: vedicMonthId,
+    edition_number: editionNumber,
+    html,
+    word_origins_used: extractWordOriginsFromHtml(html),
+    archetype_name: extractArchetypeFromHtml(html),
+    generation_prompt_version: PROMPT_VERSION,
+    generation_cost_inr: cost,
+    generation_ms: generationMs,
+    status: 'generated'
+  });
+  
+  return NextResponse.json({ html, edition_number: editionNumber });
+}
+```
+
+---
+
+## 7. QUALITY GATES AND FALLBACKS
+
+### Pre-generation validation
+- User has `subscription_status = 'active'` OR (`'pending'` AND `first_payment_at` is set)
+- User has completed prakriti assessment (`prakriti_label IS NOT NULL`)
+- User has non-null email and first name
+- Current Vedic month exists in `vedic_calendar`
+- No existing 'sent' or 'delivered' report for this user + month
+
+### Post-generation validation
+- HTML starts with `<!DOCTYPE html>` and ends with `</html>`
+- No placeholder `[[SLOT_NAME]]` strings remain (regex `\[\[[A-Z_0-9]+\]\]`)
+- User's first name appears at least twice
+- HTML length is 12000-50000 characters
+- Zero em-dash characters (`—`, U+2014) anywhere in body
+- Archetype name is present and follows naming rules (starts with "The", 2-3 words)
+- Exactly 5 anchors in Section 5
+- Exactly 6 grocery cards in Section 6
+- Word-origin cards: exactly 3 OR 4 present, all from D3 bank
+- The user's `disliked_foods` and `allergies` do NOT appear in any food recommendation row
+- The user's `favorite_foods` appear in EITHER the eat-freely OR the avoid column (not absent entirely)
+- The "tend to" rule: regex check that "Pitta-dominant", "Kapha-dominant", "Vata-dominant", "your dosha", "your constitution" do NOT appear
+
+If any check fails: store the broken HTML in `maasik_reports.failed_html`, mark status `'failed'`, alert via email, do not deliver.
+
+### Prompt versioning
+Every Claude call records `generation_prompt_version`. v2.0 is this release. Patches bump minor (v2.1). Breaking schema changes bump major (v3.0).
+
+### Cost monitoring
+At Sonnet 4.6 pricing (~₹0.40 base, dropping to ~₹0.08 with cache hits after the first call per cache window), the new report is approximately 1.5-2× v1's cost due to longer prompt and longer output. Target: under ₹1.00 per report. Supabase alert on monthly aggregate above ₹1500.
+
+---
+
+## 8. TESTING CHECKLIST
+
+Run before any prompt change ships to production.
+
+### Test 1: Hrishikesh, Greeshma
+Profile from this conversation. Expected: archetype "The Anchored Builder" (or close variant), Pune mapped to heat curve, mango/coconut emphasis, lunch-big-dinner-small lever.
+
+### Test 2: Vata-dominant cold-prone user, Hemanta
+30-year-old female, Bengaluru, Vata-dominant, irregular digestion, prefers warm foods. Expected: archetype "The Restless Scholar" or "The Wandering Mind", winter warming emphasis, archetype's "season asks: Nourish & Build".
+
+### Test 3: Kapha-dominant overweight user, Vasanta
+35-year-old male, Delhi, Kapha-dominant, wants weight loss, low energy. Expected: archetype "The Slow River" or "The Gentle Giant", spring lightening emphasis, "Move & Lighten" season ask.
+
+### Test 4: Non-vegetarian user, Hemanta
+28-year-old male, Mumbai, Pitta-Kapha, non-veg, muscle building goal. Expected: meat/fish recommendations appropriate to Hemanta's strong Agni.
+
+### Test 5: Diabetic user, any Ritu
+45-year-old, Type 2 diabetes mentioned. Expected: bitter foods emphasised, sweet fruits limited, medical disclaimer present.
+
+### Test 6: Allergy edge case
+Profile with allergies "dairy, gluten, peanuts". Expected: zero dairy/wheat/groundnut references in any food row, validation passes.
+
+### Test 7: All 6 Ritus, same user
+Generate Hrishikesh's report 6 times, once per Ritu. Verify:
+- Archetype name stays constant across all 6
+- "This season asks" cell differs across all 6
+- Section 2 title differs across all 6
+- Lever line differs across all 6
+- Cover color signature differs across all 6
+- Word-origin cards rotate (no two consecutive editions share Sanskrit terms)
+
+### Test 8: Adhik Maas
+Verify Adhik Maas edition is generated and cover labels it.
+
+### Test 9: Archetype library coverage
+Generate 30 reports with varied profiles. Verify at least 10 of the 15 library archetypes get selected, and that "new archetype" invention happens at most 2-3 times (i.e., the library covers the majority).
+
+### Test 10: Visual fidelity
+Open generated HTML on iPhone 12 and Android Pixel 6 viewports. Verify:
+- Day chart text labels never overlap
+- Taste spectrum readable on mobile
+- Archetype card renders centered with corner ornaments visible
+- All Sanskrit displays correctly (Devanagari font fallback works)
+
+For each test: save HTML and screenshot, manually review against checklist, refine the prompt if needed.
+
+---
+
+## 9. WHAT THIS UNLOCKS
+
+With v2 live, MAASIK becomes the IP-defining product. The archetype is the thing people screenshot and quote. The word-origin cards turn each edition into a small Sanskrit-curiosity gift. The lever line becomes the user's monthly mantra.
+
+Downstream products that build on this:
+- An Archetype Card you can share standalone (just Section 1, generated free, used as a top-of-funnel hook)
+- A retrospective at year-end (Sankalpa Saal) showing how the user's "season asks" evolved across 12 editions
+- A LinkedIn post template generator that turns one edition into 4 shareable insights
+
+---
+
+## 10. WHAT I OWE YOU NEXT
+
+- **D.1:** The v2 HTML template file (`report-template-v2.html`) extracted from the v4 sample, with all [[SLOT_NAME]] placeholders inserted at every dynamic point. This is mechanical work; I will generate it next.
+- **D.2:** The system prompt extracted as a plain `.txt` file for clean injection into the Vercel function.
+- **E:** The Vercel serverless function code, including email-sending and cron-triggered monthly auto-generation, updated for v2's longer prompt and caching.
+- **F:** Razorpay setup checklist.
+- **B:** Tally form spec.
+
+Recommended order: D.1 → D.2 → E → F → B. The first two are quick mechanical extractions from the work we already did.
+
+Confirm and I will proceed to D.1.
