@@ -92,6 +92,88 @@ export default function ConfirmationScreen() {
           </span>
         </div>
 
+        <div
+          style={{
+            border: '1px solid rgba(200, 75, 49, 0.3)',
+            borderRadius: 14,
+            padding: '22px 22px 24px',
+            background: 'rgba(253, 248, 238, 0.7)',
+            marginBottom: 28,
+          }}
+        >
+          <p
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: '#C84B31',
+              marginBottom: 10,
+            }}
+          >
+            Meanwhile · Join the NeoRishi Tribe
+          </p>
+          <p
+            className="font-display"
+            style={{
+              fontSize: 20,
+              lineHeight: 1.25,
+              color: '#2D2A26',
+              fontWeight: 500,
+              letterSpacing: '-0.01em',
+              marginBottom: 12,
+            }}
+          >
+            While you wait, step into the <em style={{ fontStyle: 'italic' }}>inner circle</em>.
+          </p>
+          <ul
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: '0 0 16px',
+              fontSize: 14,
+              lineHeight: 1.55,
+              color: '#4a3f31',
+            }}
+          >
+            <li style={{ marginBottom: 6 }}>· Stay updated with the latest from NeoRishi</li>
+            <li>· Early access to upcoming NeoRishi products in beta</li>
+          </ul>
+          <a
+            href="https://chat.whatsapp.com/D5SPmDOCsVqJZ7ISV9icAm"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'block',
+              textAlign: 'center',
+              background: '#C84B31',
+              color: '#FAF5E9',
+              padding: '13px 18px',
+              borderRadius: 10,
+              fontSize: 15,
+              fontWeight: 500,
+              textDecoration: 'none',
+              letterSpacing: '0.01em',
+              boxShadow: '0 6px 18px rgba(200, 75, 49, 0.18)',
+            }}
+          >
+            Join the WhatsApp community →
+          </a>
+          <p
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: '#8a7d6a',
+              textAlign: 'center',
+              marginTop: 12,
+            }}
+          >
+            Free · For paid members only
+          </p>
+        </div>
+
         <a
           href="https://maasik.neorishi.io"
           style={{
