@@ -53,8 +53,8 @@ export function validateGeneratedHtml(
   }
 
   // 4. Length window.
-  if (html.length < 12000 || html.length > 50000) {
-    errors.push(`html_length: ${html.length} chars (must be 12000-50000)`);
+  if (html.length < 12000 || html.length > 55000) {
+    errors.push(`html_length: ${html.length} chars (must be 12000-55000)`);
   }
 
   // 5. Zero em-dashes anywhere in the HTML (including SVG text, attributes).
@@ -135,7 +135,53 @@ export function validateGeneratedHtml(
     }
   }
 
+  // 15. Cover gradient integrity (v4): the .cover rule must use literal rgba()
+  // values, not the abstract var(--cover-primary)/var(--cover-accent) indirection
+  // that v2 used. Defends against Claude pasting placeholder text into the CSS.
+  validateCoverGradient(html, errors);
+
+  // 16. Heat-flow SVGs must not contain literal `>FIRE<` text. The v4 design
+  // reference regresses to text-in-shape, but Part F3 forbids it. Outline body
+  // silhouettes only.
+  validateHeatFlowSvgs(html, errors);
+
   return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Cover gradient v4 check: the .cover background must contain two rgba()
+ * literals (the two radial-gradient stops at 70% 20% and 30% 80%), and must
+ * not reference the legacy var(--cover-primary) / var(--cover-accent).
+ */
+function validateCoverGradient(html: string, errors: string[]): void {
+  const coverRuleMatch = html.match(/\.cover\s*\{[^}]*background:\s*([^;]+);/);
+  if (!coverRuleMatch) {
+    errors.push('cover_gradient: .cover rule with background declaration not found');
+    return;
+  }
+  const bg = coverRuleMatch[1];
+  const rgbaCount = (bg.match(/rgba\s*\(/g) || []).length;
+  if (rgbaCount < 2) {
+    errors.push(
+      `cover_gradient: expected >= 2 rgba() literals in .cover background, found ${rgbaCount}`,
+    );
+  }
+  if (/var\(--cover-(primary|accent)\)/.test(bg)) {
+    errors.push('cover_gradient: legacy var(--cover-primary)/var(--cover-accent) residue present');
+  }
+}
+
+/**
+ * Heat-flow SVGs must use body-silhouette icons (no text inside filled shapes).
+ * Specifically, the substring `>FIRE<` (literal text node) must not appear in
+ * either [[HEAT_FLOW_LEFT_ICON_SVG]] or [[HEAT_FLOW_RIGHT_ICON_SVG]] output.
+ */
+function validateHeatFlowSvgs(html: string, errors: string[]): void {
+  const heatFlowBlock = html.match(/<div class="heat-flow"[\s\S]*?<\/div>\s*<\/div>/);
+  const scope = heatFlowBlock ? heatFlowBlock[0] : html;
+  if (/>FIRE</.test(scope)) {
+    errors.push('heat_flow_text: literal `>FIRE<` text inside heat-flow SVG; use body silhouette per Part F3');
+  }
 }
 
 /**

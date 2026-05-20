@@ -44,7 +44,12 @@ function buildValidHtml(opts: { padding?: number } = {}): string {
   const padding = 'x'.repeat(pad);
   return `<!DOCTYPE html>
 <html>
-<head><title>Maasik report for Hrishikesh</title></head>
+<head>
+<title>Maasik report for Hrishikesh</title>
+<style>
+  .cover { background: radial-gradient(ellipse 80% 60% at 70% 20%, rgba(201, 154, 77, 0.18), transparent 55%), radial-gradient(ellipse 100% 70% at 30% 80%, rgba(184, 92, 58, 0.12), transparent 60%), var(--cream); }
+</style>
+</head>
 <body>
   <section class="cover">
     <div class="cover-quote-eng">"In summer, light cooling food suits the body."</div>
@@ -249,6 +254,36 @@ const cases: Case[] = [
       assert(
         result.errors.some((e) => e.startsWith('sanskrit_script:') && e.includes('closing_verse')),
         `expected sanskrit_script closing_verse error; got:\n  ${result.errors.join('\n  ')}`,
+      );
+    },
+  },
+  {
+    name: 'j) legacy var(--cover-primary) residue fails (v4 check #15)',
+    run: () => {
+      const html = buildValidHtml().replace(
+        'rgba(184, 92, 58, 0.12)',
+        'var(--cover-primary)',
+      );
+      const result = validateGeneratedHtml(html, baseUser);
+      assert(!result.valid, 'expected invalid');
+      assert(
+        result.errors.some((e) => e.startsWith('cover_gradient:')),
+        `expected cover_gradient error; got:\n  ${result.errors.join('\n  ')}`,
+      );
+    },
+  },
+  {
+    name: 'k) literal >FIRE< text inside heat-flow SVG fails (v4 check #16)',
+    run: () => {
+      const html = buildValidHtml().replace(
+        '<section>\n    <div class="section-num">02 . WHAT IS HAPPENING</div>',
+        '<section>\n    <div class="section-num">02 . WHAT IS HAPPENING</div>\n    <div class="heat-flow"><svg><circle cx="20" cy="20" r="10"/><text>FIRE</text></svg></div>',
+      );
+      const result = validateGeneratedHtml(html, baseUser);
+      assert(!result.valid, 'expected invalid');
+      assert(
+        result.errors.some((e) => e.startsWith('heat_flow_text:')),
+        `expected heat_flow_text error; got:\n  ${result.errors.join('\n  ')}`,
       );
     },
   },

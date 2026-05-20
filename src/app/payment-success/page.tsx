@@ -1,7 +1,7 @@
 'use client';
 
-import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   AlertCircle,
   CheckCircle2,
@@ -15,12 +15,24 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const WHATSAPP_COMMUNITY_URL = 'https://chat.whatsapp.com/D5SPmDOCsVqJZ7ISV9icAm';
+const PENDING_REDIRECT_DELAY_MS = 30000;
 
 function PaymentSuccessInner() {
+  const router = useRouter();
   const params = useSearchParams();
   const status = params.get('razorpay_payment_link_status');
   const paymentId = params.get('razorpay_payment_id');
   const isPaid = status === 'paid' && Boolean(paymentId);
+
+  // Give the webhook ~30s to record the payment and kick off generation, then
+  // hand the user over to /report-pending which polls for status until ready.
+  useEffect(() => {
+    if (!isPaid || !paymentId) return;
+    const t = setTimeout(() => {
+      router.push(`/report-pending?payment_id=${encodeURIComponent(paymentId)}`);
+    }, PENDING_REDIRECT_DELAY_MS);
+    return () => clearTimeout(t);
+  }, [isPaid, paymentId, router]);
 
   if (!isPaid) {
     return (
@@ -103,20 +115,20 @@ function PaymentSuccessInner() {
               <div className="flex items-center gap-2">
                 <Users className="h-4 w-4 text-terracotta" aria-hidden />
                 <p className="font-mono text-[10px] text-terracotta tracking-widest2 uppercase">
-                  One last step · Join the NeoRishi Tribe
+                  Meanwhile · Join the NeoRishi Tribe
                 </p>
               </div>
               <p className="font-display text-[20px] leading-tight text-ink mt-3">
-                The <em className="italic">inner circle</em> for paid members.
+                While you wait, step into the <em className="italic">inner circle</em>.
               </p>
               <ul className="mt-3 space-y-2 font-body text-[13px] text-ink-soft leading-relaxed">
                 <li className="flex items-start gap-2">
-                  <Gift className="h-4 w-4 text-terracotta shrink-0 mt-0.5" aria-hidden />
-                  Bonus gifts dropped only to community members
+                  <Sparkles className="h-4 w-4 text-terracotta shrink-0 mt-0.5" aria-hidden />
+                  Stay updated with the latest from NeoRishi
                 </li>
                 <li className="flex items-start gap-2">
-                  <Sparkles className="h-4 w-4 text-terracotta shrink-0 mt-0.5" aria-hidden />
-                  Beta access to future features before anyone else
+                  <Gift className="h-4 w-4 text-terracotta shrink-0 mt-0.5" aria-hidden />
+                  Early access to upcoming NeoRishi products in beta
                 </li>
               </ul>
               <Button

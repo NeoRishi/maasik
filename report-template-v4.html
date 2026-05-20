@@ -1,19 +1,4 @@
-/**
- * MAASIK Report Template v4.0
- *
- * Source: report-template-v4.html (immutable; do not edit this string directly)
- * Placeholder count: 95 unique tokens
- * See MAASIK_claude_api_prompt_v2.md Part J for the full slot inventory.
- *
- * v4 delta vs v2: cover gradient slots emit literal rgba() values directly
- * (drops --cover-primary / --cover-accent CSS-variable indirection).
- *
- * This template is consumed by lib/maasik/system-prompt.ts and lib/maasik/user-message.ts.
- * Claude fills the placeholders during generation; the route validates output.
- */
-export const HTML_TEMPLATE_VERSION = 'v4.0';
-
-export const HTML_TEMPLATE = `<!--
+<!--
   MAASIK Report Template v4.0
   =====================================================
   PURPOSE: This is the HTML shell Claude fills in to produce each monthly edition.
@@ -30,7 +15,7 @@ export const HTML_TEMPLATE = `<!--
   - Day chart label overlap (YOUR ANCHORS removed, BREAKFAST repositioned)
   - Fire-flow icons (no text inside filled shapes; outline body silhouettes used)
 
-  USAGE: Wrap in TypeScript as \`export const HTML_TEMPLATE = \\\`...\\\`\`
+  USAGE: Wrap in TypeScript as `export const HTML_TEMPLATE = \`...\``
   in lib/maasik/html-template.ts. Escape any literal backticks (there should be none).
 -->
 <!DOCTYPE html>
@@ -484,7 +469,7 @@ export const HTML_TEMPLATE = `<!--
   .avoid-tight ul { list-style: none; padding: 0; }
   .avoid-tight li { padding: 8px 0; font-size: 14px; color: var(--ink-soft); border-bottom: 1px dashed var(--rule); }
   .avoid-tight li:last-child { border-bottom: 0; }
-  .avoid-tight li::before { content: "\\2717  "; color: var(--terracotta); font-weight: 700; }
+  .avoid-tight li::before { content: "\2717  "; color: var(--terracotta); font-weight: 700; }
 
   /* ------- SECTION 06: GROCERY ------- */
 
@@ -682,7 +667,7 @@ export const HTML_TEMPLATE = `<!--
         <div class="hf-state">[[HEAT_FLOW_LEFT_STATE]]</div>
       </div>
 
-      <div class="hf-arrow" aria-hidden="true">\\u2192</div>
+      <div class="hf-arrow" aria-hidden="true">\u2192</div>
 
       <div class="hf-side">
         <div class="hf-icon">
@@ -943,7 +928,7 @@ export const HTML_TEMPLATE = `<!--
       The 6th card's title varies by Ritu (e.g., "Greeshma cooling specials").
 
       Each grocery card receives a list of li elements via the items placeholder, like:
-        <li>Moong dal \\u00b7 500 g</li>
+        <li>Moong dal \u00b7 500 g</li>
     -->
     <div class="grocery-grid">
       <div class="grocery-card">
@@ -1008,6 +993,3 @@ export const HTML_TEMPLATE = `<!--
 
 </body>
 </html>
-`;
-
-export const HTML_TEMPLATE_PLACEHOLDER_COUNT = 95;

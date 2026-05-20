@@ -87,13 +87,15 @@ export async function GET(request: NextRequest) {
   if (htmlCloseIdx >= 0) html = html.slice(0, htmlCloseIdx + '</html>'.length);
 
   const validation = validateGeneratedHtml(html, testUser);
+  const duration_ms = Date.now() - start;
   if (!validation.valid) {
-    console.log(`[smoke-test] done in ${Date.now() - start}ms`);
-    return NextResponse.json({ errors: validation.errors }, { status: 422 });
+    return NextResponse.json({ errors: validation.errors, duration_ms }, { status: 422 });
   }
 
-  console.log(`[smoke-test] done in ${Date.now() - start}ms`);
   return new NextResponse(html, {
-    headers: { 'Content-Type': 'text/html' },
+    headers: {
+      'Content-Type': 'text/html',
+      'X-Duration-Ms': String(duration_ms),
+    },
   });
 }

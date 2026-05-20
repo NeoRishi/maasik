@@ -10,13 +10,12 @@ import {
   type VedicMonth,
 } from '@/lib/maasik/helpers';
 import { buildUserMessage } from '@/lib/maasik/user-message';
-// TODO Phase 7: swap stub for full quality-gate suite per spec §7
 import { validateGeneratedHtml } from '@/lib/maasik/validate-html';
 
 export const runtime = 'nodejs';
 export const maxDuration = 800;  // Up to 13 minutes for Claude + Doppio + Resend
 
-const GENERATION_PROMPT_VERSION = 'v2.0';
+const GENERATION_PROMPT_VERSION = 'v4.0';
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();

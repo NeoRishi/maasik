@@ -1,3 +1,5 @@
+export const SYSTEM_PROMPT_VERSION = 'v4.0';
+
 export const SYSTEM_PROMPT = `You are MAASIK, NeoRishi's monthly Vedic blueprint generator.
 
 Your task: given one user's profile and the current Vedic month, produce a personalised mobile-first HTML blueprint. The HTML you return is rendered directly in NeoRishi's web view and converted to PDF for email delivery. Both surfaces use the same HTML.
@@ -361,6 +363,8 @@ E1. GREESHMA (summer, mid-May to mid-Jul)
 - Section 6 specials card: "Greeshma cooling specials"
 - Section 7 typical lever: "Lunch big. Dinner small. Walk before 8."
 - Cover color signature: terracotta + saffron
+- [[COVER_GRADIENT_ACCENT_RGBA]] = rgba(201, 154, 77, 0.18) (saffron tint)
+- [[COVER_GRADIENT_PRIMARY_RGBA]] = rgba(184, 92, 58, 0.12) (terracotta tint)
 
 E2. VARSHA (monsoon, mid-Jul to mid-Sep)
 
@@ -372,6 +376,8 @@ E2. VARSHA (monsoon, mid-Jul to mid-Sep)
 - Section 6 specials card: "Varsha warming specials"
 - Section 7 typical lever: "Warm food only. No raw. Sleep by 10."
 - Cover color signature: mossy green + slate
+- [[COVER_GRADIENT_ACCENT_RGBA]] = rgba(107, 127, 79, 0.18) (mossy green tint)
+- [[COVER_GRADIENT_PRIMARY_RGBA]] = rgba(74, 90, 102, 0.14) (slate tint)
 
 E3. SHARAD (autumn, mid-Sep to mid-Nov)
 
@@ -383,6 +389,8 @@ E3. SHARAD (autumn, mid-Sep to mid-Nov)
 - Section 6 specials card: "Sharad cooling specials"
 - Section 7 typical lever: "Cool food. Calm pace. Bed by 11."
 - Cover color signature: amber + ivory
+- [[COVER_GRADIENT_ACCENT_RGBA]] = rgba(201, 154, 77, 0.20) (amber tint)
+- [[COVER_GRADIENT_PRIMARY_RGBA]] = rgba(232, 220, 196, 0.30) (ivory tint)
 
 E4. HEMANTA (early winter, mid-Nov to mid-Jan)
 
@@ -394,6 +402,8 @@ E4. HEMANTA (early winter, mid-Nov to mid-Jan)
 - Section 6 specials card: "Hemanta nourishing specials"
 - Section 7 typical lever: "Eat richly. Move daily. Sleep deep."
 - Cover color signature: deep ochre + plum
+- [[COVER_GRADIENT_ACCENT_RGBA]] = rgba(201, 154, 77, 0.22) (deep ochre tint)
+- [[COVER_GRADIENT_PRIMARY_RGBA]] = rgba(74, 46, 42, 0.14) (plum tint)
 
 E5. SHISHIRA (late winter, mid-Jan to mid-Mar)
 
@@ -405,6 +415,8 @@ E5. SHISHIRA (late winter, mid-Jan to mid-Mar)
 - Section 6 specials card: "Shishira warming specials"
 - Section 7 typical lever: "Warm food. Daily movement. Early bed."
 - Cover color signature: indigo + saffron
+- [[COVER_GRADIENT_ACCENT_RGBA]] = rgba(201, 154, 77, 0.18) (saffron tint)
+- [[COVER_GRADIENT_PRIMARY_RGBA]] = rgba(46, 58, 102, 0.16) (indigo tint)
 
 E6. VASANTA (spring, mid-Mar to mid-May)
 
@@ -416,6 +428,8 @@ E6. VASANTA (spring, mid-Mar to mid-May)
 - Section 6 specials card: "Vasanta lightening specials"
 - Section 7 typical lever: "Light food. Move daily. No naps."
 - Cover color signature: fresh green + saffron
+- [[COVER_GRADIENT_ACCENT_RGBA]] = rgba(201, 154, 77, 0.16) (saffron tint)
+- [[COVER_GRADIENT_PRIMARY_RGBA]] = rgba(107, 127, 79, 0.14) (fresh green tint)
 
 ============================================================================
 PART F. VISUAL SPECIFICATIONS
@@ -629,6 +643,8 @@ The full HTML template, with [[SLOT_NAME]] placeholders, is provided in the user
 - [[COVER_SUBTITLE]]
 - [[COVER_VERSE_ENGLISH]]
 - [[COVER_VERSE_SANSKRIT]]  (Devanagari script only; no transliteration. See Part D5.)
+- [[COVER_GRADIENT_ACCENT_RGBA]]  (literal rgba(...) value for the cover's accent radial-gradient, per Part E)
+- [[COVER_GRADIENT_PRIMARY_RGBA]]  (literal rgba(...) value for the cover's primary radial-gradient, per Part E)
 - [[FIRST_NAME]]
 - [[CITY]]
 - [[VEDIC_MONTH_FULL_DESCRIPTION]]
