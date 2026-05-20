@@ -64,19 +64,116 @@ export async function POST(req: NextRequest) {
     // ---- 3. Check for existing report (with usable HTML to skip Claude during testing)
     const { data: existing } = await supabase
       .from('maasik_reports')
-      .select('id, delivery_status, report_html, issue_number, edition_number')
+      .select('id, delivery_status, report_html, issue_number, edition_number, report_pdf_storage_path')
       .eq('user_id', user_id)
       .eq('vedic_month', month.vedic_month)
       .eq('paksha', month.paksha)
       .eq('vikram_samvat', month.vikram_samvat)
       .maybeSingle();
 
-    // Short-circuit if already fully delivered
+    // A new payment landed for a month whose report was already generated and
+    // shipped (common when a user re-pays after a prior test, or pays a second
+    // time mid-month). Don't silently no-op, the user just paid and expects an
+    // email. Re-download the existing PDF and re-send via Resend, no Claude/
+    // Doppio cost. If the storage path is missing or download fails, log the
+    // miss so ops can backfill manually.
     if (existing && ['sent', 'delivered', 'opened'].includes(existing.delivery_status) && !force_regenerate) {
+      const existingEdition = existing.edition_number || existing.issue_number || 1;
+
+      if (!existing.report_pdf_storage_path) {
+        await supabase.from('maasik_events').insert({
+          user_id,
+          email: user.email,
+          event_type: 'report_resend_skipped',
+          event_source: 'generate-report',
+          event_data: {
+            report_id: existing.id,
+            vedic_month: month.vedic_month,
+            reason: 'no_storage_path',
+          },
+        });
+        return NextResponse.json({
+          ok: true,
+          already_sent: true,
+          resent: false,
+          reason: 'no_storage_path',
+          report_id: existing.id,
+        });
+      }
+
+      const { data: pdfBlob, error: downloadError } = await supabase.storage
+        .from('maasik-reports')
+        .download(existing.report_pdf_storage_path);
+
+      if (downloadError || !pdfBlob) {
+        await supabase.from('maasik_events').insert({
+          user_id,
+          email: user.email,
+          event_type: 'report_resend_skipped',
+          event_source: 'generate-report',
+          event_data: {
+            report_id: existing.id,
+            vedic_month: month.vedic_month,
+            reason: 'storage_download_failed',
+            error: downloadError?.message || 'no_blob',
+          },
+        });
+        return NextResponse.json({
+          ok: true,
+          already_sent: true,
+          resent: false,
+          reason: 'storage_download_failed',
+          report_id: existing.id,
+        });
+      }
+
+      const safeName = user.full_name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+      const pdfFilename = `MAASIK_${month.vedic_month}_${safeName}_${month.gregorian_start}.pdf`;
+      const resentBuffer = Buffer.from(await pdfBlob.arrayBuffer());
+
+      let resentResendId = '';
+      try {
+        resentResendId = await sendReportEmail({
+          to: user.email,
+          firstName: user.full_name.split(' ')[0],
+          vedicMonth: month.vedic_month,
+          ritu: month.ritu,
+          issueNumber: existingEdition,
+          pdfBuffer: resentBuffer,
+          pdfFilename,
+        });
+      } catch (emailErr: any) {
+        await sendInternalFailureAlert({
+          userEmail: user.email,
+          userId: user.id,
+          reportId: existing.id,
+          reason: `Resend (re-send path) failed: ${emailErr.message}`,
+        });
+        return NextResponse.json(
+          { error: 'Resend (re-send path) failed', details: emailErr.message },
+          { status: 500 },
+        );
+      }
+
+      await supabase.from('maasik_events').insert({
+        user_id,
+        email: user.email,
+        event_type: 'report_resent',
+        event_source: 'generate-report',
+        event_data: {
+          report_id: existing.id,
+          vedic_month: month.vedic_month,
+          edition_number: existingEdition,
+          resend_message_id: resentResendId,
+        },
+      });
+
       return NextResponse.json({
         ok: true,
         already_sent: true,
+        resent: true,
         report_id: existing.id,
+        resend_message_id: resentResendId,
       });
     }
 
