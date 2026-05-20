@@ -128,7 +128,7 @@ body {
     );
 }
 
-/* Subtle paper grain — applied via a utility class so any section can opt in.
+/* Subtle paper grain, applied via a utility class so any section can opt in.
    Uses an inline SVG turbulence so no extra HTTP request, no asset to host. */
 .paper-grain {
   position: relative;

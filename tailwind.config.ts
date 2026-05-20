@@ -41,6 +41,20 @@ const config: Config = {
   				DEFAULT: '#6b2a1a',
   				bg: '#fbf0ec'
   			},
+  			saffron: {
+  				DEFAULT: '#C99A4D',
+  				soft: '#ECD9B2',
+  				deep: '#A87E36'
+  			},
+  			khus: {
+  				DEFAULT: '#6B7F4F',
+  				soft: '#C8D2B3',
+  				deep: '#4F5F39'
+  			},
+  			mulberry: {
+  				DEFAULT: '#4A2E2A',
+  				deep: '#2E1C1A'
+  			},
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
@@ -140,12 +154,50 @@ const config: Config = {
   				'50%': {
   					transform: 'translateY(-8px) rotate(2deg)'
   				}
+  			},
+  			marquee: {
+  				from: {
+  					transform: 'translateX(0)'
+  				},
+  				to: {
+  					transform: 'translateX(calc(-100% - var(--gap)))'
+  				}
+  			},
+  			'marquee-vertical': {
+  				from: {
+  					transform: 'translateY(0)'
+  				},
+  				to: {
+  					transform: 'translateY(calc(-100% - var(--gap)))'
+  				}
+  			},
+  			shimmer: {
+  				'0%': {
+  					backgroundPosition: '0% 50%'
+  				},
+  				'100%': {
+  					backgroundPosition: '100% 50%'
+  				}
+  			},
+  			'soft-pulse': {
+  				'0%, 100%': {
+  					opacity: '0.5',
+  					transform: 'scale(1)'
+  				},
+  				'50%': {
+  					opacity: '1',
+  					transform: 'scale(1.4)'
+  				}
   			}
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-  			'moon-drift': 'moon-drift 18s ease-in-out infinite'
+  			'moon-drift': 'moon-drift 18s ease-in-out infinite',
+  			marquee: 'marquee var(--duration) linear infinite',
+  			'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
+  			shimmer: 'shimmer 4s ease-in-out infinite alternate',
+  			'soft-pulse': 'soft-pulse 2.4s ease-in-out infinite'
   		}
   	}
   },

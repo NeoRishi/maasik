@@ -13,6 +13,9 @@ interface WizardMCQInputProps {
   value: string | null;
   onChange: (value: string) => void;
   onAutoAdvance?: () => void;
+  /** Values that should NOT trigger auto-advance (typically the "Other" sentinel that reveals a text field). */
+  autoAdvanceSkipValues?: string[];
+  autoAdvanceDelayMs?: number;
   disabled?: boolean;
 }
 
@@ -29,6 +32,8 @@ export default function WizardMCQInput({
   value,
   onChange,
   onAutoAdvance,
+  autoAdvanceSkipValues,
+  autoAdvanceDelayMs = 450,
   disabled = false,
 }: WizardMCQInputProps) {
   const advanceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -36,9 +41,9 @@ export default function WizardMCQInput({
   const handleSelect = (optVal: string) => {
     if (disabled) return;
     onChange(optVal);
-    if (onAutoAdvance) {
+    if (onAutoAdvance && !autoAdvanceSkipValues?.includes(optVal)) {
       if (advanceTimer.current) clearTimeout(advanceTimer.current);
-      advanceTimer.current = setTimeout(onAutoAdvance, 280);
+      advanceTimer.current = setTimeout(onAutoAdvance, autoAdvanceDelayMs);
     }
   };
 
@@ -64,7 +69,7 @@ export default function WizardMCQInput({
               flexDirection: 'column',
               alignItems: 'flex-start',
               gap: 4,
-              padding: '14px 16px',
+              padding: '16px 18px',
               borderRadius: 12,
               border: isSelected
                 ? `2px solid ${TERRACOTTA_BORDER}`
@@ -73,7 +78,7 @@ export default function WizardMCQInput({
               cursor: 'pointer',
               textAlign: 'left',
               transition: 'all 0.15s ease',
-              minHeight: 56,
+              minHeight: 60,
               position: 'relative',
               width: '100%',
               fontFamily: 'inherit',
@@ -108,10 +113,10 @@ export default function WizardMCQInput({
             )}
             <span
               style={{
-                fontSize: 15,
+                fontSize: 'clamp(15px, 1.4vw, 17px)',
                 fontWeight: isSelected ? 600 : 500,
                 color: isSelected ? TERRACOTTA : INK,
-                lineHeight: 1.4,
+                lineHeight: 1.45,
                 paddingRight: isSelected ? 28 : 0,
               }}
             >

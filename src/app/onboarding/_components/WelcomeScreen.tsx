@@ -1,102 +1,132 @@
 'use client';
 
+import { relativeDaysAgo } from '../_lib/progress-storage';
+
 interface WelcomeScreenProps {
   onStart: () => void;
+  resumeAvailable?: { savedAt: number } | null;
+  onResume?: () => void;
+  onStartOver?: () => void;
 }
 
-export default function WelcomeScreen({ onStart }: WelcomeScreenProps) {
+export default function WelcomeScreen({
+  onStart,
+  resumeAvailable,
+  onResume,
+  onStartOver,
+}: WelcomeScreenProps) {
   return (
-    <div className="mx-auto max-w-prose540 px-6 py-12 md:py-16">
-      <div className="text-center mb-10">
-        <p
-          className="font-display text-[10px] uppercase tracking-widest3 text-ink-faded mb-3"
-          style={{ letterSpacing: '0.35em' }}
-        >
-          MAASIK
-        </p>
-        <h1 className="font-display text-3xl md:text-4xl text-ink leading-tight">
-          Map your Rhythm Profile
-        </h1>
+    <div className="mx-auto max-w-prose540 px-6 pt-24 md:pt-40 pb-20">
+      {resumeAvailable && (
         <div
-          className="mt-6 mx-auto"
-          style={{ width: 60, height: 1, background: '#d9c9a7' }}
-        />
-      </div>
-
-      <section className="mb-8">
-        <h2 className="font-display text-xl text-ink mb-3">What you’ll get</h2>
-        <ul className="diamond-list space-y-2 text-[15px] leading-relaxed text-ink-soft">
-          <li>A personalized 4-page PDF every Vedic month</li>
-          <li>Built on traditional Indian nutrition systems, calibrated to your Rhythm Profile</li>
-          <li>Delivered on the first day of each Vedic month (Shukla Pratipada)</li>
-        </ul>
-      </section>
-
-      <section
-        className="mb-8 px-5 py-4 rounded-xl"
-        style={{ background: '#fdf8ee', border: '1px solid #e8dcc1' }}
-      >
-        <div className="flex items-baseline justify-between gap-6">
-          <div>
-            <p className="text-[11px] uppercase tracking-widest text-ink-faded font-semibold">
-              Time to complete
-            </p>
-            <p className="text-lg font-display text-ink">3 minutes</p>
-          </div>
-          <div className="text-right">
-            <p className="text-[11px] uppercase tracking-widest text-ink-faded font-semibold">
-              Total questions
-            </p>
-            <p className="text-lg font-display text-ink">25</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-10">
-        <h2 className="font-display text-xl text-ink mb-3">How to answer</h2>
-        <div className="space-y-3 text-[15px] leading-relaxed text-ink-soft">
-          <p>
-            Most questions are single-select. Pick the option that fits you most of the time, not
-            your best day or your worst day. Be honest; this isn’t a test.
-          </p>
-          <p>
-            For multi-select questions (medical conditions, allergies), check all that apply, or
-            select “None”.
-          </p>
-          <p>
-            For free-text questions, a sentence or two is enough. Don’t overthink.
-          </p>
-          <p>
-            If two options feel equally true, pick the one that’s been true for the longest stretch
-            of your life.
-          </p>
-          <p>
-            There is no right answer. We use these inputs to map your Rhythm Profile and your
-            current life context. The output blueprint will be calibrated to you, not a generic
-            template.
-          </p>
-        </div>
-      </section>
-
-      <div className="flex justify-center">
-        <button
-          type="button"
-          onClick={onStart}
-          className="font-body font-semibold text-cream"
           style={{
-            background: '#C84B31',
-            padding: '14px 28px',
-            borderRadius: 999,
-            fontSize: 15,
-            boxShadow: '0 12px 30px -12px rgba(122, 40, 24, 0.45)',
-            border: 'none',
-            cursor: 'pointer',
-            letterSpacing: '0.02em',
+            marginBottom: 28,
+            padding: '12px 16px',
+            border: '1px solid #d9c9a7',
+            borderRadius: 10,
+            background: 'rgba(253, 248, 238, 0.7)',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
           }}
         >
-          Get started →
-        </button>
-      </div>
+          <span style={{ fontSize: 14, color: '#4a3f31' }}>
+            You started this {relativeDaysAgo(resumeAvailable.savedAt)}. Resume where you left off?
+          </span>
+          <span style={{ display: 'flex', gap: 14, fontSize: 14 }}>
+            <button
+              type="button"
+              onClick={onResume}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#C84B31',
+                fontWeight: 600,
+                cursor: 'pointer',
+                padding: 0,
+                fontFamily: 'inherit',
+              }}
+            >
+              Resume
+            </button>
+            <button
+              type="button"
+              onClick={onStartOver}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#8a7d6a',
+                cursor: 'pointer',
+                padding: 0,
+                fontFamily: 'inherit',
+              }}
+            >
+              Start over
+            </button>
+          </span>
+        </div>
+      )}
+
+      <p
+        style={{
+          fontSize: 11,
+          fontWeight: 600,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: '#8a7d6a',
+          marginBottom: 24,
+        }}
+      >
+        Before we begin
+      </p>
+
+      <h1
+        className="font-display"
+        style={{
+          fontSize: 'clamp(28px, 5vw, 40px)',
+          lineHeight: 1.15,
+          color: '#2D2A26',
+          fontWeight: 400,
+          letterSpacing: '-0.01em',
+          marginBottom: 24,
+        }}
+      >
+        A few questions about your rhythm.
+      </h1>
+
+      <p
+        style={{
+          fontSize: 17,
+          lineHeight: 1.6,
+          color: '#4a3f31',
+          marginBottom: 40,
+          maxWidth: 520,
+        }}
+      >
+        This takes about 6 minutes. Your answers shape your first MAASIK blueprint, your monthly nutrition document. Take it at your own pace. Your progress saves automatically.
+      </p>
+
+      <button
+        type="button"
+        onClick={onStart}
+        style={{
+          background: '#C84B31',
+          color: '#FAF3E7',
+          padding: '16px 32px',
+          borderRadius: 999,
+          fontSize: 15,
+          fontWeight: 600,
+          letterSpacing: '0.02em',
+          border: 'none',
+          cursor: 'pointer',
+          fontFamily: 'inherit',
+          boxShadow: '0 12px 30px -12px rgba(122, 40, 24, 0.45)',
+        }}
+      >
+        Begin
+      </button>
     </div>
   );
 }

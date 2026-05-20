@@ -11,21 +11,84 @@ export const COPY = {
   },
 
   hero: {
-    headlineLineOne: 'Your body switches seasons.',
-    headlineLineTwoBefore: 'Most diet plans ',
-    headlineLineTwoItalic: "don't",
+    editionLabel: 'MAASIK · JYESHTHA 2026',
+    headlineLineOne: 'Your body already knows what month it is.',
+    headlineLineTwoBefore: "Your diet ",
+    headlineLineTwoItalic: "doesn't",
     headlineLineTwoAfter: '.',
     subheadline:
-      'MAASIK is a personalized monthly nutrition blueprint, recalibrated to the season your body is actually in. A 4-page PDF, delivered on the first day of each new month.',
-    primaryCta: 'Get my first blueprint for ₹99',
-    secondaryCta: 'See a sample issue ↓',
+      "A personalized monthly blueprint built around your archetype and the Vedic season you're in. One edition. One month. ₹99.",
+    primaryCta: 'Get my Jyeshtha blueprint for ₹99',
+    secondaryCta: "See what's inside ↓",
     trustStrip: [
-      'Built on traditional Indian nutrition systems',
-      '4-page PDF, delivered to your inbox',
-      'No app to install, no daily notifications',
+      'Personalized to your archetype',
+      'Calibrated to your city and season',
+      'Delivered as a premium PDF',
     ],
-    monthMetaLabel:
-      'THIS MONTH: JYESHTHA · 02 MAY TO 16 MAY 2026',
+  },
+
+  inside: {
+    label: 'WHAT YOU GET',
+    heading: "What's inside your edition",
+    subheading:
+      'Each edition is built for one reader, in one month, in one city. Seven sections, calibrated end to end.',
+    items: [
+      {
+        n: '01',
+        title: 'Your Archetype Card',
+        body: 'Every edition opens with your archetype for the season. This month, an Anchored Builder in Greeshma is asked to cool, not push. The card names your body tendency, your mind pattern, and what this specific season asks of you. People screenshot this.',
+      },
+      {
+        n: '02',
+        title: "What's Happening in Your Body",
+        body: 'One counter-intuitive insight about the season. In peak summer, your digestive fire tends to weaken, not strengthen. Knowing this changes how much you eat at lunch, not just what.',
+      },
+      {
+        n: '03',
+        title: 'The Taste Map',
+        body: 'Six tastes. Three to lean into this month. Three to ease off. Shown as a proportional visual, not a table, so the strategy is obvious in one glance.',
+      },
+      {
+        n: '04',
+        title: 'Your Day, Mapped to the Local Heat',
+        body: "A horizontal chart showing your seven meal anchors mapped against Pune's actual heat curve. Walk zone, stay-indoors zone, wind-down zone. The rule is in the center: Lunch big. Dinner small. Walk before 8.",
+      },
+      {
+        n: '05',
+        title: 'Five Anchors',
+        body: 'Five rules that carry the month. One sentence each. The kind of rules you can quote back to someone over chai.',
+      },
+      {
+        n: '06',
+        title: 'Grocery Essentials',
+        body: 'Six cards. One week of shopping, with quantities. Specific to the season and the city. No exotic ingredients.',
+      },
+      {
+        n: '07',
+        title: 'Your Commitment',
+        body: 'One lever line built for your archetype and your month. For an Anchored Builder in Greeshma: Lunch big. Dinner small. Walk before 8. Repeat for thirty days.',
+      },
+    ],
+    closingLine:
+      '~600 words of prose. The rest is visual. Reads in 4 minutes, applies for 30 days.',
+  },
+
+  whyItWorks: {
+    label: 'WHY IT WORKS DIFFERENTLY',
+    blocks: [
+      {
+        heading: "Most nutrition advice doesn't know what month it is.",
+        body: 'The same salad in November and May is not the same meal for your body. Digestive strength shifts. Hydration needs change. Energy moves differently. The body has always been seasonal. Most plans ignore this.',
+      },
+      {
+        heading: 'Generic advice is optimized for nobody.',
+        body: 'A warm, dense, sedentary body in peak summer needs different things than a cool, light, anxious body in the same month. MAASIK maps you to an archetype first, then calibrates to the season. The result is a blueprint that could not have been written for anyone else.',
+      },
+      {
+        heading: 'Older systems understood this.',
+        body: 'Ritucharya, the Vedic seasonal code, was not spirituality. It was behavior design. Eat with the season. Move with the light. Rest with the heat. These were practical instructions, not rituals. MAASIK is that intelligence, translated for someone who lives in a city and works at a desk.',
+      },
+    ],
   },
 
   theProblem: {
@@ -115,77 +178,75 @@ export const COPY = {
   },
 
   founderNote: {
-    label: '06 · A NOTE FROM THE FOUNDER',
-    heading: 'A note from the founder.',
+    label: 'FROM THE FOUNDER',
+    heading: 'A note from the founder',
     body: [
-      "For two years, alongside a long career in tech, I worked through a Master's in Yoga-Shastra. What I found there was not a wellness aesthetic. It was a set of systems for rhythm, attention, recovery, and food that, in many ways, fit modern professional life better than modern productivity culture does.",
-      "MAASIK is the first product I'm shipping from that work. It is not a diet plan. It is a calibration tool, 4 pages, every month, built for people who think for a living and want their food to keep up with their life.",
+      "I spent seven years at Microsoft. My role was eliminated in the 2025 restructuring. In parallel with that career, I completed a Master's in Yoga Shastra (9.5 GPA, January 2023 to March 2025), alongside a Counseling Psychology diploma and an executive analytics credential from IIM Calcutta.",
+      'The observation that drove MAASIK is simple. The systems I studied during that Master’s understood rhythm, attention, recovery, and behavior design better than modern productivity culture does. They were practical, not mystical. MAASIK is the first product built from that work.',
     ],
     signature: 'Hrishikesh',
-    role: 'Founder, NeoRishi',
+    role: 'Founder, NeoRishi · Pune',
   },
 
   pricing: {
-    label: '07 · PRICING',
-    heading: 'Less than a single dinner. Every month.',
+    label: 'PRICING',
+    heading: 'One edition. One month.',
     subheading:
-      'Try MAASIK for ₹99. If the first blueprint changes how you eat, continue. If it does not, cancel in one click.',
+      'A single-edition purchase. No subscription, no auto-renewal.',
     tier: {
-      label: 'MONTHLY',
-      priceStrike: '₹299',
+      label: 'ONE EDITION',
       price: '₹99',
-      slash: '/ first month',
-      subline: 'First month ₹99. ₹299/month from month two onward.',
+      slash: '/ Jyeshtha 2026',
       bullets: [
-        'New 4-page PDF on the first day of each Vedic month',
-        'Calibrated to your Rhythm Profile, city, and goals',
-        'Cancel any time, one click',
+        'Personalized archetype card for this Vedic month',
+        'Full 7-section blueprint as a premium PDF',
+        'Calibrated to your city, goals, and body tendency',
+        'Delivered within 24 hours of completing your profile',
       ],
-      cta: 'Get my first blueprint for ₹99',
+      cta: 'Get my Jyeshtha blueprint for ₹99',
     },
     caveat:
-      'Payments handled by Razorpay. UPI, cards, and net banking accepted. No auto-debit without consent. We will email you before each renewal.',
+      'Payments via Razorpay. UPI, cards, and net banking accepted.',
+  },
+
+  finalCta: {
+    line: "This month's edition is Jyeshtha. The next one is Ashadha.",
+    cta: 'Get my Jyeshtha blueprint for ₹99',
   },
 
   faq: {
-    label: '08 · QUESTIONS WORTH ASKING',
-    heading: 'Questions worth asking.',
+    label: 'FAQ',
+    heading: 'Questions worth asking',
     items: [
       {
         q: 'Is this medical advice?',
-        a: 'No. MAASIK provides educational lifestyle guidance grounded in traditional Indian nutrition systems. It is not medical advice and is not a substitute for consultation with a qualified healthcare provider. If you have a diagnosed condition, please talk to your doctor before changing how you eat.',
+        a: 'No. MAASIK is a seasonal nutrition guide built on classical Indian food systems. It is not a clinical prescription. If you have a medical condition, speak to your doctor before making changes.',
       },
       {
-        q: 'Why a monthly PDF instead of an app?',
-        a: 'Because food rhythms do not need a daily push notification. The decisions worth making are seasonal, not hourly. One quiet artifact, once a month, is enough.',
+        q: 'What makes this different from a generic diet plan?',
+        a: 'Two things. First, it is calibrated to the Vedic season your body is in right now, not a generic annual plan. Second, it is personalized to your archetype, the combination of how your body tends to operate and what the current season asks of it. A generic plan cannot do either.',
       },
       {
-        q: 'Why does it arrive on the first day of the Vedic month and not the first of the English calendar?',
-        a: 'The Indian calendar tracks the moon as well as the sun, so its months align more closely with how the body actually shifts through the year. The first day of each Vedic month, called Shukla Pratipada, is a natural reset point. We use it as the delivery anchor.',
+        q: 'Why a PDF and not an app?',
+        a: 'Because the blueprint is meant to be read once, understood, and applied for 30 days. An app implies daily interaction. MAASIK is a monthly object, not a daily habit tracker.',
       },
       {
-        q: "What if I'm vegetarian, vegan, allergic to something, or on a specific clinical diet?",
-        a: "Tell us in the form. The blueprint accounts for it. If you are on a clinically prescribed diet, MAASIK sits alongside your doctor's plan, not in place of it.",
+        q: 'When do I receive it?',
+        a: 'Within 24 hours of completing your profile questionnaire after payment. Each new edition is released on Shukla Pratipada, the first day of the new Vedic month.',
       },
       {
-        q: 'Can I cancel anytime?',
-        a: 'Yes. One click, no calls. You keep access to any issues you have already received.',
-      },
-      {
-        q: 'Who is this for?',
-        a: 'Knowledge workers and professionals, roughly 25 to 45, who think for a living and want their nutrition to be intelligent rather than aggressive. If you want a six-pack in six weeks, this is not your product.',
+        q: 'Is this a subscription?',
+        a: "No. This is a single edition at ₹99. No auto-renewal, no recurring charge. If you want the next month's edition, you purchase it separately.",
       },
     ],
   },
 
   footer: {
-    finalSub: 'Subscribe today and your first blueprint arrives on the day.',
-    finalCta: 'Get my first blueprint for ₹99',
     legalLeft: 'MAASIK · A NeoRishi product',
     legalCenter: ['Terms', 'Privacy', 'Contact: hello@neorishi.io'],
     legalRight: '© 2026 NeoRishi',
     disclaimer:
-      'MAASIK provides educational lifestyle guidance grounded in traditional Indian nutrition systems. It is not medical advice and is not a substitute for consultation with a qualified healthcare provider.',
+      'MAASIK provides seasonal nutrition guidance grounded in classical Indian food systems. It is not medical advice and is not a substitute for a qualified healthcare provider.',
     closingSanskrit: 'सर्वे भवन्तु सुखिनः',
     closingTranslation: 'MAY ALL BE HEALTHY',
   },

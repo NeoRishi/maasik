@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 5. Trigger report generation. waitUntil keeps the inner fetch alive after we
-        //    respond 200 to Razorpay — without it, Vercel can freeze the lambda before
+        //    respond 200 to Razorpay, without it, Vercel can freeze the lambda before
         //    /api/generate-report is even reached. On failure, log to maasik_events so
         //    the daily cron sweep / ops can spot it instead of it dying in console logs.
         waitUntil(

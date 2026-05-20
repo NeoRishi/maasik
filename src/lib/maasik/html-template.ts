@@ -1,226 +1,1013 @@
-export const HTML_TEMPLATE = String.raw`<!DOCTYPE html>
+/**
+ * MAASIK Report Template v4.0
+ *
+ * Source: report-template-v4.html (immutable; do not edit this string directly)
+ * Placeholder count: 95 unique tokens
+ * See MAASIK_claude_api_prompt_v2.md Part J for the full slot inventory.
+ *
+ * v4 delta vs v2: cover gradient slots emit literal rgba() values directly
+ * (drops --cover-primary / --cover-accent CSS-variable indirection).
+ *
+ * This template is consumed by lib/maasik/system-prompt.ts and lib/maasik/user-message.ts.
+ * Claude fills the placeholders during generation; the route validates output.
+ */
+export const HTML_TEMPLATE_VERSION = 'v4.0';
+
+export const HTML_TEMPLATE = `<!--
+  MAASIK Report Template v4.0
+  =====================================================
+  PURPOSE: This is the HTML shell Claude fills in to produce each monthly edition.
+  Every dynamic content slot is marked with double-square-brackets and must be replaced.
+
+  PLACEHOLDER COUNT: 86 total (see Part J of MAASIK_claude_api_prompt_v2.md)
+
+  FIXED FROM V2:
+  - Cover gradient now uses literal RGBA slot values per Ritu (drops abstract
+    --cover-primary / --cover-accent CSS vars). Eliminates an indirection that
+    produced invalid CSS when Claude returned named tuples instead of rgba(...).
+
+  FIXED FROM V1:
+  - Day chart label overlap (YOUR ANCHORS removed, BREAKFAST repositioned)
+  - Fire-flow icons (no text inside filled shapes; outline body silhouettes used)
+
+  USAGE: Wrap in TypeScript as \`export const HTML_TEMPLATE = \\\`...\\\`\`
+  in lib/maasik/html-template.ts. Escape any literal backticks (there should be none).
+-->
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MAASIK Blueprint, [[VEDIC_MONTH]] [[GREGORIAN_YEAR]]</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAASIK · [[VEDIC_MONTH]] · Edition [[EDITION_NUMBER]]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  @page { size: A4; margin: 12mm 13mm 14mm 13mm;
-    @bottom-left { content: "MAASIK by NeoRishi"; font-family: 'Georgia', serif; font-size: 7.5pt; color: #8a7d6a; letter-spacing: 1px; }
-    @bottom-right { content: "Page " counter(page) " of " counter(pages); font-family: 'Georgia', serif; font-size: 7.5pt; color: #8a7d6a; }
+  :root {
+    --cream: #F7F1E5;
+    --cream-deep: #EFE6D2;
+    --sandstone: #E8DCC4;
+    --ink: #1A1611;
+    --ink-soft: #3D332B;
+    --ink-mute: #6B5D52;
+    --terracotta: #B85C3A;
+    --terracotta-deep: #8E3F26;
+    --terracotta-soft: #E8C5B0;
+    --khus: #6B7F4F;
+    --khus-deep: #4F5F39;
+    --khus-soft: #C8D2B3;
+    --saffron: #C99A4D;
+    --saffron-soft: #ECD9B2;
+    --mulberry: #4A2E2A;
+    --rule: rgba(26, 22, 17, 0.12);
+
+    --serif-display: 'Fraunces', Georgia, serif;
+    --serif-body: 'Newsreader', Georgia, serif;
+    --sans: 'Manrope', system-ui, sans-serif;
   }
-  @page :first { margin: 0; @bottom-left { content: ""; } @bottom-right { content: ""; } }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 8.8pt; line-height: 1.4; color: #2D2A26; }
-  .cover { page-break-after: always; height: 297mm; width: 210mm; background: linear-gradient(180deg, #C84B31 0%, #A6361F 60%, #7A2818 100%); color: #FAF3E7; position: relative; }
-  .cover-inner { padding: 30mm 22mm 20mm 22mm; border: 1px solid rgba(250, 243, 231, 0.3); margin: 8mm; height: calc(100% - 16mm); display: flex; flex-direction: column; justify-content: space-between; }
-  .cover-brand { font-family: 'Georgia', serif; font-size: 10pt; letter-spacing: 6px; text-transform: uppercase; opacity: 0.85; }
-  .cover-divider { width: 60px; height: 1px; background: #FAF3E7; opacity: 0.6; margin: 6mm 0; }
-  .cover-title { font-family: 'Georgia', serif; font-size: 60pt; line-height: 1; letter-spacing: -1px; margin-bottom: 5mm; font-weight: normal; }
-  .cover-subtitle { font-family: 'Georgia', serif; font-size: 16pt; font-style: italic; opacity: 0.92; line-height: 1.3; margin-bottom: 6mm; font-weight: normal; }
-  .cover-meta { font-size: 9.5pt; letter-spacing: 1.5px; line-height: 1.7; opacity: 0.9; }
-  .cover-meta strong { display: block; text-transform: uppercase; font-size: 7.5pt; letter-spacing: 3px; opacity: 0.7; margin-top: 4mm; margin-bottom: 0.5mm; font-weight: normal; }
-  .cover-footer { font-size: 7.5pt; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; border-top: 1px solid rgba(250, 243, 231, 0.3); padding-top: 4mm; margin-top: 8mm; }
-  .cover-sanskrit { font-family: 'Georgia', serif; font-style: italic; font-size: 10pt; opacity: 0.85; margin-top: 4mm; text-align: right; }
-  .profile-strip { display: table; width: 100%; background: #2D2A26; color: #FAF3E7; padding: 3mm 4mm; margin-bottom: 4mm; border-radius: 2px; }
-  .profile-cell { display: table-cell; padding-right: 4mm; vertical-align: top; font-size: 8pt; line-height: 1.35; }
-  .profile-cell .pl { font-size: 6.5pt; letter-spacing: 1.8px; text-transform: uppercase; opacity: 0.65; display: block; margin-bottom: 0.3mm; }
-  .profile-cell strong { font-family: 'Georgia', serif; font-size: 9.5pt; color: #FAF3E7; font-weight: normal; }
-  .section { margin-bottom: 4mm; }
-  .section-label { font-size: 7pt; letter-spacing: 3.5px; text-transform: uppercase; color: #C84B31; font-weight: bold; margin-bottom: 1.5mm; }
-  h1.section-title { font-family: 'Georgia', serif; font-size: 16pt; color: #2D2A26; font-weight: normal; margin-bottom: 3mm; line-height: 1.15; border-bottom: 1px solid #d9c9a7; padding-bottom: 2mm; }
-  h2 { font-family: 'Georgia', serif; font-size: 11pt; color: #7A2818; font-weight: normal; margin-top: 3mm; margin-bottom: 1.5mm; }
-  h3 { font-family: 'Helvetica', sans-serif; font-size: 8.5pt; color: #2D2A26; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5mm; font-weight: bold; }
-  p { margin-bottom: 2mm; text-align: justify; }
-  .lead { font-family: 'Georgia', serif; font-style: italic; font-size: 9.8pt; line-height: 1.5; color: #4a3f31; margin-bottom: 3mm; padding: 3mm 4mm; background: rgba(200, 75, 49, 0.06); border-left: 3px solid #C84B31; }
-  .personal-callout { background: #f3e9d4; border: 1px solid #d9c9a7; padding: 3mm 4mm; margin: 2.5mm 0 3mm 0; border-radius: 2px; }
-  .personal-callout .label { font-size: 6.8pt; letter-spacing: 3px; text-transform: uppercase; color: #7A8450; font-weight: bold; margin-bottom: 1.5mm; }
-  .personal-callout p { margin-bottom: 1.5mm; }
-  .personal-callout p:last-child { margin-bottom: 0; }
-  .dosha-strip { display: table; width: 100%; margin: 2mm 0 3mm 0; border-collapse: collapse; border: 1px solid #d9c9a7; }
-  .dosha-cell { display: table-cell; width: 33.33%; padding: 2.5mm; text-align: center; background: #fdf8ee; border-right: 1px solid #d9c9a7; }
-  .dosha-cell:last-child { border-right: none; }
-  .dosha-cell.dominant { background: #C84B31; color: #FAF3E7; }
-  .dosha-cell.secondary { background: #e5c2a8; color: #5a3a25; }
-  .dosha-name { font-family: 'Georgia', serif; font-size: 11pt; margin-bottom: 0.5mm; }
-  .dosha-score { font-size: 7pt; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.85; }
-  .food-table { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm 0; font-size: 8.2pt; }
-  .food-table th { background: #2D2A26; color: #FAF3E7; padding: 2mm 2.5mm; text-align: left; font-size: 7.5pt; letter-spacing: 1.8px; text-transform: uppercase; font-weight: normal; }
-  .food-table td { padding: 2mm 2.5mm; border-bottom: 1px solid #e8dcc1; vertical-align: top; line-height: 1.35; }
-  .food-table td.cat { background: #f3e9d4; width: 18%; font-weight: bold; color: #7A2818; font-size: 8pt; }
-  .food-table td.favor { width: 41%; background: #f4f6ec; color: #3d4a1e; }
-  .food-table td.avoid { width: 41%; background: #fbf0ec; color: #6b2a1a; }
-  .meal-table { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm 0; font-size: 8.3pt; }
-  .meal-table td { padding: 2mm 2.5mm; border-bottom: 1px solid #e8dcc1; vertical-align: top; line-height: 1.4; }
-  .meal-table td.time { width: 22%; background: #fdf8ee; color: #C84B31; font-family: 'Georgia', serif; font-weight: bold; font-size: 9pt; border-right: 1px solid #d9c9a7; }
-  .meal-table td.time small { display: block; font-family: 'Helvetica', sans-serif; font-size: 6.5pt; color: #8a7d6a; text-transform: uppercase; letter-spacing: 1.5px; font-weight: normal; margin-top: 0.3mm; }
-  .grocery-grid { display: table; width: 100%; border-collapse: collapse; margin: 2mm 0 3mm 0; }
-  .grocery-col { display: table-cell; width: 33.33%; padding: 3mm; vertical-align: top; border: 1px solid #d9c9a7; background: #fdf8ee; }
-  .grocery-col h4 { font-family: 'Georgia', serif; font-size: 9pt; color: #7A2818; margin-bottom: 1.5mm; border-bottom: 1px dotted #d9c9a7; padding-bottom: 1mm; font-weight: normal; }
-  .grocery-col h4.subsequent { margin-top: 3mm; }
-  .grocery-col ul { list-style: none; padding: 0; margin: 0; }
-  .grocery-col li { padding: 0.5mm 0 0.5mm 3.5mm; position: relative; font-size: 7.8pt; line-height: 1.3; }
-  .grocery-col li:before { content: "\25C7"; position: absolute; left: 0; color: #C84B31; font-size: 6.5pt; top: 1mm; }
-  .dodont-grid { display: table; width: 100%; border-collapse: collapse; margin: 2mm 0 3mm 0; }
-  .do-col, .dont-col { display: table-cell; width: 50%; padding: 3mm 4mm; vertical-align: top; }
-  .do-col { background: #f4f6ec; border-right: 1px solid #d9c9a7; }
-  .dont-col { background: #fbf0ec; }
-  .do-col h3 { color: #3d4a1e; margin-bottom: 2mm; }
-  .dont-col h3 { color: #6b2a1a; margin-bottom: 2mm; }
-  .do-col ul, .dont-col ul { list-style: none; padding: 0; margin: 0; }
-  .do-col li, .dont-col li { padding: 0.5mm 0 0.5mm 4mm; position: relative; font-size: 8pt; line-height: 1.4; }
-  .do-col li:before { content: "\2713"; position: absolute; left: 0; color: #7A8450; font-weight: bold; }
-  .dont-col li:before { content: "\2717"; position: absolute; left: 0; color: #C84B31; font-weight: bold; }
-  .closing { margin-top: 3mm; padding: 3mm 4mm; border: 1px solid #d9c9a7; background: #fdf8ee; text-align: center; }
-  .closing-mantra { font-family: 'Georgia', serif; font-style: italic; font-size: 10pt; color: #7A2818; }
-  .closing-mantra small { display: block; font-style: normal; font-size: 7.5pt; color: #8a7d6a; letter-spacing: 1px; margin-top: 1mm; }
-  .footer-note { font-size: 7.2pt; color: #8a7d6a; text-align: center; margin-top: 3mm; font-style: italic; line-height: 1.4; }
-  .medical-disclaimer { font-size: 7pt; color: #8a7d6a; font-style: italic; margin-top: 3mm; text-align: center; padding-top: 2mm; border-top: 1px dotted #d9c9a7; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--serif-body);
+    font-size: 17px;
+    line-height: 1.65;
+    font-weight: 400;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* paper grain texture, applied subtly */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.07  0 0 0 0 0.04  0 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  @media (min-width: 768px) { body { font-size: 18px; } }
+
+  .page { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  /* ------- shared atoms ------- */
+
+  .label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--khus-deep);
+  }
+  .label-light {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  /* ------- word origin card ------- */
+
+  .word-origin {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 16px;
+    padding: 18px 22px;
+    background: rgba(247, 241, 229, 0.8);
+    border: 1px solid rgba(201, 154, 77, 0.3);
+    border-left: 2px solid var(--saffron);
+    margin: 28px 0;
+    align-items: start;
+  }
+  @media (max-width: 540px) {
+    .word-origin { grid-template-columns: 1fr; gap: 8px; padding: 16px 18px; }
+  }
+  .wo-marker {
+    font-family: var(--sans);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--saffron);
+    padding-top: 3px;
+  }
+  .wo-term {
+    font-family: var(--serif-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--terracotta-deep);
+    line-height: 1.1;
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+  .wo-meaning {
+    font-family: var(--serif-body);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .wo-meaning em { font-style: normal; color: var(--terracotta-deep); }
+
+  /* ------- COVER ------- */
+
+  .cover {
+    min-height: 100vh;
+    padding: 48px 24px 56px;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 20%, [[COVER_GRADIENT_ACCENT_RGBA]], transparent 55%),
+      radial-gradient(ellipse 100% 70% at 30% 80%, [[COVER_GRADIENT_PRIMARY_RGBA]], transparent 60%),
+      var(--cream);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .cover-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 64px; }
+  .cover-brand { font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink); }
+  .cover-edition { font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); }
+
+  .cover-title {
+    font-family: var(--serif-display);
+    font-weight: 300;
+    font-size: clamp(72px, 18vw, 156px);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--terracotta-deep);
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+    margin: 24px 0 28px;
+  }
+  .cover-title em { font-style: italic; font-weight: 400; color: var(--khus-deep); }
+
+  .cover-subtitle {
+    font-family: var(--serif-body);
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    max-width: 540px;
+    margin-bottom: 40px;
+  }
+
+  .cover-quote { border-left: 2px solid var(--terracotta); padding-left: 20px; margin: 40px 0; max-width: 480px; }
+  .cover-quote-eng { font-family: var(--serif-body); font-size: 17px; font-style: italic; line-height: 1.5; color: var(--ink-soft); margin-bottom: 8px; }
+  .cover-quote-sans { font-family: var(--serif-body); font-size: 14px; color: var(--ink-mute); letter-spacing: 0.02em; }
+
+  .cover-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 32px;
+    margin-top: auto;
+    padding-top: 48px;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 600px) { .cover-meta { grid-template-columns: repeat(4, 1fr); } }
+  .meta-block .label-light { margin-bottom: 6px; }
+  .meta-block-value { font-family: var(--serif-body); font-size: 16px; color: var(--ink); line-height: 1.3; }
+
+  /* ------- sections shared ------- */
+
+  section { padding: 80px 0; position: relative; }
+  @media (min-width: 768px) { section { padding: 112px 0; } }
+  .section-num { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.25em; color: var(--terracotta); margin-bottom: 16px; }
+
+  .h2 {
+    font-family: var(--serif-display);
+    font-weight: 400;
+    font-size: clamp(32px, 6vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 24px;
+    font-variation-settings: "opsz" 96;
+  }
+  .h2 em { font-style: italic; color: var(--terracotta-deep); }
+
+  .lede {
+    font-family: var(--serif-body);
+    font-size: clamp(19px, 3.2vw, 22px);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-bottom: 32px;
+    max-width: 620px;
+  }
+
+  p { margin-bottom: 18px; max-width: 640px; }
+  p strong { color: var(--terracotta-deep); font-weight: 500; }
+
+  /* drop cap */
+  .has-dropcap::first-letter {
+    font-family: var(--serif-display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 4.2em;
+    line-height: 0.9;
+    float: left;
+    color: var(--terracotta-deep);
+    margin: 4px 12px -4px 0;
+    font-variation-settings: "opsz" 144;
+  }
+
+  /* ------- SECTION 01: ARCHETYPE ------- */
+
+  .archetype-section {
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 30%, rgba(201, 154, 77, 0.12), transparent 70%),
+      var(--cream);
+  }
+
+  .archetype-card {
+    background: var(--cream);
+    border: 1px solid rgba(201, 154, 77, 0.45);
+    padding: 56px 28px 48px;
+    margin: 40px 0 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  @media (min-width: 600px) { .archetype-card { padding: 72px 56px 64px; } }
+
+  .archetype-card::before, .archetype-card::after {
+    content: "";
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-color: var(--saffron);
+    border-style: solid;
+    border-width: 0;
+    opacity: 0.7;
+  }
+  .archetype-card::before { top: 14px; left: 14px; border-top-width: 1px; border-left-width: 1px; }
+  .archetype-card::after { bottom: 14px; right: 14px; border-bottom-width: 1px; border-right-width: 1px; }
+
+  .archetype-ornament { display: flex; justify-content: center; margin-bottom: 20px; }
+
+  .archetype-season {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 20px;
+  }
+
+  .archetype-name {
+    font-family: var(--serif-display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(36px, 8vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 14px;
+    font-variation-settings: "opsz" 96, "SOFT" 60;
+  }
+
+  .archetype-tagline {
+    font-family: var(--serif-body);
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-mute);
+    max-width: 360px;
+    margin: 0 auto;
+    line-height: 1.45;
+  }
+
+  .tendency-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin: 40px 0 32px;
+    padding: 28px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  @media (min-width: 600px) { .tendency-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+  .tendency .t-label { font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 10px; }
+  .tendency .t-value { font-family: var(--serif-display); font-weight: 500; font-style: italic; font-size: 18px; color: var(--terracotta-deep); line-height: 1.25; }
+
+  .archetype-verse {
+    font-family: var(--serif-display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(17px, 3.5vw, 20px);
+    line-height: 1.45;
+    color: var(--khus-deep);
+    margin: 16px auto 8px;
+    max-width: 440px;
+  }
+
+  .archetype-readout {
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    padding-top: 28px;
+    margin-top: 16px;
+    border-top: 1px dashed var(--rule);
+  }
+  .archetype-readout span { padding: 0 8px; }
+  .archetype-readout .sep { color: var(--saffron); }
+
+  /* ------- SECTION 02: WHAT'S HAPPENING ------- */
+
+  .heat-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 28px 0;
+    padding: 28px 20px;
+    background: rgba(247, 241, 229, 0.6);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .hf-side {
+    text-align: center;
+    flex: 1;
+    max-width: 200px;
+  }
+  .hf-icon { display: flex; justify-content: center; margin-bottom: 10px; }
+  .hf-season { font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 4px; }
+  .hf-state { font-family: var(--serif-display); font-style: italic; font-weight: 500; font-size: 15px; color: var(--terracotta-deep); }
+  .hf-arrow { color: var(--saffron); font-family: var(--serif-display); font-size: 24px; opacity: 0.6; }
+
+  .two-front { display: grid; grid-template-columns: 1fr; gap: 16px; margin: 32px 0; }
+  @media (min-width: 600px) { .two-front { grid-template-columns: 1fr 1fr; gap: 24px; } }
+
+  .front-card { padding: 28px 24px; position: relative; overflow: hidden; }
+  .front-pitta { background: linear-gradient(135deg, var(--terracotta-soft) 0%, rgba(232, 197, 176, 0.4) 100%); border-left: 3px solid var(--terracotta); }
+  .front-kapha { background: linear-gradient(135deg, var(--khus-soft) 0%, rgba(200, 210, 179, 0.4) 100%); border-left: 3px solid var(--khus); }
+  .front-card .label { margin-bottom: 12px; }
+  .front-pitta .label { color: var(--terracotta-deep); }
+  .front-kapha .label { color: var(--khus-deep); }
+  .front-title { font-family: var(--serif-display); font-weight: 500; font-size: 22px; line-height: 1.2; margin-bottom: 12px; color: var(--ink); }
+  .front-body { font-family: var(--serif-body); font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+
+  /* ------- SECTION 03: TASTE MAP ------- */
+
+  .taste-strip {
+    display: grid;
+    grid-template-columns: 4fr 4fr 4fr 1.4fr 1.4fr 1.4fr;
+    gap: 4px;
+    margin: 32px 0 16px;
+  }
+  .taste-cell { padding: 18px 6px 14px; text-align: center; border-radius: 2px; min-height: 84px; display: flex; flex-direction: column; justify-content: center; }
+  .taste-name { font-family: var(--serif-display); font-weight: 500; font-size: 15px; line-height: 1.15; margin-bottom: 4px; }
+  .taste-sanskrit { font-family: var(--sans); font-size: 9px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.7; }
+  .taste-favor { background: var(--khus-soft); color: var(--khus-deep); }
+  .taste-favor .taste-name { color: var(--khus-deep); }
+  .taste-avoid { background: var(--terracotta-soft); color: var(--terracotta-deep); }
+  .taste-avoid .taste-name { color: var(--terracotta-deep); font-size: 13px; }
+
+  .taste-legend { display: flex; gap: 24px; font-family: var(--sans); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; align-items: center; }
+  .taste-legend strong { color: var(--ink); font-weight: 600; }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 8px; vertical-align: middle; }
+
+  .taste-caption { font-family: var(--serif-body); font-size: 13px; font-style: italic; color: var(--ink-mute); margin-bottom: 24px; }
+
+  @media (max-width: 540px) {
+    .taste-strip { grid-template-columns: repeat(3, 1fr); }
+    .taste-cell.taste-avoid { min-height: 60px; }
+    .taste-name { font-size: 13px; }
+    .taste-avoid .taste-name { font-size: 12px; }
+  }
+
+  .food-cols { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 28px; }
+  @media (min-width: 700px) { .food-cols { grid-template-columns: 1fr 1fr; } }
+  .food-col { padding: 22px; border: 1px solid var(--rule); }
+  .food-col.favor { background: rgba(200, 210, 179, 0.18); border-color: var(--khus-soft); }
+  .food-col.avoid { background: rgba(232, 197, 176, 0.18); border-color: var(--terracotta-soft); }
+  .food-col h3 { font-family: var(--serif-display); font-weight: 500; font-size: 17px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  .food-col.favor h3 { color: var(--khus-deep); }
+  .food-col.avoid h3 { color: var(--terracotta-deep); }
+  .food-col ul { list-style: none; padding: 0; }
+  .food-col li { padding: 7px 0; font-size: 14px; line-height: 1.45; color: var(--ink-soft); border-bottom: 1px dashed var(--rule); }
+  .food-col li:last-child { border-bottom: 0; }
+  .food-col li strong { font-family: var(--sans); font-weight: 600; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; display: block; margin-bottom: 2px; color: var(--ink); }
+
+  /* ------- SECTION 04: DAY CHART ------- */
+
+  .day-chart-wrap {
+    margin: 32px 0;
+    padding: 28px 8px 20px;
+    background: rgba(247, 241, 229, 0.4);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+  .day-chart { width: 100%; height: auto; display: block; }
+
+  .anchor-table { margin-top: 28px; border-top: 1px solid var(--rule); }
+  .anchor-table .row {
+    display: grid;
+    grid-template-columns: 80px 110px 1fr;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: baseline;
+  }
+  @media (max-width: 540px) {
+    .anchor-table .row { grid-template-columns: 70px 1fr; }
+    .anchor-table .row .meal-name { grid-column: 2; }
+    .anchor-table .row .meal-detail { grid-column: 2; }
+  }
+  .anchor-table .time { font-family: var(--serif-display); font-weight: 500; font-size: 15px; color: var(--terracotta-deep); letter-spacing: -0.01em; }
+  .anchor-table .meal-name { font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); }
+  .anchor-table .meal-detail { font-family: var(--serif-body); font-size: 14px; color: var(--ink-soft); line-height: 1.45; }
+
+  /* ------- SECTION 05: ANCHORS ------- */
+
+  .anchor-numbered { list-style: none; padding: 0; counter-reset: anchor; margin: 32px 0; }
+  .anchor-numbered li { counter-increment: anchor; padding: 20px 0; border-bottom: 1px solid var(--rule); display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: start; }
+  .anchor-numbered li::before { content: counter(anchor, decimal-leading-zero); font-family: var(--serif-display); font-weight: 300; font-style: italic; font-size: 38px; color: var(--terracotta); line-height: 1; letter-spacing: -0.02em; font-variation-settings: "opsz" 96, "SOFT" 60; }
+  .anchor-numbered h4 { font-family: var(--serif-display); font-weight: 500; font-size: 19px; line-height: 1.25; margin-bottom: 4px; color: var(--ink); }
+  .anchor-numbered p { font-size: 14px; line-height: 1.5; color: var(--ink-soft); margin: 0; }
+
+  .avoid-tight { background: rgba(232, 197, 176, 0.15); border-left: 3px solid var(--terracotta); padding: 22px 22px; margin-top: 28px; }
+  .avoid-tight .label { color: var(--terracotta-deep); margin-bottom: 10px; }
+  .avoid-tight ul { list-style: none; padding: 0; }
+  .avoid-tight li { padding: 8px 0; font-size: 14px; color: var(--ink-soft); border-bottom: 1px dashed var(--rule); }
+  .avoid-tight li:last-child { border-bottom: 0; }
+  .avoid-tight li::before { content: "\\2717  "; color: var(--terracotta); font-weight: 700; }
+
+  /* ------- SECTION 06: GROCERY ------- */
+
+  .grocery-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 28px; }
+  @media (min-width: 600px) { .grocery-grid { grid-template-columns: 1fr 1fr; } }
+  .grocery-card { padding: 22px; background: rgba(232, 220, 196, 0.35); border-top: 2px solid var(--saffron); }
+  .grocery-card h3 { font-family: var(--serif-display); font-weight: 500; font-size: 16px; margin-bottom: 12px; color: var(--ink); }
+  .grocery-card ul { list-style: none; padding: 0; }
+  .grocery-card li { font-size: 13px; padding: 5px 0; color: var(--ink-soft); line-height: 1.4; border-bottom: 1px dashed var(--rule); }
+  .grocery-card li:last-child { border-bottom: 0; }
+
+  /* ------- SECTION 07: COMMITMENT ------- */
+
+  .commitment {
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 30%, rgba(201, 154, 77, 0.12), transparent 70%),
+      var(--cream-deep);
+  }
+  .commit-card { background: var(--cream); border: 1px solid var(--rule); padding: 40px 28px; margin: 40px 0; position: relative; }
+  @media (min-width: 768px) { .commit-card { padding: 56px 48px; } }
+  .commit-card::before { content: ""; position: absolute; top: -1px; left: -1px; width: 60px; height: 3px; background: var(--terracotta); }
+  .commit-card h3 { font-family: var(--serif-display); font-weight: 400; font-size: 26px; line-height: 1.2; margin-bottom: 18px; color: var(--ink); }
+  .commit-card p { font-size: 16px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 16px; }
+
+  .lever {
+    font-family: var(--serif-display);
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(20px, 4vw, 26px);
+    line-height: 1.3;
+    color: var(--terracotta-deep);
+    text-align: center;
+    margin: 28px 0;
+    padding: 24px 16px;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .lever-line {
+    display: block;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-top: 12px;
+  }
+
+  .closing-line { text-align: center; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--rule); }
+  .closing-eng { font-family: var(--serif-display); font-weight: 300; font-style: italic; font-size: clamp(20px, 4vw, 26px); line-height: 1.35; color: var(--khus-deep); margin-bottom: 12px; }
+  .closing-sans { font-family: var(--serif-body); font-size: 14px; color: var(--ink-mute); letter-spacing: 0.05em; }
+
+  /* ------- FOOTER ------- */
+
+  footer { padding: 40px 24px 56px; text-align: center; background: var(--cream); border-top: 1px solid var(--rule); }
+  .footer-edition { font-family: var(--sans); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink); margin-bottom: 8px; }
+  .footer-next { font-family: var(--serif-body); font-style: italic; font-size: 14px; color: var(--ink-mute); }
+
+  @media print {
+    body { font-size: 11pt; }
+    section { padding: 30pt 0; page-break-inside: avoid; }
+    .cover { min-height: auto; padding: 20pt; }
+  }
 </style>
 </head>
 <body>
 
-<!-- COVER PAGE -->
-<div class="cover">
-  <div class="cover-inner">
-    <div>
-      <div class="cover-brand">MAASIK &nbsp;|&nbsp; NeoRishi</div>
-      <div class="cover-divider"></div>
-      <div style="font-size: 9.5pt; letter-spacing: 3px; text-transform: uppercase; opacity: 0.75;">Personalized Monthly Blueprint</div>
+<!-- =================== COVER =================== -->
+<section class="cover">
+  <div class="cover-top">
+    <div class="cover-brand">MAASIK · NEORISHI</div>
+    <div class="cover-edition">Edition [[EDITION_NUMBER]] · [[GENERATION_DATE_HUMAN]]</div>
+  </div>
+
+  <div>
+    <div class="label">Your Monthly Blueprint</div>
+    <h1 class="cover-title">[[VEDIC_MONTH]]</h1>
+    <p class="cover-subtitle">[[COVER_SUBTITLE]]</p>
+
+    <div class="cover-quote">
+      <div class="cover-quote-eng">"[[COVER_VERSE_ENGLISH]]"</div>
+      <!-- Devanagari script only (U+0900-U+097F). No transliteration. See Part D5 of the system prompt. -->
+      <div class="cover-quote-sans">[[COVER_VERSE_SANSKRIT]]</div>
     </div>
-    <div>
-      <div class="cover-title">[[VEDIC_MONTH]]</div>
-      <div class="cover-subtitle">[[COVER_SUBTITLE]]</div>
-      <div class="cover-sanskrit">"[[COVER_SANSKRIT_VERSE]]"<br>
-        <span style="font-size: 7.5pt; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7;">[[COVER_SANSKRIT_TRANSLATION]]</span>
+  </div>
+
+  <div class="cover-meta">
+    <div class="meta-block">
+      <div class="label-light">Prepared for</div>
+      <div class="meta-block-value">[[FIRST_NAME]]<br>[[CITY]]</div>
+    </div>
+    <div class="meta-block">
+      <div class="label-light">Vedic Month</div>
+      <div class="meta-block-value">[[VEDIC_MONTH_FULL_DESCRIPTION]]</div>
+    </div>
+    <div class="meta-block">
+      <div class="label-light">Window</div>
+      <div class="meta-block-value">[[VEDIC_WINDOW_GREGORIAN]]</div>
+    </div>
+    <div class="meta-block">
+      <div class="label-light">Season (Ritu)</div>
+      <div class="meta-block-value">[[RITU_NAME_WITH_DESCRIPTOR]]</div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SECTION 01: ARCHETYPE =================== -->
+<section class="archetype-section">
+  <div class="page">
+    <div class="section-num">01 · YOUR ARCHETYPE</div>
+    <h2 class="h2">Who you arrive as, <em>this [[RITU_NAME]]</em></h2>
+    <p class="lede">[[SECTION_01_LEDE]]</p>
+
+    <div class="word-origin">
+      <div class="wo-marker">Word Origin</div>
+      <div>
+        <div class="wo-term">[[MONTH_WORD_ORIGIN_TERM]]</div>
+        <div class="wo-meaning">[[MONTH_WORD_ORIGIN_MEANING]]</div>
       </div>
     </div>
-    <div class="cover-meta">
-      <strong>Prepared for</strong>
-      [[USER_FULL_NAME]] &nbsp;|&nbsp; [[USER_CITY]]
-      <strong>Vedic Month</strong>
-      [[VEDIC_MONTH]] [[PAKSHA_FULL]], Vikram Samvat [[VIKRAM_SAMVAT]]
-      <strong>Gregorian Window</strong>
-      [[GREGORIAN_START_FORMATTED]] to [[GREGORIAN_END_FORMATTED]]
-      <strong>Ritu</strong>
-      [[RITU]] ([[RITU_DESCRIPTOR]])
-      <div class="cover-footer">
-        Issue [[ISSUE_NUMBER]] &nbsp;&middot;&nbsp; [[GENERATION_DATE_FORMATTED]]
+
+    <div class="archetype-card">
+      <div class="archetype-ornament" aria-hidden="true">
+        <svg width="120" height="14" viewBox="0 0 120 14" xmlns="http://www.w3.org/2000/svg">
+          <line x1="0" y1="7" x2="48" y2="7" stroke="#C99A4D" stroke-width="0.75" opacity="0.7"/>
+          <circle cx="60" cy="7" r="4" fill="none" stroke="#C99A4D" stroke-width="0.75" opacity="0.85"/>
+          <circle cx="60" cy="7" r="1.5" fill="#C99A4D"/>
+          <line x1="72" y1="7" x2="120" y2="7" stroke="#C99A4D" stroke-width="0.75" opacity="0.7"/>
+        </svg>
+      </div>
+
+      <div class="archetype-season">[[RITU_NAME]] · [[RITU_DESCRIPTOR]]</div>
+
+      <h3 class="archetype-name">[[ARCHETYPE_NAME]]</h3>
+
+      <p class="archetype-tagline">[[ARCHETYPE_TAGLINE]]</p>
+
+      <div class="tendency-grid">
+        <div class="tendency">
+          <div class="t-label">Body tends to be</div>
+          <div class="t-value">[[TENDENCY_BODY]]</div>
+        </div>
+        <div class="tendency">
+          <div class="t-label">Mind tends to be</div>
+          <div class="t-value">[[TENDENCY_MIND]]</div>
+        </div>
+        <div class="tendency">
+          <div class="t-label">This season asks</div>
+          <div class="t-value">[[TENDENCY_SEASON_ASKS]]</div>
+        </div>
+      </div>
+
+      <p class="archetype-verse">[[IDENTITY_VERSE]]</p>
+
+      <div class="archetype-readout">[[READOUT_STRIP]]</div>
+    </div>
+
+    <p class="has-dropcap">[[SECTION_01_BODY_PARA]]</p>
+
+    <p>[[SECTION_01_CLOSING_LINE]]</p>
+  </div>
+</section>
+
+<!-- =================== SECTION 02: WHAT'S HAPPENING =================== -->
+<section>
+  <div class="page">
+    <div class="section-num">02 · WHAT'S HAPPENING</div>
+    <h2 class="h2">[[SECTION_02_TITLE]]</h2>
+    <p class="lede">[[SECTION_02_LEDE]]</p>
+
+    <!--
+      HEAT-FLOW DIAGRAM (Section 2)
+      =====================================================
+      The two icons below are outline body silhouettes with a fire indicator.
+      LEFT side shows the previous-Ritu state. RIGHT side shows this-Ritu state.
+      Labels go BENEATH the icons (never inside filled shapes).
+
+      Each [[HEAT_FLOW_*_ICON_SVG]] placeholder receives the inner SVG content
+      (paths + circles only, no <svg> wrapper). The wrapper viewBox is 0 0 56 56.
+
+      For Greeshma example:
+        LEFT (cold months): body outline + bright concentrated dot at gut (cx=28, cy=32, r=5)
+        RIGHT (peak summer): faded body outline + dashed elliptical glow around the body
+        (showing heat radiating to skin)
+    -->
+    <div class="heat-flow" aria-hidden="true">
+      <div class="hf-side">
+        <div class="hf-icon">
+          <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+            [[HEAT_FLOW_LEFT_ICON_SVG]]
+          </svg>
+        </div>
+        <div class="hf-season">[[HEAT_FLOW_LEFT_LABEL]]</div>
+        <div class="hf-state">[[HEAT_FLOW_LEFT_STATE]]</div>
+      </div>
+
+      <div class="hf-arrow" aria-hidden="true">\\u2192</div>
+
+      <div class="hf-side">
+        <div class="hf-icon">
+          <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+            [[HEAT_FLOW_RIGHT_ICON_SVG]]
+          </svg>
+        </div>
+        <div class="hf-season">[[HEAT_FLOW_RIGHT_LABEL]]</div>
+        <div class="hf-state">[[HEAT_FLOW_RIGHT_STATE]]</div>
+      </div>
+    </div>
+
+    <p>The digestive fire moves with the season. Knowing where it is right now tends to change how much, and what, you eat.</p>
+
+    <div class="word-origin">
+      <div class="wo-marker">Word Origin</div>
+      <div>
+        <div class="wo-term">Agni</div>
+        <div class="wo-meaning">[[SECTION_02_AGNI_MEANING]]</div>
+      </div>
+    </div>
+
+    <p>[[SECTION_02_INTERSECTION_PARA]]</p>
+
+    <p>The plan splits in two.</p>
+
+    <div class="two-front">
+      <div class="front-card front-pitta">
+        <div class="label">Front 1</div>
+        <div class="front-title">[[FRONT_1_TITLE]]</div>
+        <div class="front-body">[[FRONT_1_BODY]]</div>
+      </div>
+      <div class="front-card front-kapha">
+        <div class="label">Front 2</div>
+        <div class="front-title">[[FRONT_2_TITLE]]</div>
+        <div class="front-body">[[FRONT_2_BODY]]</div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- PAGE 2: PROFILE STRIP + SECTION 1 + START SECTION 2 -->
-<div class="profile-strip">
-  <div class="profile-cell"><span class="pl">Constitution</span><strong>[[PRAKRITI_DISPLAY]]</strong></div>
-  <div class="profile-cell"><span class="pl">BMI</span><strong>[[BMI]]</strong></div>
-  <div class="profile-cell"><span class="pl">Primary Goal</span><strong>[[PRIMARY_GOAL_DISPLAY]]</strong></div>
-  <div class="profile-cell"><span class="pl">Secondary</span><strong>[[SECONDARY_GOAL_DISPLAY]]</strong></div>
-  <div class="profile-cell"><span class="pl">Active Concern</span><strong>[[ACTIVE_CONCERN_DISPLAY]]</strong></div>
-</div>
+<!-- =================== SECTION 03: TASTE MAP =================== -->
+<section style="background: rgba(232, 220, 196, 0.25);">
+  <div class="page">
+    <div class="section-num">03 · EATING FOR THE SEASON</div>
+    <h2 class="h2">The <em>taste map</em></h2>
+    <p class="lede">[[SECTION_03_LEDE]]</p>
 
-<div class="section">
-  <div class="section-label">Section 01</div>
-  <h1 class="section-title">[[SECTION_1_TITLE]]</h1>
-  <p class="lead">[[SECTION_1_LEAD_PARAGRAPH]]</p>
-  <p>[[SECTION_1_BODY_PARAGRAPH]]</p>
-  <div class="personal-callout">
-    <div class="label">What this month means for you, [[USER_FIRST_NAME]]</div>
-    <p>[[SECTION_1_CALLOUT_PARAGRAPH_1]]</p>
-    <p>[[SECTION_1_CALLOUT_PARAGRAPH_2]]</p>
-  </div>
-  <div class="dosha-strip">
-    <div class="dosha-cell [[VATA_CELL_CLASS]]"><div class="dosha-name">Vata</div><div class="dosha-score">[[VATA_LABEL]], [[VATA_SCORE]] pts</div></div>
-    <div class="dosha-cell [[PITTA_CELL_CLASS]]"><div class="dosha-name">Pitta</div><div class="dosha-score">[[PITTA_LABEL]], [[PITTA_SCORE]] pts</div></div>
-    <div class="dosha-cell [[KAPHA_CELL_CLASS]]"><div class="dosha-name">Kapha</div><div class="dosha-score">[[KAPHA_LABEL]], [[KAPHA_SCORE]] pts</div></div>
-  </div>
-</div>
+    <div class="taste-legend">
+      <span><span class="legend-dot" style="background: var(--khus);"></span><strong>[[LEGEND_LEAN_LABEL]]</strong></span>
+      <span><span class="legend-dot" style="background: var(--terracotta);"></span><strong>[[LEGEND_EASE_LABEL]]</strong></span>
+    </div>
 
-<div class="section" style="margin-top: 5mm;">
-  <div class="section-label">Section 02</div>
-  <h1 class="section-title">[[SECTION_2_TITLE]]</h1>
-  <p>[[SECTION_2_INTRO_PARAGRAPH]]</p>
-  <table class="food-table">
-    <tr><th>Category</th><th>Favour, eat freely</th><th>Avoid this month</th></tr>
-    <tr><td class="cat">Grains</td><td class="favor">[[GRAINS_FAVOUR]]</td><td class="avoid">[[GRAINS_AVOID]]</td></tr>
-    <tr><td class="cat">Pulses</td><td class="favor">[[PULSES_FAVOUR]]</td><td class="avoid">[[PULSES_AVOID]]</td></tr>
-    <tr><td class="cat">Vegetables</td><td class="favor">[[VEGETABLES_FAVOUR]]</td><td class="avoid">[[VEGETABLES_AVOID]]</td></tr>
-    <tr><td class="cat">Fruits</td><td class="favor">[[FRUITS_FAVOUR]]</td><td class="avoid">[[FRUITS_AVOID]]</td></tr>
-    <tr><td class="cat">Dairy</td><td class="favor">[[DAIRY_FAVOUR]]</td><td class="avoid">[[DAIRY_AVOID]]</td></tr>
-    <tr><td class="cat">Beverages</td><td class="favor">[[BEVERAGES_FAVOUR]]</td><td class="avoid">[[BEVERAGES_AVOID]]</td></tr>
-    <tr><td class="cat">Spices</td><td class="favor">[[SPICES_FAVOUR]]</td><td class="avoid">[[SPICES_AVOID]]</td></tr>
-    <tr><td class="cat">Snacks</td><td class="favor">[[SNACKS_FAVOUR]]</td><td class="avoid">[[SNACKS_AVOID]]</td></tr>
-  </table>
-  <h2>Your Ideal Day, [[VEDIC_MONTH]] Edition</h2>
-  <table class="meal-table">
-    <tr><td class="time">[[MEAL_1_TIME]]<small>On Waking</small></td><td>[[MEAL_1_CONTENT]]</td></tr>
-    <tr><td class="time">[[MEAL_2_TIME]]<small>Breakfast</small></td><td>[[MEAL_2_CONTENT]]</td></tr>
-    <tr><td class="time">[[MEAL_3_TIME]]<small>Mid-Morning</small></td><td>[[MEAL_3_CONTENT]]</td></tr>
-    <tr><td class="time">[[MEAL_4_TIME]]<small>Lunch, Largest</small></td><td>[[MEAL_4_CONTENT]]</td></tr>
-    <tr><td class="time">[[MEAL_5_TIME]]<small>Evening</small></td><td>[[MEAL_5_CONTENT]]</td></tr>
-    <tr><td class="time">[[MEAL_6_TIME]]<small>Dinner, Light</small></td><td>[[MEAL_6_CONTENT]]</td></tr>
-    <tr><td class="time">[[MEAL_7_TIME]]<small>Bedtime</small></td><td>[[MEAL_7_CONTENT]]</td></tr>
-  </table>
-</div>
+    <!--
+      TASTE STRIP (Section 3)
+      =====================================================
+      The grid uses proportional widths: 4fr for favored, 1.4fr for avoided.
+      This communicates "lean hard on these 3" visually.
 
-<div class="section" style="margin-top: 5mm;">
-  <div class="section-label">Section 03</div>
-  <h1 class="section-title">[[SECTION_3_TITLE]]</h1>
-  <p>[[SECTION_3_INTRO_LINE]]</p>
-  <div class="grocery-grid">
-    <div class="grocery-col">
-      <h4>Grains &amp; Pulses</h4>
-      <ul>[[GROCERY_GRAINS_PULSES_ITEMS]]</ul>
-      <h4 class="subsequent">Dairy &amp; Fats</h4>
-      <ul>[[GROCERY_DAIRY_FATS_ITEMS]]</ul>
+      Per-Ritu, the 3 favored vs 3 avoided tastes change. See spec Part D2:
+        Greeshma/Sharad: favor sweet/bitter/astringent, avoid salty/sour/pungent
+        Varsha: favor sour/salty/sweet, avoid astringent/bitter/pungent
+        Shishira/Hemanta: favor sweet/sour/salty, avoid bitter/astringent/pungent
+        Vasanta: favor bitter/pungent/astringent, avoid sweet/sour/salty
+    -->
+    <div class="taste-strip">
+      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_1_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_1_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_2_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_2_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_3_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_3_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_1_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_1_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_2_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_2_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_3_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_3_SANSKRIT]]</div></div>
     </div>
-    <div class="grocery-col">
-      <h4>Vegetables (weekly fresh)</h4>
-      <ul>[[GROCERY_VEGETABLES_ITEMS]]</ul>
-    </div>
-    <div class="grocery-col">
-      <h4>Fruits (weekly fresh)</h4>
-      <ul>[[GROCERY_FRUITS_ITEMS]]</ul>
-    </div>
-  </div>
-  <div class="grocery-grid">
-    <div class="grocery-col">
-      <h4>Spices &amp; Aromatics</h4>
-      <ul>[[GROCERY_SPICES_ITEMS]]</ul>
-    </div>
-    <div class="grocery-col">
-      <h4>[[GROCERY_SPECIALS_LABEL]]</h4>
-      <ul>[[GROCERY_SPECIALS_ITEMS]]</ul>
-    </div>
-    <div class="grocery-col">
-      <h4 style="color: #6b2a1a;">Skip from Pantry</h4>
-      <ul style="opacity: 0.85;">[[GROCERY_SKIP_ITEMS]]</ul>
-    </div>
-  </div>
-</div>
 
-<div class="section" style="margin-top: 4mm;">
-  <div class="section-label">Section 04</div>
-  <h1 class="section-title">[[SECTION_4_TITLE]]</h1>
-  <p>[[SECTION_4_INTRO_PARAGRAPH]]</p>
-  <div class="dodont-grid">
-    <div class="do-col">
-      <h3>Do, this month</h3>
-      <ul>[[DO_ITEMS]]</ul>
-    </div>
-    <div class="dont-col">
-      <h3>Avoid, this month</h3>
-      <ul>[[DONT_ITEMS]]</ul>
+    <p class="taste-caption">[[SECTION_03_CAPTION]]</p>
+
+    <!--
+      FOOD COLUMNS (Section 3)
+      =====================================================
+      Each column has 6 rows of category + items, formatted as <li> with <strong>CATEGORY</strong>items.
+      [[FOOD_FAVOR_ROWS]] and [[FOOD_AVOID_ROWS]] each receive 6 complete <li> elements.
+
+      Example row format:
+        <li><strong>Grains</strong>Rice, jowar roti, thin chapati, poha</li>
+
+      User's favourite_foods that fall in the avoid category MUST appear by name in the avoid column.
+    -->
+    <div class="food-cols">
+      <div class="food-col favor">
+        <h3>Eat freely</h3>
+        <ul>
+          [[FOOD_FAVOR_ROWS]]
+        </ul>
+      </div>
+      <div class="food-col avoid">
+        <h3>Eat less, or skip</h3>
+        <ul>
+          [[FOOD_AVOID_ROWS]]
+        </ul>
+      </div>
     </div>
   </div>
-  <h2>Your Personal Anchor for [[VEDIC_MONTH]]</h2>
-  <p>[[SECTION_4_PERSONAL_ANCHOR]]</p>
-  <div class="closing">
-    <div class="closing-mantra">"[[CLOSING_SANSKRIT_VERSE]]"<small>[[CLOSING_SANSKRIT_TRANSLATION]]</small></div>
+</section>
+
+<!-- =================== SECTION 04: DAY CHART =================== -->
+<section>
+  <div class="page">
+    <div class="section-num">04 · YOUR DAY</div>
+    <h2 class="h2">[[SECTION_04_TITLE]]</h2>
+    <p class="lede">[[SECTION_04_LEDE]]</p>
+
+    <div class="word-origin">
+      <div class="wo-marker">Word Origin</div>
+      <div>
+        <div class="wo-term">Dinacharya</div>
+        <div class="wo-meaning">[[DINACHARYA_MEANING]]</div>
+      </div>
+    </div>
+
+    <!--
+      DAY CHART (Section 4 centerpiece)
+      =====================================================
+      A horizontal SVG chart with three stacked bands. SVG viewBox is 0 0 700 320.
+
+      Layout:
+        y=20-60: anchors band (dots + labels ABOVE the dots)
+        y=60-260: weather curve band
+        y=288-306: activity zones band
+
+      Hour-to-x formula: x = 25 + (hour - 6) * 40.625
+        So 6 AM = x25, 7 AM = x65.625, ... 9 PM = x675
+
+      The "PUNE'S HEAT CURVE" header (top-left at y=20) was REMOVED to prevent
+      overlap with the BREAKFAST label. The curve's right-side label survives.
+
+      [[DAY_CHART_DYNAMIC_CONTENT]] receives 4 distinct SVG groups in this order:
+        1. <g id="anchor-dots">: 7 anchor circles at appropriate x positions
+        2. <g id="anchor-labels">: 3 labels for breakfast/lunch/dinner above their dots
+        3. <path id="heat-curve">: the weather curve path (peak shape varies by Ritu)
+        4. <g id="activity-zones">: 3 rect+text pairs at the bottom (Walk/Stay/Wind Down)
+
+      All coordinates are computed per Ritu and per user wake/sleep time.
+      See spec Part F1 for exact specifications.
+    -->
+    <div class="day-chart-wrap">
+      <svg class="day-chart" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Daily timeline showing meal anchors mapped to local weather curve">
+        <defs>
+          <linearGradient id="tempGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#6B7F4F" stop-opacity="0.85"/>
+            <stop offset="22%" stop-color="#C99A4D" stop-opacity="0.9"/>
+            <stop offset="48%" stop-color="#B85C3A" stop-opacity="1"/>
+            <stop offset="58%" stop-color="#B85C3A" stop-opacity="1"/>
+            <stop offset="80%" stop-color="#C99A4D" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#6B7F4F" stop-opacity="0.85"/>
+          </linearGradient>
+          <linearGradient id="heatBg" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#B85C3A" stop-opacity="0.10"/>
+            <stop offset="100%" stop-color="#B85C3A" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+
+        [[DAY_CHART_DYNAMIC_CONTENT]]
+
+        <!-- Time axis (always 6 AM to 9 PM, hardcoded) -->
+        <line x1="25" y1="254" x2="675" y2="254" stroke="#6B5D52" stroke-width="0.5" opacity="0.35"/>
+        <g font-family="Manrope, sans-serif" font-size="11" font-weight="500" fill="#6B5D52" letter-spacing="1.2">
+          <text x="25" y="272" text-anchor="middle">6 AM</text>
+          <text x="147" y="272" text-anchor="middle">9 AM</text>
+          <text x="269" y="272" text-anchor="middle">12 PM</text>
+          <text x="391" y="272" text-anchor="middle">3 PM</text>
+          <text x="513" y="272" text-anchor="middle">6 PM</text>
+          <text x="635" y="272" text-anchor="middle">9 PM</text>
+        </g>
+      </svg>
+    </div>
+
+    <!--
+      ANCHOR TABLE (Section 4)
+      =====================================================
+      7 rows beneath the chart. ANCHOR_TABLE_ROWS receives 7 complete row blocks.
+
+      Row format (one per anchor):
+        <div class="row">
+          <div class="time">06:30 AM</div>           // 12-hour with AM/PM, leading zero. Never 24-hour.
+          <div class="meal-name">On waking</div>     // exact label from vocabulary below
+          <div class="meal-detail">One glass of room-temperature water with 5 soaked raisins. Skip refrigerated water; the gut tends to be delicate in summer mornings.</div>
+        </div>
+
+      Meal-name vocabulary (use EXACTLY these labels, in this order):
+        On waking, Breakfast, Mid-morning, Lunch (largest), Evening, Dinner (light), Bedtime
+        Use parentheses for "(largest)" and "(light)", not the middle dot. Never "Wake" or "Tea".
+
+      Detail style: 1 to 2 short sentences, 16 to 24 words total. Lead with the action/food,
+      close with a one-clause seasonal rationale, a "Skip..." warning, or a sleep cap.
+      Plain English. No em-dashes.
+
+      Times are adjusted to the user's actual wake_time and sleep_time but anchored
+      around the standard slots (06:30 / 07:30 / 10:30 / 01:00 / 04:30 / 07:00 / 09:30).
+    -->
+    <div class="anchor-table">
+      [[ANCHOR_TABLE_ROWS]]
+    </div>
   </div>
-  <p class="footer-note">[[FOOTER_NOTE]]</p>
-  [[MEDICAL_DISCLAIMER_BLOCK]]
-</div>
+</section>
+
+<!-- =================== SECTION 05: FIVE ANCHORS =================== -->
+<section>
+  <div class="page">
+    <div class="section-num">05 · FIVE ANCHORS</div>
+    <h2 class="h2">Five rules that <em>carry the rest</em></h2>
+    <p class="lede">[[SECTION_05_LEDE]]</p>
+
+    <ol class="anchor-numbered">
+      <li><div>
+        <h4>[[ANCHOR_01_TITLE]]</h4>
+        <p>[[ANCHOR_01_DETAIL]]</p>
+      </div></li>
+      <li><div>
+        <h4>[[ANCHOR_02_TITLE]]</h4>
+        <p>[[ANCHOR_02_DETAIL]]</p>
+      </div></li>
+      <li><div>
+        <h4>[[ANCHOR_03_TITLE]]</h4>
+        <p>[[ANCHOR_03_DETAIL]]</p>
+      </div></li>
+      <li><div>
+        <h4>[[ANCHOR_04_TITLE]]</h4>
+        <p>[[ANCHOR_04_DETAIL]]</p>
+      </div></li>
+      <li><div>
+        <h4>[[ANCHOR_05_TITLE]]</h4>
+        <p>[[ANCHOR_05_DETAIL]]</p>
+      </div></li>
+    </ol>
+
+    <div class="avoid-tight">
+      <div class="label">Three things to actively avoid</div>
+      <ul>
+        <li>[[AVOID_01]]</li>
+        <li>[[AVOID_02]]</li>
+        <li>[[AVOID_03]]</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SECTION 06: GROCERY =================== -->
+<section style="background: rgba(232, 220, 196, 0.25);">
+  <div class="page">
+    <div class="section-num">06 · GROCERY</div>
+    <h2 class="h2">What to <em>actually buy</em></h2>
+    <p class="lede">[[SECTION_06_LEDE]]</p>
+
+    <!--
+      GROCERY CARDS (Section 6)
+      =====================================================
+      Six cards in a 2-column grid. The first 5 have stable titles.
+      The 6th card's title varies by Ritu (e.g., "Greeshma cooling specials").
+
+      Each grocery card receives a list of li elements via the items placeholder, like:
+        <li>Moong dal \\u00b7 500 g</li>
+    -->
+    <div class="grocery-grid">
+      <div class="grocery-card">
+        <h3>Grains &amp; Pulses</h3>
+        <ul>[[GROCERY_CARD_1_ITEMS]]</ul>
+      </div>
+      <div class="grocery-card">
+        <h3>Dairy &amp; Fats</h3>
+        <ul>[[GROCERY_CARD_2_ITEMS]]</ul>
+      </div>
+      <div class="grocery-card">
+        <h3>Vegetables</h3>
+        <ul>[[GROCERY_CARD_3_ITEMS]]</ul>
+      </div>
+      <div class="grocery-card">
+        <h3>Fruits</h3>
+        <ul>[[GROCERY_CARD_4_ITEMS]]</ul>
+      </div>
+      <div class="grocery-card">
+        <h3>Spices</h3>
+        <ul>[[GROCERY_CARD_5_ITEMS]]</ul>
+      </div>
+      <div class="grocery-card">
+        <h3>[[GROCERY_SPECIALS_TITLE]]</h3>
+        <ul>[[GROCERY_CARD_6_ITEMS]]</ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SECTION 07: COMMITMENT =================== -->
+<section class="commitment">
+  <div class="page">
+    <div class="section-num">07 · YOUR COMMITMENT</div>
+    <h2 class="h2">The <em>one thing</em></h2>
+
+    <div class="commit-card">
+      <h3>[[COMMIT_OPENING]]</h3>
+      <p>[[COMMIT_THREAD_PARA]]</p>
+
+      <div class="lever">
+        "[[LEVER_LINE]]"
+        <span class="lever-line">Repeat for thirty days</span>
+      </div>
+
+      <p style="margin-bottom: 0;">[[COMMIT_CLOSING_PARA]]</p>
+    </div>
+
+    <div class="closing-line">
+      <div class="closing-eng">"[[CLOSING_VERSE_ENGLISH]]"</div>
+      <!-- Devanagari script only (U+0900-U+097F). Must differ from the cover verse. See Part D5. -->
+      <div class="closing-sans">[[CLOSING_VERSE_SANSKRIT]]</div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer>
+  <div class="footer-edition">MAASIK · Edition [[EDITION_NUMBER]] · [[GENERATION_DATE_HUMAN]]</div>
+  <div class="footer-next">Your next edition, [[FOOTER_NEXT_EDITION_VEDIC_MONTH]] ([[FOOTER_NEXT_EDITION_RITU]]), arrives [[FOOTER_NEXT_DELIVERY_DATE]].</div>
+</footer>
 
 </body>
-</html>`;
+</html>
+`;
+
+export const HTML_TEMPLATE_PLACEHOLDER_COUNT = 95;

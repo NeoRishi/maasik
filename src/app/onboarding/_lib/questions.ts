@@ -7,7 +7,10 @@ export type QuestionType =
   | 'short_answer'
   | 'long_answer'
   | 'number'
+  | 'select'
+  | 'city_autocomplete'
   | 'email'
+  | 'phone'
   | 'dual_time'
   | 'height'
   | 'weight';
@@ -61,7 +64,7 @@ export const PARTS: Part[] = [
     number: 1,
     title: 'Your Goal',
     duration: '~30 sec',
-    intro: 'Start with the why — what do you want this monthly blueprint to do for you?',
+    intro: 'Start with the why, what do you want this monthly blueprint to do for you?',
   },
   {
     number: 2,
@@ -74,7 +77,7 @@ export const PARTS: Part[] = [
     title: 'Your Prakriti, Vedic Constitution',
     duration: '~90 sec',
     intro:
-      'Seven quick questions to estimate your dosha tendency. This is a high-level read, not a clinical diagnosis. Pick the answer that has been most true for you over your lifetime — not based on recent diet, training, or stress.',
+      'Seven quick questions to estimate your dosha tendency. This is a high-level read, not a clinical diagnosis. Pick the answer that has been most true for you over your lifetime, not based on recent diet, training, or stress.',
   },
   {
     number: 4,
@@ -99,9 +102,9 @@ export const PARTS: Part[] = [
   {
     number: 7,
     title: 'Where to Send Your Report',
-    duration: '~15 sec',
+    duration: '~60 sec',
     intro:
-      'Last two questions. Then your first MAASIK Blueprint will land in your inbox within minutes of payment.',
+      'A short reflection, then your name, email, and WhatsApp number. Your first MAASIK Blueprint will land in your inbox within minutes of payment.',
   },
 ];
 
@@ -114,29 +117,29 @@ const PRAKRITI_OPTIONS: Record<string, Option[]> = {
     {
       value: 'vata',
       label:
-        'Thin and lean — I find it hard to gain weight; prominent joints, narrow shoulders or hips',
+        'Thin and lean, I find it hard to gain weight; prominent joints, narrow shoulders or hips',
     },
     {
       value: 'pitta',
-      label: 'Medium and muscular — well-proportioned, athletic build with moderate weight',
+      label: 'Medium and muscular, well-proportioned, athletic build with moderate weight',
     },
     {
       value: 'kapha',
-      label: 'Solid and sturdy — broader frame; I gain weight easily; strong, well-built',
+      label: 'Solid and sturdy, broader frame; I gain weight easily; strong, well-built',
     },
     {
       value: 'vata_pitta',
-      label: 'Mix of slim and athletic — can shift between thin and toned depending on the year',
+      label: 'Mix of slim and athletic, can shift between thin and toned depending on the year',
     },
     {
       value: 'pitta_kapha',
-      label: 'Athletic but with curves or padding — well-built with some softness',
+      label: 'Athletic but with curves or padding, well-built with some softness',
     },
   ],
   skin: [
     {
       value: 'vata',
-      label: 'Dry skin; thin, frizzy, or coarse hair — prone to dryness, roughness, cold extremities',
+      label: 'Dry skin; thin, frizzy, or coarse hair, prone to dryness, roughness, cold extremities',
     },
     {
       value: 'pitta',
@@ -145,7 +148,7 @@ const PRAKRITI_OPTIONS: Record<string, Option[]> = {
     },
     {
       value: 'kapha',
-      label: 'Smooth and slightly oily skin; thick, lustrous hair — rarely dry',
+      label: 'Smooth and slightly oily skin; thick, lustrous hair, rarely dry',
     },
     {
       value: 'vata_pitta',
@@ -160,15 +163,15 @@ const PRAKRITI_OPTIONS: Record<string, Option[]> = {
     {
       value: 'vata',
       label:
-        'Irregular appetite — sometimes very hungry, sometimes not; prone to gas, bloating, or discomfort',
+        'Irregular appetite, sometimes very hungry, sometimes not; prone to gas, bloating, or discomfort',
     },
     {
       value: 'pitta',
-      label: 'Strong, sharp appetite — I get irritable if I miss a meal; sometimes acidity or heartburn',
+      label: 'Strong, sharp appetite, I get irritable if I miss a meal; sometimes acidity or heartburn',
     },
     {
       value: 'kapha',
-      label: 'Slow digestion — I feel heavy after meals; I can comfortably skip meals',
+      label: 'Slow digestion, I feel heavy after meals; I can comfortably skip meals',
     },
     {
       value: 'vata_pitta',
@@ -176,25 +179,25 @@ const PRAKRITI_OPTIONS: Record<string, Option[]> = {
     },
     {
       value: 'pitta_kapha',
-      label: 'Strong appetite but slow to digest — I eat a lot but feel heavy afterwards',
+      label: 'Strong appetite but slow to digest, I eat a lot but feel heavy afterwards',
     },
   ],
   sleep: [
     {
       value: 'vata',
-      label: 'Light sleeper — I wake easily; sometimes trouble falling asleep; vivid or active dreams',
+      label: 'Light sleeper, I wake easily; sometimes trouble falling asleep; vivid or active dreams',
     },
     {
       value: 'pitta',
-      label: 'Moderate sleeper — 6 to 7 hours; mostly sound but occasionally wake at night',
+      label: 'Moderate sleeper, 6 to 7 hours; mostly sound but occasionally wake at night',
     },
     {
       value: 'kapha',
-      label: 'Deep sleeper — fall asleep easily; sleep long hours; can feel groggy or slow on waking',
+      label: 'Deep sleeper, fall asleep easily; sleep long hours; can feel groggy or slow on waking',
     },
     {
       value: 'vata_pitta',
-      label: 'Light to moderate sleeper — varies a lot with stress level',
+      label: 'Light to moderate sleeper, varies a lot with stress level',
     },
     {
       value: 'pitta_kapha',
@@ -205,15 +208,15 @@ const PRAKRITI_OPTIONS: Record<string, Option[]> = {
     {
       value: 'vata',
       label:
-        'Energy comes in bursts — fluctuates through the day; I usually feel cold and dislike cold weather',
+        'Energy comes in bursts, fluctuates through the day; I usually feel cold and dislike cold weather',
     },
     {
       value: 'pitta',
-      label: 'Steady, high energy — I feel warm or hot, prefer cool weather, and sweat easily',
+      label: 'Steady, high energy, I feel warm or hot, prefer cool weather, and sweat easily',
     },
     {
       value: 'kapha',
-      label: 'Stable, steady energy — body feels cool to neutral; I tolerate most weather well',
+      label: 'Stable, steady energy, body feels cool to neutral; I tolerate most weather well',
     },
     {
       value: 'vata_pitta',
@@ -228,39 +231,39 @@ const PRAKRITI_OPTIONS: Record<string, Option[]> = {
     {
       value: 'vata',
       label:
-        'Quick, creative, restless — many thoughts at once; prone to worry, anxiety, or scattered focus',
+        'Quick, creative, restless, many thoughts at once; prone to worry, anxiety, or scattered focus',
     },
     {
       value: 'pitta',
       label:
-        'Sharp, focused, determined — can be intense, competitive, or quick to anger when frustrated',
+        'Sharp, focused, determined, can be intense, competitive, or quick to anger when frustrated',
     },
     {
       value: 'kapha',
       label:
-        'Calm, steady, patient — slow to anger, but also slow to change; sometimes feel sluggish or stuck',
+        'Calm, steady, patient, slow to anger, but also slow to change; sometimes feel sluggish or stuck',
     },
     {
       value: 'vata_pitta',
-      label: 'Quick-thinking and sharp — switches between creative and laser-focused modes',
+      label: 'Quick-thinking and sharp, switches between creative and laser-focused modes',
     },
     {
       value: 'pitta_kapha',
-      label: 'Focused and calm — steady but firm, deliberate',
+      label: 'Focused and calm, steady but firm, deliberate',
     },
   ],
   bowels: [
     {
       value: 'vata',
-      label: 'Irregular or sometimes constipated — dry or hard stools; not always daily',
+      label: 'Irregular or sometimes constipated, dry or hard stools; not always daily',
     },
     {
       value: 'pitta',
-      label: 'Regular and frequent — sometimes loose or urgent; often more than once a day',
+      label: 'Regular and frequent, sometimes loose or urgent; often more than once a day',
     },
     {
       value: 'kapha',
-      label: 'Slow and steady — well-formed, may go once a day or less; rarely loose',
+      label: 'Slow and steady, well-formed, may go once a day or less; rarely loose',
     },
     {
       value: 'vata_pitta',
@@ -279,51 +282,39 @@ export const QUESTIONS: Question[] = [
     id: 'Q1',
     part: 1,
     field: 'primary_goal',
-    type: 'single_select',
-    prompt: "What's your primary health goal right now?",
+    type: 'multi_select',
+    prompt: 'What are your health goals right now?',
     subtitle:
-      "Choose the single outcome that matters most to you right now. We'll center the monthly recommendations on this goal.",
+      "Pick all that apply, in any combination. We'll center the monthly recommendations on what you choose here.",
     required: true,
+    revealsTextOn: 'other',
+    otherField: 'primary_goal_other',
     options: [
-      { value: 'weight_loss', label: 'Weight loss — reduce body fat and lighten my frame' },
+      { value: 'weight_loss', label: 'Weight loss, reduce body fat and lighten my frame' },
       {
         value: 'weight_gain',
-        label: 'Weight gain or muscle building — add healthy mass and strength',
+        label: 'Weight gain or muscle building, add healthy mass and strength',
       },
-      { value: 'energy', label: 'Sustained energy and vitality — feel less tired through the day' },
+      { value: 'energy', label: 'Sustained energy and vitality, feel less tired through the day' },
       {
         value: 'digestion',
         label:
-          'Better digestion and gut health — resolve bloating, irregularity, or discomfort',
+          'Better digestion and gut health, resolve bloating, irregularity, or discomfort',
       },
       {
         value: 'hormonal_balance',
-        label: 'Hormonal balance / cycle health — support menstrual or hormonal regulation',
+        label: 'Hormonal balance / cycle health, support menstrual or hormonal regulation',
       },
       {
         value: 'stress_relief',
-        label: 'Stress reduction and mental calm — feel less anxious or overwhelmed',
+        label: 'Stress reduction and mental calm, feel less anxious or overwhelmed',
       },
       {
         value: 'general_wellness',
-        label: 'General wellness and maintenance — stay healthy without a specific issue',
+        label: 'General wellness and maintenance, stay healthy without a specific issue',
       },
-      { value: 'other', label: "Other — I'll describe in the next question" },
+      { value: 'other', label: 'Other (please specify)' },
     ],
-  },
-  {
-    id: 'Q2',
-    part: 1,
-    field: 'success_vision',
-    type: 'long_answer',
-    prompt: 'What does success look like for you?',
-    subtitle:
-      "In your own words, describe what you'd love to feel or experience after 3 months of following this blueprint. One to three sentences is enough.",
-    required: true,
-    minLength: 10,
-    maxLength: 500,
-    placeholder:
-      'e.g., I want to lose 5 kg without giving up my favourite foods, and stop feeling sluggish in the afternoons.',
   },
 
   // ── PART 2 ── About You ────────────────────────────────────────────────
@@ -331,14 +322,14 @@ export const QUESTIONS: Question[] = [
     id: 'Q3',
     part: 2,
     field: 'age',
-    type: 'number',
+    type: 'select',
     prompt: 'Your age',
     subtitle:
       'Helps us calibrate recommendations by life stage (Ayurveda treats different decades differently).',
     required: true,
     min: 16,
     max: 95,
-    placeholder: 'e.g., 32',
+    placeholder: 'Select your age',
   },
   {
     id: 'Q4',
@@ -362,13 +353,13 @@ export const QUESTIONS: Question[] = [
     id: 'Q5',
     part: 2,
     field: 'city',
-    type: 'short_answer',
+    type: 'city_autocomplete',
     prompt: 'City or region you live in',
     subtitle:
-      'We recommend foods that are seasonally available and culturally familiar in your area. Please include city + state/country.',
+      'Start typing your city and pick from the suggestions. We use this to recommend foods that are seasonally available and culturally familiar in your area.',
     required: true,
-    placeholder: 'e.g., Nanded, Maharashtra, India',
-    maxLength: 120,
+    placeholder: 'Start typing your city, e.g., Nanded',
+    maxLength: 200,
   },
   {
     id: 'Q6',
@@ -589,11 +580,11 @@ export const QUESTIONS: Question[] = [
       },
       {
         value: 'physical_work',
-        label: 'Physically active work — field, lab, on-site, or trades',
+        label: 'Physically active work, field, lab, on-site, or trades',
       },
       {
         value: 'wfh_flexible',
-        label: 'Work from home or flexible hours — mixed sitting and moving',
+        label: 'Work from home or flexible hours, mixed sitting and moving',
       },
       {
         value: 'not_working',
@@ -616,7 +607,7 @@ export const QUESTIONS: Question[] = [
       },
       {
         value: 'irregular_3',
-        label: 'Three meals but irregular timing — I often skip or delay',
+        label: 'Three meals but irregular timing, I often skip or delay',
       },
       {
         value: 'meals_plus_snacks',
@@ -643,14 +634,14 @@ export const QUESTIONS: Question[] = [
     subtitle: 'Choose the option that best describes how you eat by default.',
     required: true,
     options: [
-      { value: 'vegetarian', label: 'Pure vegetarian — no meat, no fish, no eggs' },
+      { value: 'vegetarian', label: 'Pure vegetarian, no meat, no fish, no eggs' },
       {
         value: 'eggetarian',
-        label: 'Lacto-ovo vegetarian — no meat or fish, but I eat eggs and dairy',
+        label: 'Lacto-ovo vegetarian, no meat or fish, but I eat eggs and dairy',
       },
-      { value: 'vegan', label: 'Vegan — no animal products at all' },
-      { value: 'non_vegetarian', label: 'Non-vegetarian — I eat meat or fish regularly' },
-      { value: 'flexitarian', label: 'Flexitarian — mostly vegetarian, occasionally non-veg' },
+      { value: 'vegan', label: 'Vegan, no animal products at all' },
+      { value: 'non_vegetarian', label: 'Non-vegetarian, I eat meat or fish regularly' },
+      { value: 'flexitarian', label: 'Flexitarian, mostly vegetarian, occasionally non-veg' },
     ],
   },
   {
@@ -680,6 +671,20 @@ export const QUESTIONS: Question[] = [
 
   // ── PART 7 ── Where to Send Your Report ────────────────────────────────
   {
+    id: 'Q2',
+    part: 7,
+    field: 'success_vision',
+    type: 'long_answer',
+    prompt: 'What does success look like for you?',
+    subtitle:
+      "In your own words, describe what you'd love to feel or experience after 3 months of following this blueprint. One to three sentences is enough.",
+    required: true,
+    minLength: 10,
+    maxLength: 500,
+    placeholder:
+      'e.g., I want to lose 5 kg without giving up my favourite foods, and stop feeling sluggish in the afternoons.',
+  },
+  {
     id: 'Q24',
     part: 7,
     field: 'full_name',
@@ -702,6 +707,17 @@ export const QUESTIONS: Question[] = [
       'This is where your monthly Vedic Blueprint PDF will be delivered, every Shukla Pratipada (first day of the Vedic month).',
     required: true,
     placeholder: 'e.g., yourname@example.com',
+  },
+  {
+    id: 'Q26',
+    part: 7,
+    field: 'phone',
+    type: 'phone',
+    prompt: 'Your mobile or WhatsApp number',
+    subtitle:
+      'We use this only for important account updates and to share your renewal link before each Vedic month. We will not message you outside of that.',
+    required: true,
+    placeholder: '98765 43210',
   },
 ];
 

@@ -4,27 +4,18 @@ import { getAnthropic } from '@/lib/maasik/anthropic-client';
 import { htmlToPdfBuffer } from '@/lib/maasik/doppio';
 import { sendReportEmail, sendInternalFailureAlert } from '@/lib/maasik/resend';
 import { SYSTEM_PROMPT } from '@/lib/maasik/system-prompt';
-import { HTML_TEMPLATE } from '@/lib/maasik/html-template';
 import {
-  formatVedicDate,
-  getBmiCategory,
-  getMonthDescriptor,
-  getRituDescriptor,
-  humanisePaksha,
-  humanisePrakriti,
-  computeDoshaCellClasses,
-  getDoshaLabel,
-  getPrimaryGoalDisplay,
-  getSecondaryGoalDisplay,
-  getActiveConcernDisplay,
-  formatIssueNumber,
   computeReportCostInr,
   type MaasikUser,
   type VedicMonth,
 } from '@/lib/maasik/helpers';
+import { buildUserMessage } from '@/lib/maasik/user-message';
+import { validateGeneratedHtml } from '@/lib/maasik/validate-html';
 
 export const runtime = 'nodejs';
 export const maxDuration = 800;  // Up to 13 minutes for Claude + Doppio + Resend
+
+const GENERATION_PROMPT_VERSION = 'v4.0';
 
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
@@ -68,10 +59,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No active Vedic month' }, { status: 404 });
     }
 
+    console.log(`[generate-report v2.0] user_id=${user_id} month=${month.vedic_month}`);
+
     // ---- 3. Check for existing report (with usable HTML to skip Claude during testing)
     const { data: existing } = await supabase
       .from('maasik_reports')
-      .select('id, delivery_status, report_html, issue_number')
+      .select('id, delivery_status, report_html, issue_number, edition_number')
       .eq('user_id', user_id)
       .eq('vedic_month', month.vedic_month)
       .eq('paksha', month.paksha)
@@ -87,17 +80,19 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // ---- 4. Determine issue number (only for new reports)
-    let issueNumber: number;
-    if (existing?.issue_number) {
-      issueNumber = existing.issue_number;
+    // ---- 4. Determine edition number (only for new reports)
+    let editionNumber: number;
+    if (existing?.edition_number) {
+      editionNumber = existing.edition_number;
+    } else if (existing?.issue_number) {
+      editionNumber = existing.issue_number;
     } else {
       const { count: priorCount } = await supabase
         .from('maasik_reports')
         .select('id', { count: 'exact', head: true })
         .eq('user_id', user_id)
         .in('delivery_status', ['sent', 'delivered', 'opened']);
-      issueNumber = (priorCount || 0) + 1;
+      editionNumber = (priorCount || 0) + 1;
     }
 
     // ---- 5. Decide whether to reuse existing HTML or generate fresh
@@ -129,9 +124,10 @@ export async function POST(req: NextRequest) {
           ritu: month.ritu,
           gregorian_start: month.gregorian_start,
           gregorian_end: month.gregorian_end,
-          issue_number: issueNumber,
+          issue_number: editionNumber,
+          edition_number: editionNumber,
           delivery_status: 'generating',
-          generation_prompt_version: 'v1.0',
+          generation_prompt_version: GENERATION_PROMPT_VERSION,
           generation_model: 'claude-sonnet-4-6',
         }, { onConflict: 'user_id,vedic_month,paksha,vikram_samvat' })
         .select()
@@ -145,14 +141,42 @@ export async function POST(req: NextRequest) {
       }
       report = newReport;
 
-      // 5B.2: Build the user message and call Claude
-      const userMessage = buildUserMessage(user as MaasikUser, month as VedicMonth, issueNumber);
+      // 5B.2: Fetch previous word origins (last 3 sent reports) to prevent repeats
+      const { data: priorReports } = await supabase
+        .from('maasik_reports')
+        .select('word_origins_used, sent_at')
+        .eq('user_id', user_id)
+        .in('delivery_status', ['sent', 'delivered', 'opened'])
+        .order('sent_at', { ascending: false })
+        .limit(3);
+
+      const previousWordOrigins = Array.from(
+        new Set(
+          (priorReports || [])
+            .flatMap((r: any) => (Array.isArray(r.word_origins_used) ? r.word_origins_used : []))
+            .filter((w: unknown): w is string => typeof w === 'string' && w.length > 0),
+        ),
+      );
+
+      // 5B.3: Build the user message and call Claude
+      const userMessage = buildUserMessage(
+        user as MaasikUser,
+        month as VedicMonth,
+        editionNumber,
+        previousWordOrigins,
+      );
       const anthropic = getAnthropic();
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-6',
-        max_tokens: 16000,
+        max_tokens: 18000,
         temperature: 0.4,
-        system: SYSTEM_PROMPT,
+        system: [
+          {
+            type: 'text',
+            text: SYSTEM_PROMPT,
+            cache_control: { type: 'ephemeral' },
+          },
+        ],
         messages: [{ role: 'user', content: userMessage }],
       });
 
@@ -162,11 +186,20 @@ export async function POST(req: NextRequest) {
         .join('\n')
         .trim();
 
-      // 5B.3: Validate HTML structure
-      if (!html.startsWith('<!DOCTYPE html>') || !html.endsWith('</html>')) {
+      // Strip any accidental preamble (HTTP-like text, "Here is the HTML:", code-fence markers)
+      // before the doctype and any trailing content after </html>. Defense-in-depth so a viewer
+      // or downstream PDF tool never sees stray text around the document.
+      const doctypeIdx = html.indexOf('<!DOCTYPE html>');
+      if (doctypeIdx > 0) html = html.slice(doctypeIdx);
+      const htmlCloseIdx = html.lastIndexOf('</html>');
+      if (htmlCloseIdx >= 0) html = html.slice(0, htmlCloseIdx + '</html>'.length);
+
+      // 5B.4: Post-generation validation (Phase 7 stub: structure + placeholders)
+      const validation = validateGeneratedHtml(html, user as MaasikUser);
+      if (!validation.valid) {
         await supabase.from('maasik_reports').update({
           delivery_status: 'failed',
-          delivery_error: 'Invalid HTML output from Claude',
+          delivery_error: validation.errors.join('; '),
           report_html: html.slice(0, 5000),
         }).eq('id', report.id);
 
@@ -174,34 +207,32 @@ export async function POST(req: NextRequest) {
           userEmail: user.email,
           userId: user.id,
           reportId: report.id,
-          reason: 'Claude returned malformed HTML',
+          reason: `Validation failed: ${validation.errors.join('; ')}`,
         });
 
-        return NextResponse.json({ error: 'Invalid HTML output' }, { status: 500 });
+        return NextResponse.json(
+          { error: 'Validation failed', details: validation.errors },
+          { status: 500 },
+        );
       }
 
-      // 5B.4: Check for unfilled placeholders
-      const unfilled = html.match(/\[\[[A-Z_]+\]\]/g);
-      if (unfilled && unfilled.length > 0) {
-        await supabase.from('maasik_reports').update({
-          delivery_status: 'failed',
-          delivery_error: `Unfilled placeholders: ${unfilled.slice(0, 5).join(', ')}`,
-          report_html: html,
-        }).eq('id', report.id);
+      // 5B.5: Extract v2 metadata from the HTML
+      const archetypeMatch = html.match(/<h3 class="archetype-name">([^<]+)<\/h3>/);
+      const archetypeName = archetypeMatch ? archetypeMatch[1].trim() : null;
 
-        await sendInternalFailureAlert({
-          userEmail: user.email,
-          userId: user.id,
-          reportId: report.id,
-          reason: `Unfilled placeholders: ${unfilled.join(', ')}`,
-        });
+      const wordOriginsUsed = Array.from(
+        new Set(
+          Array.from(html.matchAll(/<div class="wo-term">([^<]+)<\/div>/g)).map((m) =>
+            m[1].trim(),
+          ),
+        ),
+      );
 
-        return NextResponse.json({ error: 'Template not fully filled', unfilled }, { status: 500 });
-      }
-
-      // 5B.5: Save the generated HTML and generation metadata
+      // 5B.6: Save the generated HTML and generation metadata
       await supabase.from('maasik_reports').update({
         report_html: html,
+        archetype_name: archetypeName,
+        word_origins_used: wordOriginsUsed,
         generation_tokens_input: response.usage.input_tokens,
         generation_tokens_output: response.usage.output_tokens,
         generation_cost_inr: computeReportCostInr(response.usage),
@@ -247,7 +278,7 @@ export async function POST(req: NextRequest) {
         firstName: user.full_name.split(' ')[0],
         vedicMonth: month.vedic_month,
         ritu: month.ritu,
-        issueNumber,
+        issueNumber: editionNumber,
         pdfBuffer,
         pdfFilename,
       });
@@ -277,8 +308,8 @@ export async function POST(req: NextRequest) {
       resend_message_id: resendId,
     }).eq('id', report.id);
 
-    // ---- 11. Update user.first_report_sent_at if this is issue 1
-    if (issueNumber === 1) {
+    // ---- 11. Update user.first_report_sent_at if this is edition 1
+    if (editionNumber === 1) {
       await supabase.from('maasik_users').update({
         first_report_sent_at: new Date().toISOString(),
       }).eq('id', user_id);
@@ -293,7 +324,8 @@ export async function POST(req: NextRequest) {
       event_data: {
         report_id: report.id,
         vedic_month: month.vedic_month,
-        issue_number: issueNumber,
+        edition_number: editionNumber,
+        issue_number: editionNumber,
         duration_ms: Date.now() - startTime,
         path: hasUsableHtml ? 'reused_html' : 'fresh_generation',
       },
@@ -311,89 +343,4 @@ export async function POST(req: NextRequest) {
     console.error('Report generation error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
-}
-
-function buildUserMessage(user: MaasikUser, month: VedicMonth, issueNumber: number): string {
-  const firstName = user.full_name.split(' ')[0];
-  const today = formatVedicDate(new Date().toISOString().split('T')[0]);
-
-  const prakritiDisplay = humanisePrakriti(user.prakriti_label);
-  const cellClasses = computeDoshaCellClasses(user.vata_score, user.pitta_score, user.kapha_score);
-  const primaryGoal = getPrimaryGoalDisplay(user.primary_goals);
-  const secondaryGoal = getSecondaryGoalDisplay(user.primary_goals);
-  const activeConcern = getActiveConcernDisplay(user.allergies, user.medical_conditions);
-
-  return `Generate the MAASIK monthly blueprint for the following user.
-
-<user_profile>
-  <name>${user.full_name}</name>
-  <first_name>${firstName}</first_name>
-  <age>${user.age || 'not provided'}</age>
-  <gender>${user.gender || 'not provided'}</gender>
-  <city>${user.city || 'India'}</city>
-  <region>${user.region || ''}</region>
-  <height_cm>${user.height_cm || ''}</height_cm>
-  <weight_kg>${user.weight_kg || ''}</weight_kg>
-  <bmi>${user.bmi || ''}</bmi>
-  <bmi_category>${getBmiCategory(user.bmi)}</bmi_category>
-
-  <prakriti_label>${user.prakriti_label || ''}</prakriti_label>
-  <prakriti_display>${prakritiDisplay}</prakriti_display>
-  <vata_score>${user.vata_score}</vata_score>
-  <pitta_score>${user.pitta_score}</pitta_score>
-  <kapha_score>${user.kapha_score}</kapha_score>
-
-  <primary_goals>${user.primary_goals.join(', ')}</primary_goals>
-  <primary_goal_display>${primaryGoal}</primary_goal_display>
-  <secondary_goal_display>${secondaryGoal}</secondary_goal_display>
-  <goal_specifics>${user.goal_specifics || 'not specified'}</goal_specifics>
-
-  <diet_type>${user.diet_type || 'unspecified'}</diet_type>
-  <favorite_foods>${user.favorite_foods || 'not specified'}</favorite_foods>
-  <disliked_foods>${user.disliked_foods || 'none'}</disliked_foods>
-  <allergies>${user.allergies || 'none'}</allergies>
-  <medical_conditions>${user.medical_conditions || 'none'}</medical_conditions>
-  <active_concern_display>${activeConcern}</active_concern_display>
-
-  <sleep_time>${user.sleep_time || '11:00 PM'}</sleep_time>
-  <wake_time>${user.wake_time || '06:30 AM'}</wake_time>
-  <work_type>${user.work_type || 'sedentary'}</work_type>
-  <stress_level>${user.stress_level || 'moderate'}</stress_level>
-  <meal_timing_pattern>${user.meal_timing_pattern || 'standard'}</meal_timing_pattern>
-
-  <expectations>${user.expectations || 'general wellness'}</expectations>
-</user_profile>
-
-<vedic_month_context>
-  <vedic_month>${month.vedic_month}</vedic_month>
-  <paksha>${month.paksha}</paksha>
-  <paksha_full>${humanisePaksha(month.paksha)}</paksha_full>
-  <vikram_samvat>${month.vikram_samvat}</vikram_samvat>
-  <ritu>${month.ritu}</ritu>
-  <ritu_descriptor>${getRituDescriptor(month.ritu)}</ritu_descriptor>
-  <gregorian_start>${month.gregorian_start}</gregorian_start>
-  <gregorian_end>${month.gregorian_end}</gregorian_end>
-  <gregorian_start_formatted>${formatVedicDate(month.gregorian_start)}</gregorian_start_formatted>
-  <gregorian_end_formatted>${formatVedicDate(month.gregorian_end)}</gregorian_end_formatted>
-  <is_adhik_maas>${month.is_adhik_maas || false}</is_adhik_maas>
-  <month_descriptor>${getMonthDescriptor(month)}</month_descriptor>
-</vedic_month_context>
-
-<dosha_cell_classes>
-  <vata>${cellClasses.vata}</vata>
-  <pitta>${cellClasses.pitta}</pitta>
-  <kapha>${cellClasses.kapha}</kapha>
-  <vata_label>${getDoshaLabel(user.vata_score, cellClasses.vata)}</vata_label>
-  <pitta_label>${getDoshaLabel(user.pitta_score, cellClasses.pitta)}</pitta_label>
-  <kapha_label>${getDoshaLabel(user.kapha_score, cellClasses.kapha)}</kapha_label>
-</dosha_cell_classes>
-
-<issue_number>${formatIssueNumber(issueNumber)}</issue_number>
-<generation_date_formatted>${today}</generation_date_formatted>
-
-<output_template>
-${HTML_TEMPLATE}
-</output_template>
-
-Produce the complete HTML now, replacing every [[SLOT_NAME]] placeholder with calibrated content. Return only the HTML, starting with <!DOCTYPE html> and ending with </html>. No preamble, no code fences, no commentary.`;
 }
