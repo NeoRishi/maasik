@@ -5,7 +5,7 @@ import { MotionSection } from './motion/MotionSection';
 
 export function FounderNote() {
   return (
-    <section id="founder-note" className="bg-cream w-full">
+    <section id="founder" className="bg-cream-warm w-full border-t border-sand">
       <div className="max-w-3xl mx-auto px-6 md:px-8 py-24 md:py-32 lg:py-40">
         <MotionSection>
           <p className="font-mono text-[11px] text-terracotta tracking-widest3 uppercase">
@@ -24,7 +24,7 @@ export function FounderNote() {
             {COPY.founderNote.body.map((p, i) => (
               <p
                 key={i}
-                className="font-body text-[1.125rem] leading-relaxed text-ink"
+                className="font-body text-[1.0625rem] md:text-[1.125rem] leading-relaxed text-ink"
               >
                 {p}
               </p>

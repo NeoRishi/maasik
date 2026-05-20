@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Inter_Tight, JetBrains_Mono, Noto_Serif_Devanagari } from 'next/font/google';
+import { Fraunces, Inter_Tight, JetBrains_Mono, Newsreader, Noto_Serif_Devanagari } from 'next/font/google';
 import './globals.css';
 import { PostHogProvider } from '@/components/PostHogProvider';
 import { ScrollDepthTracker } from '@/components/ScrollDepthTracker';
@@ -30,6 +30,14 @@ const notoDevanagari = Noto_Serif_Devanagari({
   subsets: ['devanagari'],
   weight: ['400', '500'],
   variable: '--font-noto-devanagari',
+  display: 'swap',
+});
+
+const newsreader = Newsreader({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--font-newsreader',
   display: 'swap',
 });
 
@@ -68,7 +76,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${interTight.variable} ${jetbrainsMono.variable} ${notoDevanagari.variable}`}
+      className={`${fraunces.variable} ${interTight.variable} ${jetbrainsMono.variable} ${notoDevanagari.variable} ${newsreader.variable}`}
     >
       <body className="bg-cream text-ink font-body antialiased">
         <PostHogProvider />
