@@ -292,25 +292,88 @@ export async function POST(req: NextRequest) {
       if (htmlCloseIdx >= 0) html = html.slice(0, htmlCloseIdx + '</html>'.length);
 
       // 5B.4: Post-generation validation (Phase 7 stub: structure + placeholders)
-      const validation = validateGeneratedHtml(html, user as MaasikUser);
-      if (!validation.valid) {
-        await supabase.from('maasik_reports').update({
-          delivery_status: 'failed',
-          delivery_error: validation.errors.join('; '),
-          report_html: html.slice(0, 5000),
-        }).eq('id', report.id);
+      let validation = validateGeneratedHtml(html, user as MaasikUser);
+      let generationAttempts = 1;
+      let secondResponse: typeof response | null = null;
 
-        await sendInternalFailureAlert({
-          userEmail: user.email,
-          userId: user.id,
-          reportId: report.id,
-          reason: `Validation failed: ${validation.errors.join('; ')}`,
+      if (!validation.valid) {
+        // One repair attempt: re-ask Claude with the specific validator errors.
+        // LLM slip-class failures (entity encoding, occasional disliked-food
+        // leak) usually clear on retry. Two attempts cap the cost; if both
+        // fail we mark the report failed as before.
+        console.warn(
+          `[generate-report v2.0] validation_failed_attempt_1 user_id=${user_id} errors=${validation.errors.join(' | ')}`,
+        );
+
+        const repairUserTurn = `Your previous draft failed these validation checks:
+${validation.errors.map((e) => `- ${e}`).join('\n')}
+
+Regenerate the FULL HTML report fixing every issue above. Critical rules:
+- Use the literal middle-dot character "·" (Unicode U+00B7) directly in the HTML. NEVER escape it as "&#183;", "&#xb7;", or "&middot;".
+- Before finalizing the Vegetables and Fruits grocery cards, cross-check every item against the user's <disliked_foods> list. If any item matches case-insensitively, replace it with a seasonally-appropriate alternative.
+- Return ONLY the complete HTML document starting with <!DOCTYPE html> and ending with </html>. No preamble, no code fences.`;
+
+        secondResponse = await anthropic.messages.create({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 18000,
+          temperature: 0.4,
+          system: [
+            {
+              type: 'text',
+              text: SYSTEM_PROMPT,
+              cache_control: { type: 'ephemeral' },
+            },
+          ],
+          messages: [
+            { role: 'user', content: userMessage },
+            { role: 'assistant', content: html },
+            { role: 'user', content: repairUserTurn },
+          ],
         });
 
-        return NextResponse.json(
-          { error: 'Validation failed', details: validation.errors },
-          { status: 500 },
-        );
+        let repairedHtml = secondResponse.content
+          .filter((b: any) => b.type === 'text')
+          .map((b: any) => b.text)
+          .join('\n')
+          .trim();
+
+        const doctypeIdx2 = repairedHtml.indexOf('<!DOCTYPE html>');
+        if (doctypeIdx2 > 0) repairedHtml = repairedHtml.slice(doctypeIdx2);
+        const htmlCloseIdx2 = repairedHtml.lastIndexOf('</html>');
+        if (htmlCloseIdx2 >= 0) repairedHtml = repairedHtml.slice(0, htmlCloseIdx2 + '</html>'.length);
+
+        validation = validateGeneratedHtml(repairedHtml, user as MaasikUser);
+        generationAttempts = 2;
+
+        if (validation.valid) {
+          console.log(
+            `[generate-report v2.0] validation_passed_on_retry user_id=${user_id}`,
+          );
+          html = repairedHtml;
+        } else {
+          console.error(
+            `[generate-report v2.0] validation_failed_after_retry user_id=${user_id} errors=${validation.errors.join(' | ')}`,
+          );
+          await supabase.from('maasik_reports').update({
+            delivery_status: 'failed',
+            delivery_error: validation.errors.join('; '),
+            report_html: repairedHtml.slice(0, 5000),
+          }).eq('id', report.id);
+
+          await sendInternalFailureAlert({
+            userEmail: user.email,
+            userId: user.id,
+            reportId: report.id,
+            reason: `Validation failed after retry: ${validation.errors.join('; ')}`,
+          });
+
+          return NextResponse.json(
+            { error: 'Validation failed', details: validation.errors, attempts: 2 },
+            { status: 500 },
+          );
+        }
+      } else {
+        console.log(`[generate-report v2.0] validation_passed_first_try user_id=${user_id}`);
       }
 
       // 5B.5: Extract v2 metadata from the HTML
@@ -325,16 +388,34 @@ export async function POST(req: NextRequest) {
         ),
       );
 
-      // 5B.6: Save the generated HTML and generation metadata
+      // 5B.6: Save the generated HTML and generation metadata. If a retry
+      // happened, combine token usage and cost across both Claude calls.
+      const combinedUsage = secondResponse
+        ? {
+            input_tokens: response.usage.input_tokens + secondResponse.usage.input_tokens,
+            output_tokens: response.usage.output_tokens + secondResponse.usage.output_tokens,
+            cache_creation_input_tokens:
+              (response.usage.cache_creation_input_tokens || 0)
+              + (secondResponse.usage.cache_creation_input_tokens || 0),
+            cache_read_input_tokens:
+              (response.usage.cache_read_input_tokens || 0)
+              + (secondResponse.usage.cache_read_input_tokens || 0),
+          }
+        : response.usage;
+
       await supabase.from('maasik_reports').update({
         report_html: html,
         archetype_name: archetypeName,
         word_origins_used: wordOriginsUsed,
-        generation_tokens_input: response.usage.input_tokens,
-        generation_tokens_output: response.usage.output_tokens,
-        generation_cost_inr: computeReportCostInr(response.usage),
+        generation_tokens_input: combinedUsage.input_tokens,
+        generation_tokens_output: combinedUsage.output_tokens,
+        generation_cost_inr: computeReportCostInr(combinedUsage as any),
         generation_duration_ms: Date.now() - startTime,
       }).eq('id', report.id);
+
+      if (generationAttempts > 1) {
+        console.log(`[generate-report v2.0] generation_attempts=${generationAttempts} user_id=${user_id}`);
+      }
     }
 
     // ---- 6. Convert HTML to PDF via Doppio (applies to both paths)

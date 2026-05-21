@@ -195,7 +195,9 @@ function validateGroceryQuantities(html: string, errors: string[]): void {
   for (const [, title, body] of cards) {
     if (!/vegetables|fruits/i.test(title)) continue;
     const items = [...body.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) =>
-      m[1].replace(/<[^>]+>/g, '').trim(),
+      // Normalize HTML entity forms of U+00B7 so the regex below works regardless
+      // of whether Claude emitted the literal char or its escaped form.
+      m[1].replace(/<[^>]+>/g, '').replace(/&#183;|&#xB7;|&#xb7;|&middot;/g, '·').trim(),
     );
     // Require middle dot followed (eventually) by a digit on the right side.
     const missing = items.filter((t) => !/·[^·]*\d/.test(t));
