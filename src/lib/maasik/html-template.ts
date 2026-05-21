@@ -132,6 +132,17 @@ export const HTML_TEMPLATE = `<!--
   @media (max-width: 540px) {
     .word-origin { grid-template-columns: 1fr; gap: 8px; padding: 16px 18px; }
   }
+  @media (max-width: 420px) {
+    .word-origin {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 14px 16px;
+    }
+    .wo-marker {
+      font-size: 8px;
+      margin-bottom: 2px;
+    }
+  }
   .wo-marker {
     font-family: var(--sans);
     font-size: 9px;
@@ -181,12 +192,14 @@ export const HTML_TEMPLATE = `<!--
   .cover-title {
     font-family: var(--serif-display);
     font-weight: 300;
-    font-size: clamp(72px, 18vw, 156px);
+    font-size: clamp(48px, 14vw, 156px);
     line-height: 0.92;
     letter-spacing: -0.02em;
     color: var(--terracotta-deep);
     font-variation-settings: "opsz" 144, "SOFT" 50;
     margin: 24px 0 28px;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
   .cover-title em { font-style: italic; font-weight: 400; color: var(--khus-deep); }
 
@@ -232,6 +245,8 @@ export const HTML_TEMPLATE = `<!--
     color: var(--ink);
     margin-bottom: 24px;
     font-variation-settings: "opsz" 96;
+    hyphens: auto;
+    -webkit-hyphens: auto;
   }
   .h2 em { font-style: italic; color: var(--terracotta-deep); }
 
@@ -309,12 +324,13 @@ export const HTML_TEMPLATE = `<!--
     font-family: var(--serif-display);
     font-weight: 300;
     font-style: italic;
-    font-size: clamp(36px, 8vw, 56px);
+    font-size: clamp(28px, 7vw, 56px);
     line-height: 1.05;
     letter-spacing: -0.015em;
     color: var(--ink);
     margin-bottom: 14px;
     font-variation-settings: "opsz" 96, "SOFT" 60;
+    word-break: break-word;
   }
 
   .archetype-tagline {
@@ -424,7 +440,7 @@ export const HTML_TEMPLATE = `<!--
 
   @media (max-width: 540px) {
     .taste-strip { grid-template-columns: repeat(3, 1fr); }
-    .taste-cell.taste-avoid { min-height: 60px; }
+    .taste-cell.taste-avoid { min-height: 56px; opacity: 0.7; }
     .taste-name { font-size: 13px; }
     .taste-avoid .taste-name { font-size: 12px; }
   }
@@ -452,6 +468,26 @@ export const HTML_TEMPLATE = `<!--
     border-radius: 2px;
   }
   .day-chart { width: 100%; height: auto; display: block; }
+
+  @media (max-width: 540px) {
+    .day-chart-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .day-chart {
+      min-width: 600px;
+    }
+    .day-chart-wrap::after {
+      content: "Scroll to see full chart \\2192";
+      display: block;
+      text-align: right;
+      font-family: var(--sans);
+      font-size: 10px;
+      color: var(--ink-mute);
+      margin-top: 8px;
+      letter-spacing: 0.1em;
+    }
+  }
 
   .anchor-table { margin-top: 28px; border-top: 1px solid var(--rule); }
   .anchor-table .row {
@@ -495,6 +531,19 @@ export const HTML_TEMPLATE = `<!--
   .grocery-card ul { list-style: none; padding: 0; }
   .grocery-card li { font-size: 13px; padding: 5px 0; color: var(--ink-soft); line-height: 1.4; border-bottom: 1px dashed var(--rule); }
   .grocery-card li:last-child { border-bottom: 0; }
+
+  @media (max-width: 540px) {
+    .grocery-card {
+      padding: 18px 16px;
+    }
+    .grocery-card h3 {
+      font-size: 15px;
+    }
+    .grocery-card li {
+      font-size: 12px;
+      padding: 4px 0;
+    }
+  }
 
   /* ------- SECTION 07: COMMITMENT ------- */
 
@@ -545,9 +594,158 @@ export const HTML_TEMPLATE = `<!--
   .footer-next { font-family: var(--serif-body); font-style: italic; font-size: 14px; color: var(--ink-mute); }
 
   @media print {
-    body { font-size: 11pt; }
-    section { padding: 30pt 0; page-break-inside: avoid; }
-    .cover { min-height: auto; padding: 20pt; }
+    /* Page setup */
+    @page {
+      size: A4 portrait;
+      margin: 20mm 18mm 24mm 18mm;
+    }
+
+    /* Reset web-specific layout */
+    body {
+      font-size: 11pt;
+      line-height: 1.55;
+      background: white !important;
+    }
+
+    /* Kill the paper grain overlay */
+    body::before {
+      display: none !important;
+    }
+
+    /* Kill the download button */
+    #maasik-download-btn {
+      display: none !important;
+    }
+
+    /* Page width */
+    .page {
+      max-width: 100% !important;
+      padding: 0 !important;
+    }
+
+    /* Cover: fill first page without flex tricks */
+    .cover {
+      min-height: auto !important;
+      display: block !important;
+      padding: 30pt 0 20pt !important;
+      page-break-after: always;
+    }
+
+    .cover-meta {
+      margin-top: 40pt !important;
+    }
+
+    /* Each section starts on a new page */
+    section {
+      padding: 24pt 0 !important;
+      page-break-before: always;
+      page-break-inside: auto;
+    }
+
+    /* Prevent orphans within key components */
+    .archetype-card,
+    .word-origin,
+    .two-front,
+    .front-card,
+    .taste-strip,
+    .food-col,
+    .day-chart-wrap,
+    .anchor-numbered li,
+    .avoid-tight,
+    .grocery-card,
+    .commit-card,
+    .lever {
+      page-break-inside: avoid;
+    }
+
+    /* Anchor table rows should not split */
+    .anchor-table .row {
+      page-break-inside: avoid;
+    }
+
+    /* The day chart SVG must stay on one page */
+    .day-chart-wrap {
+      page-break-inside: avoid;
+      max-height: 280pt;
+    }
+
+    /* Grocery grid: allow page break between cards but not inside them */
+    .grocery-grid {
+      page-break-inside: auto;
+    }
+
+    .grocery-card {
+      page-break-inside: avoid;
+      margin-bottom: 8pt;
+    }
+
+    /* Food columns: keep together */
+    .food-cols {
+      page-break-inside: avoid;
+    }
+
+    /* Typography adjustments for print */
+    .cover-title {
+      font-size: 48pt !important;
+    }
+
+    .h2 {
+      font-size: 22pt !important;
+    }
+
+    .archetype-name {
+      font-size: 32pt !important;
+    }
+
+    .lede {
+      font-size: 12pt !important;
+    }
+
+    /* Tendency grid: always 3-col in print */
+    .tendency-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    /* Cover meta: always 4-col in print */
+    .cover-meta {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+
+    /* Taste strip: always 6-col in print */
+    .taste-strip {
+      grid-template-columns: 4fr 4fr 4fr 1.4fr 1.4fr 1.4fr !important;
+    }
+
+    /* Food columns: always side by side in print */
+    .food-cols {
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* Grocery: always 2-col in print */
+    .grocery-grid {
+      grid-template-columns: 1fr 1fr !important;
+    }
+
+    /* Anchor table: always 3-col in print */
+    .anchor-table .row {
+      grid-template-columns: 80px 110px 1fr !important;
+    }
+
+    /* Links: no underlines in print */
+    a { text-decoration: none !important; }
+
+    /* Backgrounds: force print backgrounds */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+
+    /* Footer */
+    footer {
+      page-break-before: avoid;
+      margin-top: 20pt;
+    }
   }
 </style>
 </head>

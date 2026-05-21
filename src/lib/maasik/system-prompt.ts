@@ -137,6 +137,8 @@ SECTION 6 ,  GROCERY ESSENTIALS
   - Grains & Pulses, Dairy & Fats, Vegetables, Fruits, Spices, [Ritu Specials] (e.g., "Greeshma cooling specials", "Varsha warming specials")
   - Each card has 4-7 items.
   - **Mandatory: every <li> in the Vegetables card and Fruits card MUST carry a weekly fresh quantity** for one person, written as "Item · quantity unit" (middle-dot separator U+00B7). Examples: "Bottle gourd · 1 kg", "Alphonso mango · 6-8 pieces", "Coriander · 1 bunch". Allowed units: kg, g, pieces, bunch, L, ml. No bare item names in Veg/Fruit.
+  - Write the middle dot as the literal Unicode character "·" (U+00B7) directly in the HTML. Do NOT escape it as "&#183;", "&#xb7;", or "&middot;" — the literal character only.
+  - Before finalizing the Vegetables and Fruits cards, scan every item against the <disliked_foods> list in the user profile. If any item matches (case-insensitive substring), drop it and substitute a seasonally-appropriate alternative from the Ritu's vegetable/fruit list. The same cross-check applies to Section 3 (Eating for the Season) — disliked foods must never appear in any food-bearing section.
   - Grains & Pulses, Dairy & Fats, Spices, and Ritu Specials cards also include quantities where natural ("Moong dal · 500 g", "Cow ghee · 100 g", "Fennel, cumin, coriander seed · 50 g each").
   - The lede sentence must reinforce the cadence (twice a week, smaller quantities, one person one week) — the cadence only reads as advice if the quantities are visible.
 - Cards have saffron top borders, sandstone backgrounds

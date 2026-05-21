@@ -18,6 +18,7 @@ export interface EmailReportArgs {
   issueNumber: number;
   pdfBuffer: Buffer;
   pdfFilename: string;
+  reportUrl?: string;
 }
 
 /**
@@ -116,7 +117,14 @@ export async function sendInternalFailureAlert(args: EmailFailureArgs): Promise<
 // ============================================================================
 
 function buildReportEmailHtml(args: EmailReportArgs): string {
-  const { firstName, vedicMonth, ritu, issueNumber } = args;
+  const { firstName, vedicMonth, ritu, issueNumber, reportUrl } = args;
+  const ctaBlock = reportUrl
+    ? `
+        <div style="margin:24px 0 32px 0;">
+          <a href="${reportUrl}" style="display:inline-block;background:#7A2818;color:#FAF3E7;font-family:Georgia,serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;padding:14px 28px;border-radius:2px;">Read your blueprint</a>
+          <p style="font-family:Georgia,serif;font-size:12px;color:#8a7d6a;margin:10px 0 0 0;">Opens in your browser. The PDF is also attached for printing.</p>
+        </div>`
+    : '';
   return `<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>Your ${vedicMonth} Blueprint</title></head>
 <body style="margin:0;padding:0;background:#FAF3E7;font-family:Georgia,serif;color:#2D2A26;">
@@ -140,7 +148,7 @@ function buildReportEmailHtml(args: EmailReportArgs): string {
         <p style="font-size:15px;line-height:1.6;color:#2D2A26;margin:0 0 24px 0;">
           This month's report covers what to eat, what to avoid, your ideal daily meal schedule, a complete grocery list, and the routine that anchors all of it. Open the PDF when you have a quiet five minutes. Then print it, stick it on your refrigerator, and live by it for the next 14 to 30 days.
         </p>
-
+${ctaBlock}
         <div style="background:#f3e9d4;border-left:3px solid #C84B31;padding:16px 20px;margin:24px 0;">
           <p style="font-family:Georgia,serif;font-style:italic;font-size:14px;color:#4a3f31;margin:0;line-height:1.5;">
             One ritual that helps: read the report once on the morning of delivery, then keep it accessible through the month. Most subscribers reread it during week two when they need a reminder of the path.
@@ -168,11 +176,12 @@ function buildReportEmailHtml(args: EmailReportArgs): string {
 }
 
 function buildReportEmailText(args: EmailReportArgs): string {
+  const urlLine = args.reportUrl ? `\n\nRead online: ${args.reportUrl}` : '';
   return `${args.firstName},
 
 Issue ${String(args.issueNumber).padStart(2, '0')} of your MAASIK blueprint is attached.
 
-This is your ${args.vedicMonth} nutrition guide, four pages calibrated to your constitution, your goals, and the current Vedic month. Open the PDF when you have a quiet five minutes. Then print it, stick it on your refrigerator, and live by it for the next 14 to 30 days.
+This is your ${args.vedicMonth} nutrition guide, four pages calibrated to your constitution, your goals, and the current Vedic month. Open the PDF when you have a quiet five minutes. Then print it, stick it on your refrigerator, and live by it for the next 14 to 30 days.${urlLine}
 
 Your next blueprint arrives on the next Shukla Pratipada. Reply to this email if anything in the report needs adjusting.
 
