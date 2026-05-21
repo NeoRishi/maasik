@@ -29,7 +29,7 @@ const DOWNLOAD_BUTTON_HTML = `
       color: #8E3F26;
       background: #F7F1E5;
       border: 1px solid rgba(26,22,17,0.12);
-      padding: 12px 20px;
+      padding: 14px 22px;
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       border-radius: 2px;
