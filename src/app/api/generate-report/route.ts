@@ -11,6 +11,12 @@ import {
 } from '@/lib/maasik/helpers';
 import { buildUserMessage } from '@/lib/maasik/user-message';
 import { validateGeneratedHtml } from '@/lib/maasik/validate-html';
+import { getReportToken } from '@/lib/maasik/report-token';
+
+function buildReportUrl(reportId: string, token: string): string {
+  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://maasik.neorishi.io';
+  return `${base.replace(/\/$/, '')}/report/${reportId}?token=${token}`;
+}
 
 export const runtime = 'nodejs';
 export const maxDuration = 800;  // Up to 13 minutes for Claude + Doppio + Resend
@@ -141,6 +147,7 @@ export async function POST(req: NextRequest) {
           issueNumber: existingEdition,
           pdfBuffer: resentBuffer,
           pdfFilename,
+          reportUrl: buildReportUrl(existing.id, getReportToken(existing.id, user.email)),
         });
       } catch (emailErr: any) {
         await sendInternalFailureAlert({
@@ -154,6 +161,12 @@ export async function POST(req: NextRequest) {
           { status: 500 },
         );
       }
+
+      const resendToken = getReportToken(existing.id, user.email);
+      await supabase
+        .from('maasik_reports')
+        .update({ access_token: resendToken })
+        .eq('id', existing.id);
 
       await supabase.from('maasik_events').insert({
         user_id,
@@ -173,6 +186,7 @@ export async function POST(req: NextRequest) {
         already_sent: true,
         resent: true,
         report_id: existing.id,
+        report_url: buildReportUrl(existing.id, resendToken),
         resend_message_id: resentResendId,
       });
     }
@@ -411,6 +425,7 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
         generation_tokens_output: combinedUsage.output_tokens,
         generation_cost_inr: computeReportCostInr(combinedUsage as any),
         generation_duration_ms: Date.now() - startTime,
+        access_token: getReportToken(report.id, user.email),
       }).eq('id', report.id);
 
       if (generationAttempts > 1) {
@@ -459,6 +474,7 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
         issueNumber: editionNumber,
         pdfBuffer,
         pdfFilename,
+        reportUrl: buildReportUrl(report.id, getReportToken(report.id, user.email)),
       });
     } catch (emailErr: any) {
       await supabase.from('maasik_reports').update({
@@ -479,11 +495,14 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
       );
     }
 
-    // ---- 10. Mark as sent
+    // ---- 10. Mark as sent. Ensure access_token is present even on the
+    // reused-HTML path where step 5B did not run.
+    const accessToken = getReportToken(report.id, user.email);
     await supabase.from('maasik_reports').update({
       delivery_status: 'sent',
       sent_at: new Date().toISOString(),
       resend_message_id: resendId,
+      access_token: accessToken,
     }).eq('id', report.id);
 
     // ---- 11. Update user.first_report_sent_at if this is edition 1
@@ -511,7 +530,10 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
 
     return NextResponse.json({
       ok: true,
+      success: true,
       report_id: report.id,
+      report_url: buildReportUrl(report.id, accessToken),
+      html_length: html.length,
       duration_ms: Date.now() - startTime,
       resend_message_id: resendId,
       path: hasUsableHtml ? 'reused_html' : 'fresh_generation',
