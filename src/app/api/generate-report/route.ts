@@ -287,7 +287,12 @@ export async function POST(req: NextRequest) {
         previousWordOrigins,
       );
       const anthropic = getAnthropic();
-      const response = await anthropic.messages.create({
+      // Streaming is required by the Anthropic SDK for any single call that
+      // may exceed 10 minutes -- which a 32K-token max_tokens request can.
+      // finalMessage() resolves to the same Message shape as the non-stream
+      // create() call (usage, stop_reason, content), so downstream code is
+      // unchanged.
+      const response = await anthropic.messages.stream({
         model: 'claude-sonnet-4-6',
         max_tokens: MAX_OUTPUT_TOKENS,
         temperature: 0.4,
@@ -299,7 +304,7 @@ export async function POST(req: NextRequest) {
           },
         ],
         messages: [{ role: 'user', content: userMessage }],
-      });
+      }).finalMessage();
 
       html = response.content
         .filter((b: any) => b.type === 'text')
@@ -359,7 +364,7 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
 - Before finalizing the Vegetables and Fruits grocery cards, cross-check every item against the user's <disliked_foods> list. If any item matches case-insensitively, replace it with a seasonally-appropriate alternative.
 - Return ONLY the complete HTML document starting with <!DOCTYPE html> and ending with </html>. No preamble, no code fences.`;
 
-        secondResponse = await anthropic.messages.create({
+        secondResponse = await anthropic.messages.stream({
           model: 'claude-sonnet-4-6',
           max_tokens: MAX_OUTPUT_TOKENS,
           temperature: 0.4,
@@ -375,7 +380,7 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
             { role: 'assistant', content: html },
             { role: 'user', content: repairUserTurn },
           ],
-        });
+        }).finalMessage();
 
         let repairedHtml = secondResponse.content
           .filter((b: any) => b.type === 'text')
