@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
   const userMessage = buildUserMessage(testUser, testMonth, 2, []);
 
   const anthropic = getAnthropic();
-  const response = await anthropic.messages.create({
+  const response = await anthropic.messages.stream({
     model: 'claude-sonnet-4-6',
     max_tokens: 32000,
     temperature: 0.4,
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       },
     ],
     messages: [{ role: 'user', content: userMessage }],
-  });
+  }).finalMessage();
 
   let html = response.content
     .filter((b: any) => b.type === 'text')
