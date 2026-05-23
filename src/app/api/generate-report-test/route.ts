@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
   const anthropic = getAnthropic();
   const response = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 18000,
+    max_tokens: 32000,
     temperature: 0.4,
     system: [
       {

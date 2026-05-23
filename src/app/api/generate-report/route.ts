@@ -23,6 +23,16 @@ export const maxDuration = 800;  // Up to 13 minutes for Claude + Doppio + Resen
 
 const GENERATION_PROMPT_VERSION = 'v4.0';
 
+// Sonnet 4.6 supports up to 64K output tokens. The v4 template typically lands
+// at 14-18K output tokens; the old 18K cap was the binding constraint that
+// truncated long reports and produced phantom html_structure /
+// sanskrit_slot_missing validation errors (the closing-sans block and </html>
+// live at the tail of the document, which is exactly what gets lopped off when
+// the model hits max_tokens). 32K gives real headroom for verbose months
+// without doubling cost in the common case, since billing is on tokens
+// actually generated, not the cap.
+const MAX_OUTPUT_TOKENS = 32000;
+
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
 
@@ -279,7 +289,7 @@ export async function POST(req: NextRequest) {
       const anthropic = getAnthropic();
       const response = await anthropic.messages.create({
         model: 'claude-sonnet-4-6',
-        max_tokens: 18000,
+        max_tokens: MAX_OUTPUT_TOKENS,
         temperature: 0.4,
         system: [
           {
@@ -305,21 +315,43 @@ export async function POST(req: NextRequest) {
       const htmlCloseIdx = html.lastIndexOf('</html>');
       if (htmlCloseIdx >= 0) html = html.slice(0, htmlCloseIdx + '</html>'.length);
 
-      // 5B.4: Post-generation validation (Phase 7 stub: structure + placeholders)
+      // 5B.4: Post-generation validation.
+      //
+      // Inspect stop_reason FIRST: when the model hits max_tokens the document
+      // is mechanically truncated, which makes downstream structural validators
+      // (html_structure, sanskrit_slot_missing — the closing-sans block lives
+      // at the tail) trip on what is really a budget failure. Classifying it
+      // here means logs and the repair retry can target the real cause instead
+      // of chasing the symptoms (we burned a customer on this exact confusion).
+      const truncatedOnFirstTry = response.stop_reason === 'max_tokens';
       let validation = validateGeneratedHtml(html, user as MaasikUser);
       let generationAttempts = 1;
       let secondResponse: typeof response | null = null;
 
-      if (!validation.valid) {
+      if (truncatedOnFirstTry || !validation.valid) {
         // One repair attempt: re-ask Claude with the specific validator errors.
         // LLM slip-class failures (entity encoding, occasional disliked-food
         // leak) usually clear on retry. Two attempts cap the cost; if both
         // fail we mark the report failed as before.
-        console.warn(
-          `[generate-report v2.0] validation_failed_attempt_1 user_id=${user_id} errors=${validation.errors.join(' | ')}`,
-        );
+        if (truncatedOnFirstTry) {
+          console.warn(
+            `[generate-report v2.0] truncated_attempt_1 user_id=${user_id} output_tokens=${response.usage.output_tokens} stop_reason=max_tokens`,
+          );
+        } else {
+          console.warn(
+            `[generate-report v2.0] validation_failed_attempt_1 user_id=${user_id} errors=${validation.errors.join(' | ')}`,
+          );
+        }
 
-        const repairUserTurn = `Your previous draft failed these validation checks:
+        const repairUserTurn = truncatedOnFirstTry
+          ? `Your previous draft was cut off mid-document because it exceeded the output token budget. The document never reached </html> and is missing the closing Sanskrit verse.
+
+Regenerate the FULL HTML report end-to-end, but be DISCIPLINED about length: tighten prose paragraphs to the lower end of the stated word budgets in each section, strip any inline CSS comments and collapse whitespace inside the <style> block, and avoid repeating CSS variable values you can reuse. The HTML must start with <!DOCTYPE html> and end with </html>. No preamble, no code fences.
+
+Critical rules still apply:
+- Use the literal middle-dot character "·" (Unicode U+00B7) directly in the HTML. NEVER escape it as "&#183;", "&#xb7;", or "&middot;".
+- Before finalizing the Vegetables and Fruits grocery cards, cross-check every item against the user's <disliked_foods> list. If any item matches case-insensitively, replace it with a seasonally-appropriate alternative.`
+          : `Your previous draft failed these validation checks:
 ${validation.errors.map((e) => `- ${e}`).join('\n')}
 
 Regenerate the FULL HTML report fixing every issue above. Critical rules:
@@ -329,7 +361,7 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
 
         secondResponse = await anthropic.messages.create({
           model: 'claude-sonnet-4-6',
-          max_tokens: 18000,
+          max_tokens: MAX_OUTPUT_TOKENS,
           temperature: 0.4,
           system: [
             {
@@ -356,33 +388,55 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
         const htmlCloseIdx2 = repairedHtml.lastIndexOf('</html>');
         if (htmlCloseIdx2 >= 0) repairedHtml = repairedHtml.slice(0, htmlCloseIdx2 + '</html>'.length);
 
+        const truncatedOnRetry = secondResponse.stop_reason === 'max_tokens';
         validation = validateGeneratedHtml(repairedHtml, user as MaasikUser);
         generationAttempts = 2;
 
-        if (validation.valid) {
+        // Treat retry-time truncation as a hard failure even if the structural
+        // validators happen to pass. A truncated retry is the failure mode we
+        // most need to alert on (budget cap is wrong, or the prompt is too
+        // expansive) so we never quietly ship a half-document.
+        if (validation.valid && !truncatedOnRetry) {
           console.log(
             `[generate-report v2.0] validation_passed_on_retry user_id=${user_id}`,
           );
           html = repairedHtml;
         } else {
+          const failureKind = truncatedOnRetry ? 'token_budget_exceeded' : 'validation_failed_after_retry';
+          const errorSummary = truncatedOnRetry
+            ? `token_budget_exceeded: stop_reason=max_tokens output_tokens_attempt2=${secondResponse.usage.output_tokens}`
+            : validation.errors.join('; ');
           console.error(
-            `[generate-report v2.0] validation_failed_after_retry user_id=${user_id} errors=${validation.errors.join(' | ')}`,
+            `[generate-report v2.0] ${failureKind} user_id=${user_id} ${truncatedOnRetry ? errorSummary : `errors=${errorSummary}`}`,
           );
+
           await supabase.from('maasik_reports').update({
             delivery_status: 'failed',
-            delivery_error: validation.errors.join('; '),
+            delivery_error: errorSummary,
             report_html: repairedHtml.slice(0, 5000),
+            generation_tokens_input: response.usage.input_tokens + secondResponse.usage.input_tokens,
+            generation_tokens_output: response.usage.output_tokens + secondResponse.usage.output_tokens,
+            generation_duration_ms: Date.now() - startTime,
+            generation_stop_reason: secondResponse.stop_reason,
+            generation_attempts: 2,
           }).eq('id', report.id);
 
           await sendInternalFailureAlert({
             userEmail: user.email,
             userId: user.id,
             reportId: report.id,
-            reason: `Validation failed after retry: ${validation.errors.join('; ')}`,
+            reason: truncatedOnRetry
+              ? `Token budget exceeded on both attempts (stop_reason=max_tokens, output_tokens attempt1=${response.usage.output_tokens}, attempt2=${secondResponse.usage.output_tokens}). MAX_OUTPUT_TOKENS=${MAX_OUTPUT_TOKENS}. Either raise the cap or tighten the prompt's word budgets.`
+              : `Validation failed after retry: ${errorSummary}`,
           });
 
           return NextResponse.json(
-            { error: 'Validation failed', details: validation.errors, attempts: 2 },
+            {
+              error: failureKind,
+              details: truncatedOnRetry ? [errorSummary] : validation.errors,
+              attempts: 2,
+              stop_reason: secondResponse.stop_reason,
+            },
             { status: 500 },
           );
         }
@@ -417,6 +471,8 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
           }
         : response.usage;
 
+      const finalStopReason = secondResponse ? secondResponse.stop_reason : response.stop_reason;
+
       await supabase.from('maasik_reports').update({
         report_html: html,
         archetype_name: archetypeName,
@@ -425,11 +481,13 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
         generation_tokens_output: combinedUsage.output_tokens,
         generation_cost_inr: computeReportCostInr(combinedUsage as any),
         generation_duration_ms: Date.now() - startTime,
+        generation_stop_reason: finalStopReason,
+        generation_attempts: generationAttempts,
         access_token: getReportToken(report.id, user.email),
       }).eq('id', report.id);
 
       if (generationAttempts > 1) {
-        console.log(`[generate-report v2.0] generation_attempts=${generationAttempts} user_id=${user_id}`);
+        console.log(`[generate-report v2.0] generation_attempts=${generationAttempts} user_id=${user_id} stop_reason=${finalStopReason}`);
       }
     }
 
