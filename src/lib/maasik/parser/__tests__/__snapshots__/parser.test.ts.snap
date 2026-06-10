@@ -1,0 +1,982 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Round-trip + golden snapshot > produces a stable content_json snapshot 1`] = `
+"{
+  "directives": [
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:taste.favor_1_name",
+      "justified_by": [],
+      "kind": "recommendation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "TASTE_FAVOR_1_NAME"
+      ],
+      "statement": "val_taste.favor_1_name",
+      "trackable": false
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:taste.favor_2_name",
+      "justified_by": [],
+      "kind": "recommendation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "TASTE_FAVOR_2_NAME"
+      ],
+      "statement": "val_taste.favor_2_name",
+      "trackable": false
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:taste.favor_3_name",
+      "justified_by": [],
+      "kind": "recommendation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "TASTE_FAVOR_3_NAME"
+      ],
+      "statement": "val_taste.favor_3_name",
+      "trackable": false
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:taste.avoid_1_name",
+      "justified_by": [],
+      "kind": "recommendation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "avoid",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "TASTE_AVOID_1_NAME"
+      ],
+      "statement": "val_taste.avoid_1_name",
+      "trackable": false
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:taste.avoid_2_name",
+      "justified_by": [],
+      "kind": "recommendation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "avoid",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "TASTE_AVOID_2_NAME"
+      ],
+      "statement": "val_taste.avoid_2_name",
+      "trackable": false
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:taste.avoid_3_name",
+      "justified_by": [],
+      "kind": "recommendation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "avoid",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "TASTE_AVOID_3_NAME"
+      ],
+      "statement": "val_taste.avoid_3_name",
+      "trackable": false
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "detail": "val_five_anchors.anchor_1_detail",
+      "id": "maasik:directive:five_anchors.anchor_1_title",
+      "justified_by": [],
+      "kind": "practice",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "ANCHOR_01_TITLE",
+        "ANCHOR_01_DETAIL"
+      ],
+      "statement": "val_five_anchors.anchor_1_title",
+      "trackable": true
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "detail": "val_five_anchors.anchor_2_detail",
+      "id": "maasik:directive:five_anchors.anchor_2_title",
+      "justified_by": [],
+      "kind": "practice",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "ANCHOR_02_TITLE",
+        "ANCHOR_02_DETAIL"
+      ],
+      "statement": "val_five_anchors.anchor_2_title",
+      "trackable": true
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "detail": "val_five_anchors.anchor_3_detail",
+      "id": "maasik:directive:five_anchors.anchor_3_title",
+      "justified_by": [],
+      "kind": "practice",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "ANCHOR_03_TITLE",
+        "ANCHOR_03_DETAIL"
+      ],
+      "statement": "val_five_anchors.anchor_3_title",
+      "trackable": true
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "detail": "val_five_anchors.anchor_4_detail",
+      "id": "maasik:directive:five_anchors.anchor_4_title",
+      "justified_by": [],
+      "kind": "practice",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "ANCHOR_04_TITLE",
+        "ANCHOR_04_DETAIL"
+      ],
+      "statement": "val_five_anchors.anchor_4_title",
+      "trackable": true
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "detail": "val_five_anchors.anchor_5_detail",
+      "id": "maasik:directive:five_anchors.anchor_5_title",
+      "justified_by": [],
+      "kind": "practice",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "ANCHOR_05_TITLE",
+        "ANCHOR_05_DETAIL"
+      ],
+      "statement": "val_five_anchors.anchor_5_title",
+      "trackable": true
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:five_anchors.avoid_1",
+      "justified_by": [],
+      "kind": "practice",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "avoid",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "AVOID_01"
+      ],
+      "statement": "val_five_anchors.avoid_1",
+      "trackable": true
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:five_anchors.avoid_2",
+      "justified_by": [],
+      "kind": "practice",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "avoid",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "AVOID_02"
+      ],
+      "statement": "val_five_anchors.avoid_2",
+      "trackable": true
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:five_anchors.avoid_3",
+      "justified_by": [],
+      "kind": "practice",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "aahar",
+      "polarity": "avoid",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "AVOID_03"
+      ],
+      "statement": "val_five_anchors.avoid_3",
+      "trackable": true
+    },
+    {
+      "classification": {
+        "compass": [],
+        "karma_tag": null,
+        "purushartha": []
+      },
+      "id": "maasik:directive:commitment.lever_line",
+      "justified_by": [],
+      "kind": "commitment",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": null,
+      "polarity": "do",
+      "scope": {
+        "grain": "month"
+      },
+      "serves": [],
+      "source_slots": [
+        "LEVER_LINE"
+      ],
+      "statement": "val_commitment.lever_line",
+      "trackable": true
+    }
+  ],
+  "generated_at": "2026-05-17T00:00:00.000Z",
+  "presentation": {
+    "archetype": {
+      "body_para": "val_archetype.body_paragraph",
+      "closing_line": "val_archetype.closing_line",
+      "identity_verse": "val_archetype.identity_verse",
+      "lede": "val_archetype.lede",
+      "month_word_origin": {
+        "meaning": "val_archetype.month_word_meaning",
+        "term": "val_archetype.month_word_term"
+      },
+      "name": "val_archetype.name",
+      "readout_label": "val_archetype.readout_strip",
+      "tagline": "val_archetype.tagline",
+      "tendencies": {
+        "body": "val_archetype.tendency_body",
+        "mind": "val_archetype.tendency_mind",
+        "season_asks": "val_archetype.tendency_season_asks"
+      }
+    },
+    "commitment": {
+      "closing_para": "val_commitment.closing_para",
+      "lever_line": "val_commitment.lever_line",
+      "opening": "val_commitment.opening",
+      "thread_para": "val_commitment.thread_para",
+      "verse": {
+        "english": "val_commitment.verse_english",
+        "sanskrit": "val_commitment.verse_sanskrit"
+      }
+    },
+    "cover": {
+      "subtitle": "val_cover.subtitle",
+      "verse": {
+        "english": "val_cover.verse_english",
+        "sanskrit": "val_cover.verse_sanskrit"
+      }
+    },
+    "day_plan": {
+      "anchors": [
+        {
+          "detail": "Detail for On waking.",
+          "name": "On waking",
+          "time": "01:30 AM"
+        },
+        {
+          "detail": "Detail for Breakfast.",
+          "name": "Breakfast",
+          "time": "02:30 AM"
+        },
+        {
+          "detail": "Detail for Mid-morning.",
+          "name": "Mid-morning",
+          "time": "03:30 AM"
+        },
+        {
+          "detail": "Detail for Lunch (largest).",
+          "name": "Lunch (largest)",
+          "time": "04:30 AM"
+        },
+        {
+          "detail": "Detail for Evening.",
+          "name": "Evening",
+          "time": "05:30 AM"
+        },
+        {
+          "detail": "Detail for Dinner (light).",
+          "name": "Dinner (light)",
+          "time": "06:30 AM"
+        },
+        {
+          "detail": "Detail for Bedtime.",
+          "name": "Bedtime",
+          "time": "07:30 AM"
+        }
+      ],
+      "dinacharya_meaning": "val_day_plan.dinacharya_meaning",
+      "lede": "val_day_plan.lede",
+      "title": "val_day_plan.title"
+    },
+    "five_anchors": {
+      "avoid": [
+        "val_five_anchors.avoid_1",
+        "val_five_anchors.avoid_2",
+        "val_five_anchors.avoid_3"
+      ],
+      "lede": "val_five_anchors.lede",
+      "rules": [
+        {
+          "detail": "val_five_anchors.anchor_1_detail",
+          "title": "val_five_anchors.anchor_1_title"
+        },
+        {
+          "detail": "val_five_anchors.anchor_2_detail",
+          "title": "val_five_anchors.anchor_2_title"
+        },
+        {
+          "detail": "val_five_anchors.anchor_3_detail",
+          "title": "val_five_anchors.anchor_3_title"
+        },
+        {
+          "detail": "val_five_anchors.anchor_4_detail",
+          "title": "val_five_anchors.anchor_4_title"
+        },
+        {
+          "detail": "val_five_anchors.anchor_5_detail",
+          "title": "val_five_anchors.anchor_5_title"
+        }
+      ]
+    },
+    "grocery": {
+      "cards": [
+        {
+          "items": [
+            {
+              "name": "Card1Item1",
+              "qty": "100 g"
+            },
+            {
+              "name": "Card1Item2",
+              "qty": "200 g"
+            },
+            {
+              "name": "Card1Item3",
+              "qty": "300 g"
+            }
+          ]
+        },
+        {
+          "items": [
+            {
+              "name": "Card2Item1",
+              "qty": "100 g"
+            },
+            {
+              "name": "Card2Item2",
+              "qty": "200 g"
+            },
+            {
+              "name": "Card2Item3",
+              "qty": "300 g"
+            }
+          ]
+        },
+        {
+          "items": [
+            {
+              "name": "Card3Item1",
+              "qty": "100 g"
+            },
+            {
+              "name": "Card3Item2",
+              "qty": "200 g"
+            },
+            {
+              "name": "Card3Item3",
+              "qty": "300 g"
+            }
+          ]
+        },
+        {
+          "items": [
+            {
+              "name": "Card4Item1",
+              "qty": "100 g"
+            },
+            {
+              "name": "Card4Item2",
+              "qty": "200 g"
+            },
+            {
+              "name": "Card4Item3",
+              "qty": "300 g"
+            }
+          ]
+        },
+        {
+          "items": [
+            {
+              "name": "Card5Item1",
+              "qty": "100 g"
+            },
+            {
+              "name": "Card5Item2",
+              "qty": "200 g"
+            },
+            {
+              "name": "Card5Item3",
+              "qty": "300 g"
+            }
+          ]
+        },
+        {
+          "items": [
+            {
+              "name": "Card6Item1",
+              "qty": "100 g"
+            },
+            {
+              "name": "Card6Item2",
+              "qty": "200 g"
+            },
+            {
+              "name": "Card6Item3",
+              "qty": "300 g"
+            }
+          ]
+        }
+      ],
+      "lede": "val_grocery.lede",
+      "specials_title": "val_grocery.specials_title"
+    },
+    "meta": {
+      "city": "val_subject.city",
+      "edition_number": "val_meta.edition_number",
+      "first_name": "val_subject.first_name",
+      "generation_date_label": "val_meta.generation_date",
+      "next_edition": {
+        "delivery_date": "val_footer.next_delivery_date",
+        "ritu": "val_footer.next_ritu",
+        "vedic_month": "val_footer.next_vedic_month"
+      }
+    },
+    "taste_map": {
+      "avoid": [
+        {
+          "name": "val_taste.avoid_1_name",
+          "sanskrit": "val_taste.avoid_1_sanskrit"
+        },
+        {
+          "name": "val_taste.avoid_2_name",
+          "sanskrit": "val_taste.avoid_2_sanskrit"
+        },
+        {
+          "name": "val_taste.avoid_3_name",
+          "sanskrit": "val_taste.avoid_3_sanskrit"
+        }
+      ],
+      "caption": "val_taste.caption",
+      "favor": [
+        {
+          "name": "val_taste.favor_1_name",
+          "sanskrit": "val_taste.favor_1_sanskrit"
+        },
+        {
+          "name": "val_taste.favor_2_name",
+          "sanskrit": "val_taste.favor_2_sanskrit"
+        },
+        {
+          "name": "val_taste.favor_3_name",
+          "sanskrit": "val_taste.favor_3_sanskrit"
+        }
+      ],
+      "foods_avoid": [
+        {
+          "category": "AvoidCat1",
+          "items": [
+            "AvoidA1",
+            "AvoidB1",
+            "AvoidC1"
+          ]
+        },
+        {
+          "category": "AvoidCat2",
+          "items": [
+            "AvoidA2",
+            "AvoidB2",
+            "AvoidC2"
+          ]
+        },
+        {
+          "category": "AvoidCat3",
+          "items": [
+            "AvoidA3",
+            "AvoidB3",
+            "AvoidC3"
+          ]
+        },
+        {
+          "category": "AvoidCat4",
+          "items": [
+            "AvoidA4",
+            "AvoidB4",
+            "AvoidC4"
+          ]
+        },
+        {
+          "category": "AvoidCat5",
+          "items": [
+            "AvoidA5",
+            "AvoidB5",
+            "AvoidC5"
+          ]
+        },
+        {
+          "category": "AvoidCat6",
+          "items": [
+            "AvoidA6",
+            "AvoidB6",
+            "AvoidC6"
+          ]
+        }
+      ],
+      "foods_favor": [
+        {
+          "category": "FavorCat1",
+          "items": [
+            "FavorA1",
+            "FavorB1",
+            "FavorC1"
+          ]
+        },
+        {
+          "category": "FavorCat2",
+          "items": [
+            "FavorA2",
+            "FavorB2",
+            "FavorC2"
+          ]
+        },
+        {
+          "category": "FavorCat3",
+          "items": [
+            "FavorA3",
+            "FavorB3",
+            "FavorC3"
+          ]
+        },
+        {
+          "category": "FavorCat4",
+          "items": [
+            "FavorA4",
+            "FavorB4",
+            "FavorC4"
+          ]
+        },
+        {
+          "category": "FavorCat5",
+          "items": [
+            "FavorA5",
+            "FavorB5",
+            "FavorC5"
+          ]
+        },
+        {
+          "category": "FavorCat6",
+          "items": [
+            "FavorA6",
+            "FavorB6",
+            "FavorC6"
+          ]
+        }
+      ],
+      "lede": "val_taste.lede",
+      "legend": {
+        "ease": "val_taste.legend_ease",
+        "lean": "val_taste.legend_lean"
+      }
+    },
+    "vedic_context": {
+      "ritu": {
+        "descriptor": "val_vedic.ritu_descriptor",
+        "name": "val_vedic.ritu_name"
+      },
+      "ritu_label": "val_vedic.ritu_label",
+      "vedic_month": "val_vedic.month_name",
+      "vedic_month_full_description": "val_vedic.month_description",
+      "window_label": "val_vedic.window_gregorian"
+    },
+    "visuals": {
+      "cover_gradient": {
+        "accent_rgba": "rgba(124,111,192,0.55)",
+        "primary_rgba": "rgba(214,142,43,0.92)"
+      },
+      "day_chart": {
+        "svg": "<g id=\\"anchor-dots\\"><circle cx=\\"25\\" cy=\\"40\\" r=\\"3\\"></circle></g><g id=\\"anchor-labels\\"><text x=\\"25\\" y=\\"20\\">Breakfast</text></g><path id=\\"heat-curve\\" d=\\"M25 200 L675 200\\"></path><g id=\\"activity-zones\\"><rect x=\\"25\\" y=\\"288\\" width=\\"100\\" height=\\"18\\"></rect></g>"
+      },
+      "heat_flow_left": {
+        "icon_svg": "<circle cx=\\"28\\" cy=\\"32\\" r=\\"5\\" fill=\\"#B85C3A\\" data-tag=\\"agni.heat_flow_left_icon\\"></circle>"
+      },
+      "heat_flow_right": {
+        "icon_svg": "<circle cx=\\"28\\" cy=\\"32\\" r=\\"5\\" fill=\\"#B85C3A\\" data-tag=\\"agni.heat_flow_right_icon\\"></circle>"
+      }
+    },
+    "whats_happening": {
+      "agni_meaning": "val_agni.meaning",
+      "fronts": [
+        {
+          "body": "val_agni.front_1_body",
+          "title": "val_agni.front_1_title"
+        },
+        {
+          "body": "val_agni.front_2_body",
+          "title": "val_agni.front_2_title"
+        }
+      ],
+      "heat_flow": {
+        "left": {
+          "label": "val_agni.heat_flow_left_label",
+          "state": "val_agni.heat_flow_left_state"
+        },
+        "right": {
+          "label": "val_agni.heat_flow_right_label",
+          "state": "val_agni.heat_flow_right_state"
+        }
+      },
+      "intersection_para": "val_agni.intersection_para",
+      "lede": "val_agni.lede",
+      "title": "val_agni.title"
+    }
+  },
+  "schema_version": "maasik.content.v2",
+  "signals": [
+    {
+      "classification": {
+        "compass": [],
+        "purushartha": []
+      },
+      "evidence": [],
+      "id": "maasik:signal:archetype.tendency_body",
+      "kind": "observation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": null,
+      "polarity": "neutral",
+      "scope": {
+        "grain": "month"
+      },
+      "source_slots": [
+        "TENDENCY_BODY"
+      ],
+      "statement": "val_archetype.tendency_body"
+    },
+    {
+      "classification": {
+        "compass": [],
+        "purushartha": []
+      },
+      "evidence": [],
+      "id": "maasik:signal:archetype.tendency_mind",
+      "kind": "observation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": "vichaar",
+      "polarity": "neutral",
+      "scope": {
+        "grain": "month"
+      },
+      "source_slots": [
+        "TENDENCY_MIND"
+      ],
+      "statement": "val_archetype.tendency_mind"
+    },
+    {
+      "classification": {
+        "compass": [],
+        "purushartha": []
+      },
+      "evidence": [],
+      "id": "maasik:signal:archetype.tendency_season_asks",
+      "kind": "insight",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": null,
+      "polarity": "neutral",
+      "scope": {
+        "grain": "month"
+      },
+      "source_slots": [
+        "TENDENCY_SEASON_ASKS"
+      ],
+      "statement": "val_archetype.tendency_season_asks"
+    },
+    {
+      "classification": {
+        "compass": [],
+        "purushartha": []
+      },
+      "detail": "val_agni.front_1_body",
+      "evidence": [],
+      "id": "maasik:signal:agni.front_1_title",
+      "kind": "observation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": null,
+      "polarity": "neutral",
+      "scope": {
+        "grain": "month"
+      },
+      "source_slots": [
+        "FRONT_1_TITLE",
+        "FRONT_1_BODY"
+      ],
+      "statement": "val_agni.front_1_title"
+    },
+    {
+      "classification": {
+        "compass": [],
+        "purushartha": []
+      },
+      "detail": "val_agni.front_2_body",
+      "evidence": [],
+      "id": "maasik:signal:agni.front_2_title",
+      "kind": "observation",
+      "origin": {
+        "generated_at": "2026-05-17T00:00:00.000Z",
+        "method": "transcribed",
+        "producer": "maasik",
+        "source_ref": "report:00000000-0000-0000-0000-000000000000",
+        "version": "maasik.content.v2"
+      },
+      "pillar": null,
+      "polarity": "neutral",
+      "scope": {
+        "grain": "month"
+      },
+      "source_slots": [
+        "FRONT_2_TITLE",
+        "FRONT_2_BODY"
+      ],
+      "statement": "val_agni.front_2_title"
+    }
+  ],
+  "source_ref": "report:00000000-0000-0000-0000-000000000000",
+  "template_version": "v4.1"
+}"
+`;

@@ -11,7 +11,7 @@
  * This template is consumed by lib/maasik/system-prompt.ts and lib/maasik/user-message.ts.
  * Claude fills the placeholders during generation; the route validates output.
  */
-export const HTML_TEMPLATE_VERSION = 'v4.0';
+export const HTML_TEMPLATE_VERSION = 'v4.1';
 
 export const HTML_TEMPLATE = `<!--
   MAASIK Report Template v4.0
@@ -755,37 +755,37 @@ export const HTML_TEMPLATE = `<!--
 <section class="cover">
   <div class="cover-top">
     <div class="cover-brand">MAASIK · NEORISHI</div>
-    <div class="cover-edition">Edition [[EDITION_NUMBER]] · [[GENERATION_DATE_HUMAN]]</div>
+    <div class="cover-edition">Edition <span data-slot="edition-number">[[EDITION_NUMBER]]</span> · <span data-slot="generation-date-human">[[GENERATION_DATE_HUMAN]]</span></div>
   </div>
 
   <div>
     <div class="label">Your Monthly Blueprint</div>
-    <h1 class="cover-title">[[VEDIC_MONTH]]</h1>
-    <p class="cover-subtitle">[[COVER_SUBTITLE]]</p>
+    <h1 class="cover-title" data-slot="vedic-month">[[VEDIC_MONTH]]</h1>
+    <p class="cover-subtitle" data-slot="cover-subtitle">[[COVER_SUBTITLE]]</p>
 
     <div class="cover-quote">
-      <div class="cover-quote-eng">"[[COVER_VERSE_ENGLISH]]"</div>
+      <div class="cover-quote-eng">"<span data-slot="cover-verse-english">[[COVER_VERSE_ENGLISH]]</span>"</div>
       <!-- Devanagari script only (U+0900-U+097F). No transliteration. See Part D5 of the system prompt. -->
-      <div class="cover-quote-sans">[[COVER_VERSE_SANSKRIT]]</div>
+      <div class="cover-quote-sans" data-slot="cover-verse-sanskrit">[[COVER_VERSE_SANSKRIT]]</div>
     </div>
   </div>
 
   <div class="cover-meta">
     <div class="meta-block">
       <div class="label-light">Prepared for</div>
-      <div class="meta-block-value">[[FIRST_NAME]]<br>[[CITY]]</div>
+      <div class="meta-block-value"><span data-slot="first-name">[[FIRST_NAME]]</span><br><span data-slot="city">[[CITY]]</span></div>
     </div>
     <div class="meta-block">
       <div class="label-light">Vedic Month</div>
-      <div class="meta-block-value">[[VEDIC_MONTH_FULL_DESCRIPTION]]</div>
+      <div class="meta-block-value" data-slot="vedic-month-full-description">[[VEDIC_MONTH_FULL_DESCRIPTION]]</div>
     </div>
     <div class="meta-block">
       <div class="label-light">Window</div>
-      <div class="meta-block-value">[[VEDIC_WINDOW_GREGORIAN]]</div>
+      <div class="meta-block-value" data-slot="vedic-window-gregorian">[[VEDIC_WINDOW_GREGORIAN]]</div>
     </div>
     <div class="meta-block">
       <div class="label-light">Season (Ritu)</div>
-      <div class="meta-block-value">[[RITU_NAME_WITH_DESCRIPTOR]]</div>
+      <div class="meta-block-value" data-slot="ritu-name-with-descriptor">[[RITU_NAME_WITH_DESCRIPTOR]]</div>
     </div>
   </div>
 </section>
@@ -795,13 +795,13 @@ export const HTML_TEMPLATE = `<!--
   <div class="page">
     <div class="section-num">01 · YOUR ARCHETYPE</div>
     <h2 class="h2">Who you arrive as, <em>this [[RITU_NAME]]</em></h2>
-    <p class="lede">[[SECTION_01_LEDE]]</p>
+    <p class="lede" data-slot="section-01-lede">[[SECTION_01_LEDE]]</p>
 
     <div class="word-origin">
       <div class="wo-marker">Word Origin</div>
       <div>
-        <div class="wo-term">[[MONTH_WORD_ORIGIN_TERM]]</div>
-        <div class="wo-meaning">[[MONTH_WORD_ORIGIN_MEANING]]</div>
+        <div class="wo-term" data-slot="month-word-origin-term">[[MONTH_WORD_ORIGIN_TERM]]</div>
+        <div class="wo-meaning" data-slot="month-word-origin-meaning">[[MONTH_WORD_ORIGIN_MEANING]]</div>
       </div>
     </div>
 
@@ -815,35 +815,35 @@ export const HTML_TEMPLATE = `<!--
         </svg>
       </div>
 
-      <div class="archetype-season">[[RITU_NAME]] · [[RITU_DESCRIPTOR]]</div>
+      <div class="archetype-season"><span data-slot="ritu-name">[[RITU_NAME]]</span> · <span data-slot="ritu-descriptor">[[RITU_DESCRIPTOR]]</span></div>
 
-      <h3 class="archetype-name">[[ARCHETYPE_NAME]]</h3>
+      <h3 class="archetype-name" data-slot="archetype-name">[[ARCHETYPE_NAME]]</h3>
 
-      <p class="archetype-tagline">[[ARCHETYPE_TAGLINE]]</p>
+      <p class="archetype-tagline" data-slot="archetype-tagline">[[ARCHETYPE_TAGLINE]]</p>
 
       <div class="tendency-grid">
         <div class="tendency">
           <div class="t-label">Body tends to be</div>
-          <div class="t-value">[[TENDENCY_BODY]]</div>
+          <div class="t-value" data-slot="tendency-body">[[TENDENCY_BODY]]</div>
         </div>
         <div class="tendency">
           <div class="t-label">Mind tends to be</div>
-          <div class="t-value">[[TENDENCY_MIND]]</div>
+          <div class="t-value" data-slot="tendency-mind">[[TENDENCY_MIND]]</div>
         </div>
         <div class="tendency">
           <div class="t-label">This season asks</div>
-          <div class="t-value">[[TENDENCY_SEASON_ASKS]]</div>
+          <div class="t-value" data-slot="tendency-season-asks">[[TENDENCY_SEASON_ASKS]]</div>
         </div>
       </div>
 
-      <p class="archetype-verse">[[IDENTITY_VERSE]]</p>
+      <p class="archetype-verse" data-slot="identity-verse">[[IDENTITY_VERSE]]</p>
 
-      <div class="archetype-readout">[[READOUT_STRIP]]</div>
+      <div class="archetype-readout" data-slot="readout-strip">[[READOUT_STRIP]]</div>
     </div>
 
-    <p class="has-dropcap">[[SECTION_01_BODY_PARA]]</p>
+    <p class="has-dropcap" data-slot="section-01-body-para">[[SECTION_01_BODY_PARA]]</p>
 
-    <p>[[SECTION_01_CLOSING_LINE]]</p>
+    <p data-slot="section-01-closing-line">[[SECTION_01_CLOSING_LINE]]</p>
   </div>
 </section>
 
@@ -851,8 +851,8 @@ export const HTML_TEMPLATE = `<!--
 <section>
   <div class="page">
     <div class="section-num">02 · WHAT'S HAPPENING</div>
-    <h2 class="h2">[[SECTION_02_TITLE]]</h2>
-    <p class="lede">[[SECTION_02_LEDE]]</p>
+    <h2 class="h2" data-slot="section-02-title">[[SECTION_02_TITLE]]</h2>
+    <p class="lede" data-slot="section-02-lede">[[SECTION_02_LEDE]]</p>
 
     <!--
       HEAT-FLOW DIAGRAM (Section 2)
@@ -872,24 +872,24 @@ export const HTML_TEMPLATE = `<!--
     <div class="heat-flow" aria-hidden="true">
       <div class="hf-side">
         <div class="hf-icon">
-          <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" data-slot="heat-flow-left-icon-svg">
             [[HEAT_FLOW_LEFT_ICON_SVG]]
           </svg>
         </div>
-        <div class="hf-season">[[HEAT_FLOW_LEFT_LABEL]]</div>
-        <div class="hf-state">[[HEAT_FLOW_LEFT_STATE]]</div>
+        <div class="hf-season" data-slot="heat-flow-left-label">[[HEAT_FLOW_LEFT_LABEL]]</div>
+        <div class="hf-state" data-slot="heat-flow-left-state">[[HEAT_FLOW_LEFT_STATE]]</div>
       </div>
 
       <div class="hf-arrow" aria-hidden="true">\\u2192</div>
 
       <div class="hf-side">
         <div class="hf-icon">
-          <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+          <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" data-slot="heat-flow-right-icon-svg">
             [[HEAT_FLOW_RIGHT_ICON_SVG]]
           </svg>
         </div>
-        <div class="hf-season">[[HEAT_FLOW_RIGHT_LABEL]]</div>
-        <div class="hf-state">[[HEAT_FLOW_RIGHT_STATE]]</div>
+        <div class="hf-season" data-slot="heat-flow-right-label">[[HEAT_FLOW_RIGHT_LABEL]]</div>
+        <div class="hf-state" data-slot="heat-flow-right-state">[[HEAT_FLOW_RIGHT_STATE]]</div>
       </div>
     </div>
 
@@ -899,24 +899,24 @@ export const HTML_TEMPLATE = `<!--
       <div class="wo-marker">Word Origin</div>
       <div>
         <div class="wo-term">Agni</div>
-        <div class="wo-meaning">[[SECTION_02_AGNI_MEANING]]</div>
+        <div class="wo-meaning" data-slot="section-02-agni-meaning">[[SECTION_02_AGNI_MEANING]]</div>
       </div>
     </div>
 
-    <p>[[SECTION_02_INTERSECTION_PARA]]</p>
+    <p data-slot="section-02-intersection-para">[[SECTION_02_INTERSECTION_PARA]]</p>
 
     <p>The plan splits in two.</p>
 
     <div class="two-front">
       <div class="front-card front-pitta">
         <div class="label">Front 1</div>
-        <div class="front-title">[[FRONT_1_TITLE]]</div>
-        <div class="front-body">[[FRONT_1_BODY]]</div>
+        <div class="front-title" data-slot="front-1-title">[[FRONT_1_TITLE]]</div>
+        <div class="front-body" data-slot="front-1-body">[[FRONT_1_BODY]]</div>
       </div>
       <div class="front-card front-kapha">
         <div class="label">Front 2</div>
-        <div class="front-title">[[FRONT_2_TITLE]]</div>
-        <div class="front-body">[[FRONT_2_BODY]]</div>
+        <div class="front-title" data-slot="front-2-title">[[FRONT_2_TITLE]]</div>
+        <div class="front-body" data-slot="front-2-body">[[FRONT_2_BODY]]</div>
       </div>
     </div>
   </div>
@@ -927,11 +927,11 @@ export const HTML_TEMPLATE = `<!--
   <div class="page">
     <div class="section-num">03 · EATING FOR THE SEASON</div>
     <h2 class="h2">The <em>taste map</em></h2>
-    <p class="lede">[[SECTION_03_LEDE]]</p>
+    <p class="lede" data-slot="section-03-lede">[[SECTION_03_LEDE]]</p>
 
     <div class="taste-legend">
-      <span><span class="legend-dot" style="background: var(--khus);"></span><strong>[[LEGEND_LEAN_LABEL]]</strong></span>
-      <span><span class="legend-dot" style="background: var(--terracotta);"></span><strong>[[LEGEND_EASE_LABEL]]</strong></span>
+      <span><span class="legend-dot" style="background: var(--khus);"></span><strong data-slot="legend-lean-label">[[LEGEND_LEAN_LABEL]]</strong></span>
+      <span><span class="legend-dot" style="background: var(--terracotta);"></span><strong data-slot="legend-ease-label">[[LEGEND_EASE_LABEL]]</strong></span>
     </div>
 
     <!--
@@ -947,15 +947,15 @@ export const HTML_TEMPLATE = `<!--
         Vasanta: favor bitter/pungent/astringent, avoid sweet/sour/salty
     -->
     <div class="taste-strip">
-      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_1_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_1_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_2_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_2_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-favor"><div class="taste-name">[[TASTE_FAVOR_3_NAME]]</div><div class="taste-sanskrit">[[TASTE_FAVOR_3_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_1_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_1_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_2_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_2_SANSKRIT]]</div></div>
-      <div class="taste-cell taste-avoid"><div class="taste-name">[[TASTE_AVOID_3_NAME]]</div><div class="taste-sanskrit">[[TASTE_AVOID_3_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-favor"><div class="taste-name" data-slot="taste-favor-1-name">[[TASTE_FAVOR_1_NAME]]</div><div class="taste-sanskrit" data-slot="taste-favor-1-sanskrit">[[TASTE_FAVOR_1_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-favor"><div class="taste-name" data-slot="taste-favor-2-name">[[TASTE_FAVOR_2_NAME]]</div><div class="taste-sanskrit" data-slot="taste-favor-2-sanskrit">[[TASTE_FAVOR_2_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-favor"><div class="taste-name" data-slot="taste-favor-3-name">[[TASTE_FAVOR_3_NAME]]</div><div class="taste-sanskrit" data-slot="taste-favor-3-sanskrit">[[TASTE_FAVOR_3_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name" data-slot="taste-avoid-1-name">[[TASTE_AVOID_1_NAME]]</div><div class="taste-sanskrit" data-slot="taste-avoid-1-sanskrit">[[TASTE_AVOID_1_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name" data-slot="taste-avoid-2-name">[[TASTE_AVOID_2_NAME]]</div><div class="taste-sanskrit" data-slot="taste-avoid-2-sanskrit">[[TASTE_AVOID_2_SANSKRIT]]</div></div>
+      <div class="taste-cell taste-avoid"><div class="taste-name" data-slot="taste-avoid-3-name">[[TASTE_AVOID_3_NAME]]</div><div class="taste-sanskrit" data-slot="taste-avoid-3-sanskrit">[[TASTE_AVOID_3_SANSKRIT]]</div></div>
     </div>
 
-    <p class="taste-caption">[[SECTION_03_CAPTION]]</p>
+    <p class="taste-caption" data-slot="section-03-caption">[[SECTION_03_CAPTION]]</p>
 
     <!--
       FOOD COLUMNS (Section 3)
@@ -971,13 +971,13 @@ export const HTML_TEMPLATE = `<!--
     <div class="food-cols">
       <div class="food-col favor">
         <h3>Eat freely</h3>
-        <ul>
+        <ul data-slot="food-favor-rows">
           [[FOOD_FAVOR_ROWS]]
         </ul>
       </div>
       <div class="food-col avoid">
         <h3>Eat less, or skip</h3>
-        <ul>
+        <ul data-slot="food-avoid-rows">
           [[FOOD_AVOID_ROWS]]
         </ul>
       </div>
@@ -989,14 +989,14 @@ export const HTML_TEMPLATE = `<!--
 <section>
   <div class="page">
     <div class="section-num">04 · YOUR DAY</div>
-    <h2 class="h2">[[SECTION_04_TITLE]]</h2>
-    <p class="lede">[[SECTION_04_LEDE]]</p>
+    <h2 class="h2" data-slot="section-04-title">[[SECTION_04_TITLE]]</h2>
+    <p class="lede" data-slot="section-04-lede">[[SECTION_04_LEDE]]</p>
 
     <div class="word-origin">
       <div class="wo-marker">Word Origin</div>
       <div>
         <div class="wo-term">Dinacharya</div>
-        <div class="wo-meaning">[[DINACHARYA_MEANING]]</div>
+        <div class="wo-meaning" data-slot="dinacharya-meaning">[[DINACHARYA_MEANING]]</div>
       </div>
     </div>
 
@@ -1042,7 +1042,7 @@ export const HTML_TEMPLATE = `<!--
           </linearGradient>
         </defs>
 
-        [[DAY_CHART_DYNAMIC_CONTENT]]
+        <g data-slot="day-chart-dynamic-content">[[DAY_CHART_DYNAMIC_CONTENT]]</g>
 
         <!-- Time axis (always 6 AM to 9 PM, hardcoded) -->
         <line x1="25" y1="254" x2="675" y2="254" stroke="#6B5D52" stroke-width="0.5" opacity="0.35"/>
@@ -1080,7 +1080,7 @@ export const HTML_TEMPLATE = `<!--
       Times are adjusted to the user's actual wake_time and sleep_time but anchored
       around the standard slots (06:30 / 07:30 / 10:30 / 01:00 / 04:30 / 07:00 / 09:30).
     -->
-    <div class="anchor-table">
+    <div class="anchor-table" data-slot="anchor-table-rows">
       [[ANCHOR_TABLE_ROWS]]
     </div>
   </div>
@@ -1091,37 +1091,37 @@ export const HTML_TEMPLATE = `<!--
   <div class="page">
     <div class="section-num">05 · FIVE ANCHORS</div>
     <h2 class="h2">Five rules that <em>carry the rest</em></h2>
-    <p class="lede">[[SECTION_05_LEDE]]</p>
+    <p class="lede" data-slot="section-05-lede">[[SECTION_05_LEDE]]</p>
 
     <ol class="anchor-numbered">
       <li><div>
-        <h4>[[ANCHOR_01_TITLE]]</h4>
-        <p>[[ANCHOR_01_DETAIL]]</p>
+        <h4 data-slot="anchor-01-title">[[ANCHOR_01_TITLE]]</h4>
+        <p data-slot="anchor-01-detail">[[ANCHOR_01_DETAIL]]</p>
       </div></li>
       <li><div>
-        <h4>[[ANCHOR_02_TITLE]]</h4>
-        <p>[[ANCHOR_02_DETAIL]]</p>
+        <h4 data-slot="anchor-02-title">[[ANCHOR_02_TITLE]]</h4>
+        <p data-slot="anchor-02-detail">[[ANCHOR_02_DETAIL]]</p>
       </div></li>
       <li><div>
-        <h4>[[ANCHOR_03_TITLE]]</h4>
-        <p>[[ANCHOR_03_DETAIL]]</p>
+        <h4 data-slot="anchor-03-title">[[ANCHOR_03_TITLE]]</h4>
+        <p data-slot="anchor-03-detail">[[ANCHOR_03_DETAIL]]</p>
       </div></li>
       <li><div>
-        <h4>[[ANCHOR_04_TITLE]]</h4>
-        <p>[[ANCHOR_04_DETAIL]]</p>
+        <h4 data-slot="anchor-04-title">[[ANCHOR_04_TITLE]]</h4>
+        <p data-slot="anchor-04-detail">[[ANCHOR_04_DETAIL]]</p>
       </div></li>
       <li><div>
-        <h4>[[ANCHOR_05_TITLE]]</h4>
-        <p>[[ANCHOR_05_DETAIL]]</p>
+        <h4 data-slot="anchor-05-title">[[ANCHOR_05_TITLE]]</h4>
+        <p data-slot="anchor-05-detail">[[ANCHOR_05_DETAIL]]</p>
       </div></li>
     </ol>
 
     <div class="avoid-tight">
       <div class="label">Three things to actively avoid</div>
       <ul>
-        <li>[[AVOID_01]]</li>
-        <li>[[AVOID_02]]</li>
-        <li>[[AVOID_03]]</li>
+        <li data-slot="avoid-01">[[AVOID_01]]</li>
+        <li data-slot="avoid-02">[[AVOID_02]]</li>
+        <li data-slot="avoid-03">[[AVOID_03]]</li>
       </ul>
     </div>
   </div>
@@ -1132,7 +1132,7 @@ export const HTML_TEMPLATE = `<!--
   <div class="page">
     <div class="section-num">06 · GROCERY</div>
     <h2 class="h2">What to <em>actually buy</em></h2>
-    <p class="lede">[[SECTION_06_LEDE]]</p>
+    <p class="lede" data-slot="section-06-lede">[[SECTION_06_LEDE]]</p>
 
     <!--
       GROCERY CARDS (Section 6)
@@ -1146,27 +1146,27 @@ export const HTML_TEMPLATE = `<!--
     <div class="grocery-grid">
       <div class="grocery-card">
         <h3>Grains &amp; Pulses</h3>
-        <ul>[[GROCERY_CARD_1_ITEMS]]</ul>
+        <ul data-slot="grocery-card-1-items">[[GROCERY_CARD_1_ITEMS]]</ul>
       </div>
       <div class="grocery-card">
         <h3>Dairy &amp; Fats</h3>
-        <ul>[[GROCERY_CARD_2_ITEMS]]</ul>
+        <ul data-slot="grocery-card-2-items">[[GROCERY_CARD_2_ITEMS]]</ul>
       </div>
       <div class="grocery-card">
         <h3>Vegetables</h3>
-        <ul>[[GROCERY_CARD_3_ITEMS]]</ul>
+        <ul data-slot="grocery-card-3-items">[[GROCERY_CARD_3_ITEMS]]</ul>
       </div>
       <div class="grocery-card">
         <h3>Fruits</h3>
-        <ul>[[GROCERY_CARD_4_ITEMS]]</ul>
+        <ul data-slot="grocery-card-4-items">[[GROCERY_CARD_4_ITEMS]]</ul>
       </div>
       <div class="grocery-card">
         <h3>Spices</h3>
-        <ul>[[GROCERY_CARD_5_ITEMS]]</ul>
+        <ul data-slot="grocery-card-5-items">[[GROCERY_CARD_5_ITEMS]]</ul>
       </div>
       <div class="grocery-card">
-        <h3>[[GROCERY_SPECIALS_TITLE]]</h3>
-        <ul>[[GROCERY_CARD_6_ITEMS]]</ul>
+        <h3 data-slot="grocery-specials-title">[[GROCERY_SPECIALS_TITLE]]</h3>
+        <ul data-slot="grocery-card-6-items">[[GROCERY_CARD_6_ITEMS]]</ul>
       </div>
     </div>
   </div>
@@ -1179,21 +1179,21 @@ export const HTML_TEMPLATE = `<!--
     <h2 class="h2">The <em>one thing</em></h2>
 
     <div class="commit-card">
-      <h3>[[COMMIT_OPENING]]</h3>
-      <p>[[COMMIT_THREAD_PARA]]</p>
+      <h3 data-slot="commit-opening">[[COMMIT_OPENING]]</h3>
+      <p data-slot="commit-thread-para">[[COMMIT_THREAD_PARA]]</p>
 
       <div class="lever">
-        "[[LEVER_LINE]]"
+        "<span data-slot="lever-line">[[LEVER_LINE]]</span>"
         <span class="lever-line">Repeat for thirty days</span>
       </div>
 
-      <p style="margin-bottom: 0;">[[COMMIT_CLOSING_PARA]]</p>
+      <p style="margin-bottom: 0;" data-slot="commit-closing-para">[[COMMIT_CLOSING_PARA]]</p>
     </div>
 
     <div class="closing-line">
-      <div class="closing-eng">"[[CLOSING_VERSE_ENGLISH]]"</div>
+      <div class="closing-eng">"<span data-slot="closing-verse-english">[[CLOSING_VERSE_ENGLISH]]</span>"</div>
       <!-- Devanagari script only (U+0900-U+097F). Must differ from the cover verse. See Part D5. -->
-      <div class="closing-sans">[[CLOSING_VERSE_SANSKRIT]]</div>
+      <div class="closing-sans" data-slot="closing-verse-sanskrit">[[CLOSING_VERSE_SANSKRIT]]</div>
     </div>
   </div>
 </section>
@@ -1201,7 +1201,7 @@ export const HTML_TEMPLATE = `<!--
 <!-- =================== FOOTER =================== -->
 <footer>
   <div class="footer-edition">MAASIK · Edition [[EDITION_NUMBER]] · [[GENERATION_DATE_HUMAN]]</div>
-  <div class="footer-next">Your next edition, [[FOOTER_NEXT_EDITION_VEDIC_MONTH]] ([[FOOTER_NEXT_EDITION_RITU]]), arrives [[FOOTER_NEXT_DELIVERY_DATE]].</div>
+  <div class="footer-next">Your next edition, <span data-slot="footer-next-edition-vedic-month">[[FOOTER_NEXT_EDITION_VEDIC_MONTH]]</span> (<span data-slot="footer-next-edition-ritu">[[FOOTER_NEXT_EDITION_RITU]]</span>), arrives <span data-slot="footer-next-delivery-date">[[FOOTER_NEXT_DELIVERY_DATE]]</span>.</div>
 </footer>
 
 </body>
