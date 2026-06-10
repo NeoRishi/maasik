@@ -13,6 +13,7 @@ import { buildUserMessage } from '@/lib/maasik/user-message';
 import { validateGeneratedHtml } from '@/lib/maasik/validate-html';
 import { getReportToken } from '@/lib/maasik/report-token';
 import { extractContentJson } from '@/lib/maasik/extract-content-json';
+import { convertV1ToV2 } from '@/lib/maasik/v1-to-v2';
 import { parseMaasikReport } from '@/lib/maasik/parser';
 import { HTML_TEMPLATE_VERSION } from '@/lib/maasik/html-template';
 
@@ -594,22 +595,94 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
       },
     });
 
-    // ---- 13. Shadow step: transcribe the shipped HTML into content_json for
-    // the in-app Day/Week/Paksha/Month views. The paid PDF is already sent, so
-    // this is strictly non-fatal: any failure is logged and content_json stays
-    // null (backfillable later). Runs on both fresh and reused-HTML paths.
+    // ---- 13. content_json v2 cutover: write the structured blueprint that the
+    // NeoRishi in-app dashboard renders. Primary path: deterministic parser
+    // over the instrumented HTML (template v4.1+). Fallback path: v1 LLM
+    // transcription lifted to v2 by convertV1ToV2 (also covers reused legacy
+    // HTML with no data-slot hooks). Strictly non-fatal: the PDF/email already
+    // went out above; any failure logs an event and leaves content_json null.
     try {
-      const transcriptionUserMessage = buildUserMessage(
-        user as MaasikUser,
-        month as VedicMonth,
-        editionNumber,
-        [],
-      );
-      const cj = await extractContentJson(html, transcriptionUserMessage);
-      if (cj.ok) {
+      let contentV2: Record<string, unknown> | null = null;
+      let cutoverPath = '';
+
+      if (html.includes('data-slot')) {
+        try {
+          const parsed = parseMaasikReport(html, {
+            producer: 'maasik',
+            sourceRef: `report:${report.id}`,
+            generatedAt: new Date().toISOString(),
+            schemaVersion: 'maasik.content.v2',
+            templateVersion: HTML_TEMPLATE_VERSION,
+          });
+          // The slot registry does not carry paksha; the report row is
+          // authoritative. Inject it so PakshaView renders the right half.
+          const pres = parsed.contentJson.presentation as Record<string, any>;
+          if (pres && typeof pres === 'object') {
+            pres.vedic_context = { ...(pres.vedic_context ?? {}), paksha: month.paksha };
+          }
+          contentV2 = parsed.contentJson as unknown as Record<string, unknown>;
+          cutoverPath = 'parser';
+          await supabase.from('maasik_events').insert({
+            user_id,
+            email: user.email,
+            event_type: 'content_json_v2_parsed',
+            event_source: 'generate-report',
+            event_data: {
+              report_id: report.id,
+              integrity_ok: parsed.integrity.ok,
+              hooks_found: parsed.integrity.foundHooks,
+              signals: parsed.contentJson.signals.length,
+              directives: parsed.contentJson.directives.length,
+              template_version: HTML_TEMPLATE_VERSION,
+            },
+          });
+        } catch (parseErr: any) {
+          console.warn('[generate-report] v2 parse failed, falling back to v1 extraction:', parseErr?.code || parseErr?.message);
+          await supabase.from('maasik_events').insert({
+            user_id,
+            email: user.email,
+            event_type: 'content_json_v2_parse_failed',
+            event_source: 'generate-report',
+            event_data: {
+              report_id: report.id,
+              code: parseErr?.code ?? null,
+              reason: parseErr?.message || String(parseErr),
+            },
+          });
+        }
+      }
+
+      if (!contentV2) {
+        const transcriptionUserMessage = buildUserMessage(
+          user as MaasikUser,
+          month as VedicMonth,
+          editionNumber,
+          [],
+        );
+        const cj = await extractContentJson(html, transcriptionUserMessage);
+        if (cj.ok) {
+          contentV2 = convertV1ToV2(cj.contentJson, {
+            sourceRef: `report:${report.id}`,
+            generatedAt: new Date().toISOString(),
+            paksha: month.paksha,
+          });
+          cutoverPath = 'v1_convert';
+        } else {
+          console.warn(`[generate-report] content_json_failed user_id=${user_id} ${cj.error}`);
+          await supabase.from('maasik_events').insert({
+            user_id,
+            email: user.email,
+            event_type: 'content_json_failed',
+            event_source: 'generate-report',
+            event_data: { report_id: report.id, reason: cj.error },
+          });
+        }
+      }
+
+      if (contentV2) {
         await supabase.from('maasik_reports').update({
-          content_json: cj.contentJson,
-          content_schema_version: cj.schemaVersion,
+          content_json: contentV2,
+          content_schema_version: 'maasik.content.v2',
         }).eq('id', report.id);
 
         await supabase.from('maasik_events').insert({
@@ -619,25 +692,15 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
           event_source: 'generate-report',
           event_data: {
             report_id: report.id,
-            schema_version: cj.schemaVersion,
-            tokens_output: cj.usage.output_tokens,
+            schema_version: 'maasik.content.v2',
+            path: cutoverPath,
           },
-        });
-      } else {
-        console.warn(`[generate-report] content_json_failed user_id=${user_id} ${cj.error}`);
-        await supabase.from('maasik_events').insert({
-          user_id,
-          email: user.email,
-          event_type: 'content_json_failed',
-          event_source: 'generate-report',
-          event_data: { report_id: report.id, reason: cj.error },
         });
       }
     } catch (cjErr: any) {
-      // Defense in depth: extractContentJson already swallows its own errors.
-      // This insert must not throw out of the route (the PDF is already sent),
-      // so it gets its own guard.
-      console.error('content_json shadow step threw:', cjErr);
+      // Defense in depth: this step must never throw out of the route
+      // (the PDF is already sent).
+      console.error('content_json step threw:', cjErr);
       try {
         await supabase.from('maasik_events').insert({
           user_id,
@@ -647,66 +710,7 @@ Regenerate the FULL HTML report fixing every issue above. Critical rules:
           event_data: { report_id: report.id, reason: cjErr?.message || String(cjErr) },
         });
       } catch {
-        /* swallow: never let the shadow step affect the delivery response */
-      }
-    }
-
-    // ---- 14. Shadow step (v2 parser): deterministically parse the instrumented
-    // HTML and LOG the result for shadow validation. Does NOT write content_json
-    // (cutover does that). Guarded on instrumentation so the reused-HTML path
-    // (pre-v4.1, no data-slot hooks) is skipped, not thrown on. Strictly
-    // non-fatal to delivery: the PDF/email already went out above.
-    try {
-      if (html.includes('data-slot')) {
-        const parsed = parseMaasikReport(html, {
-          producer: 'maasik',
-          sourceRef: `report:${report.id}`,
-          generatedAt: new Date().toISOString(),
-          schemaVersion: 'maasik.content.v2',
-          templateVersion: HTML_TEMPLATE_VERSION,
-        });
-        await supabase.from('maasik_events').insert({
-          user_id,
-          email: user.email,
-          event_type: 'content_json_v2_shadow',
-          event_source: 'generate-report',
-          event_data: {
-            report_id: report.id,
-            integrity_ok: parsed.integrity.ok,
-            hooks_found: parsed.integrity.foundHooks,
-            signals: parsed.contentJson.signals.length,
-            directives: parsed.contentJson.directives.length,
-            template_version: HTML_TEMPLATE_VERSION,
-          },
-        });
-      } else {
-        await supabase.from('maasik_events').insert({
-          user_id,
-          email: user.email,
-          event_type: 'content_json_v2_shadow_skipped',
-          event_source: 'generate-report',
-          event_data: { report_id: report.id, reason: 'html_not_instrumented' },
-        });
-      }
-    } catch (v2Err: any) {
-      console.warn(
-        '[generate-report] content_json_v2_shadow failed:',
-        v2Err?.code || v2Err?.message,
-      );
-      try {
-        await supabase.from('maasik_events').insert({
-          user_id,
-          email: user.email,
-          event_type: 'content_json_v2_shadow_failed',
-          event_source: 'generate-report',
-          event_data: {
-            report_id: report.id,
-            code: v2Err?.code ?? null,
-            reason: v2Err?.message || String(v2Err),
-          },
-        });
-      } catch {
-        /* never throw out of the shadow step */
+        /* swallow: never let the content_json step affect the delivery response */
       }
     }
 

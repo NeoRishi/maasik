@@ -24,6 +24,9 @@
     },
     "src/app/api/razorpay-webhook/route.ts": {
       "maxDuration": 30
+    },
+    "src/app/api/backfill-content-json/route.ts": {
+      "maxDuration": 800
     }
   }
 }
