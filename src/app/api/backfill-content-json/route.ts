@@ -174,13 +174,17 @@ export async function GET(req: NextRequest) {
         paksha: report.paksha,
       });
 
-      const { error: upErr } = await supabase
+      // NOTE: no .neq() guard here. SQL NULL semantics make
+      // `content_schema_version <> 'v2'` filter out NULL rows, silently
+      // matching zero rows. Idempotency is enforced by the candidate
+      // selection above; .select() verifies the write actually landed.
+      const { data: updated, error: upErr } = await supabase
         .from('maasik_reports')
         .update({ content_json: v2, content_schema_version: 'maasik.content.v2' })
         .eq('id', report.id)
-        .neq('content_schema_version', 'maasik.content.v2');
-      if (upErr) {
-        results.push({ id: report.id, ok: false, reason: upErr.message });
+        .select('id');
+      if (upErr || !updated || updated.length === 0) {
+        results.push({ id: report.id, ok: false, reason: upErr?.message ?? 'update matched 0 rows' });
         continue;
       }
 
