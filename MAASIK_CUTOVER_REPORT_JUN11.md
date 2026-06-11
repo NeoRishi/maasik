@@ -79,3 +79,18 @@ curl -s -m 800 -X POST -H "Authorization: Bearer $CRON_SECRET" \
 1. **Founder:** push + merge Maasik (`2dbae5b`, `145f7af`, `4bfa6e6`); merge NeoRishi `audit-remediation-jun10` (empty-state + migrations mirrors).
 2. **Hygiene:** delete the temporary `maasik-backfill` edge function after the Vercel route is live (Dashboard → Edge Functions). Rotate the ANTHROPIC_API_KEY at your convenience: it transited pg_net request bodies during the cutover (queue and response tables were scrubbed, but rotation is cheap insurance).
 3. Stale `.git/stale-*.bak` lock files in both repos can be deleted.
+
+---
+
+# Final Leg Addendum, 12 June 2026
+
+**Deployment:** PR #9 (`7810d76`) merged; `ccf634c` confirmed on origin/main; Vercel Ready.
+**Fresh generation (production, zero manual steps after trigger):** POST /api/generate-report with force_regenerate for tsd.preview.555. Evidence chain in maasik_events:
+- `report_sent` 22:51:53 (fresh Claude HTML, new archetype "The Steady Furnace", html_len 50228)
+- `content_json_generated` 22:53:56, `path: v1_convert`, row updated to `maasik.content.v2`, 15 directives, renders in NeoRishi via the live RLS path.
+
+**Verdict: PASS on the mission end-state.** A newly generated production report automatically received content_json v2 and is visible in NeoRishi with no manual intervention. The monthly cron path is identical.
+
+**Sub-item `path="parser"`: BLOCKED, not a value blocker.** Root cause: `html-template.ts` v4.1 (82 data-slot hooks) was committed but never wired into `system-prompt.ts` (zero data-slot references), so production Claude emits uninstrumented HTML and the parser path cannot engage. The v1_convert fallback covers every report (by design) until the template is wired. Follow-up (one focused change + PDF visual QA): embed the instrumented template in the generation system prompt, bump GENERATION_PROMPT_VERSION, regenerate one test report, expect `content_json_v2_parsed` with `integrity_ok: true` and `path: "parser"`.
+
+**Incident note:** the first trigger ran against the old deployment (push had not landed) and downgraded tsd's content_json to v1; repaired within minutes via the edge backfill. tsd.preview's inbox received the regenerated report emails (test account).
