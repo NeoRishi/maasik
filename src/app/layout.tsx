@@ -1,44 +1,71 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Inter_Tight, JetBrains_Mono, Newsreader, Noto_Serif_Devanagari } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import { PostHogProvider } from '@/components/PostHogProvider';
 import { ScrollDepthTracker } from '@/components/ScrollDepthTracker';
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
-  style: ['normal', 'italic'],
+// Fonts are self-hosted from @fontsource packages (Oct 2026). next/font/google broke the
+// Vercel build (Google Fonts response no longer parsed by Next 14.2.15), and self-hosting
+// also removes the build-time dependency on fonts.googleapis.com. Same CSS variables as before.
+
+const fraunces = localFont({
+  src: [
+    { path: '../../node_modules/@fontsource/fraunces/files/fraunces-latin-300-normal.woff2', weight: '300', style: 'normal' },
+    { path: '../../node_modules/@fontsource/fraunces/files/fraunces-latin-300-italic.woff2', weight: '300', style: 'italic' },
+    { path: '../../node_modules/@fontsource/fraunces/files/fraunces-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../../node_modules/@fontsource/fraunces/files/fraunces-latin-400-italic.woff2', weight: '400', style: 'italic' },
+    { path: '../../node_modules/@fontsource/fraunces/files/fraunces-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../../node_modules/@fontsource/fraunces/files/fraunces-latin-500-italic.woff2', weight: '500', style: 'italic' },
+    { path: '../../node_modules/@fontsource/fraunces/files/fraunces-latin-600-normal.woff2', weight: '600', style: 'normal' },
+    { path: '../../node_modules/@fontsource/fraunces/files/fraunces-latin-600-italic.woff2', weight: '600', style: 'italic' },
+  ],
   variable: '--font-fraunces',
   display: 'swap',
+  fallback: ['serif'],
 });
 
-const interTight = Inter_Tight({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+const interTight = localFont({
+  src: [
+    { path: '../../node_modules/@fontsource/inter-tight/files/inter-tight-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../../node_modules/@fontsource/inter-tight/files/inter-tight-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../../node_modules/@fontsource/inter-tight/files/inter-tight-latin-600-normal.woff2', weight: '600', style: 'normal' },
+    { path: '../../node_modules/@fontsource/inter-tight/files/inter-tight-latin-700-normal.woff2', weight: '700', style: 'normal' },
+  ],
   variable: '--font-inter-tight',
   display: 'swap',
+  fallback: ['sans-serif'],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
+const jetbrainsMono = localFont({
+  src: [
+    { path: '../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../../node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2', weight: '500', style: 'normal' },
+  ],
   variable: '--font-jetbrains-mono',
   display: 'swap',
+  fallback: ['monospace'],
 });
 
-const notoDevanagari = Noto_Serif_Devanagari({
-  subsets: ['devanagari'],
-  weight: ['400', '500'],
+const notoDevanagari = localFont({
+  src: [
+    { path: '../../node_modules/@fontsource/noto-serif-devanagari/files/noto-serif-devanagari-devanagari-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../../node_modules/@fontsource/noto-serif-devanagari/files/noto-serif-devanagari-devanagari-500-normal.woff2', weight: '500', style: 'normal' },
+  ],
   variable: '--font-noto-devanagari',
   display: 'swap',
+  fallback: ['serif'],
 });
 
-const newsreader = Newsreader({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  style: ['normal', 'italic'],
+const newsreader = localFont({
+  src: [
+    { path: '../../node_modules/@fontsource/newsreader/files/newsreader-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../../node_modules/@fontsource/newsreader/files/newsreader-latin-400-italic.woff2', weight: '400', style: 'italic' },
+    { path: '../../node_modules/@fontsource/newsreader/files/newsreader-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../../node_modules/@fontsource/newsreader/files/newsreader-latin-500-italic.woff2', weight: '500', style: 'italic' },
+  ],
   variable: '--font-newsreader',
   display: 'swap',
+  fallback: ['serif'],
 });
 
 export const metadata: Metadata = {
